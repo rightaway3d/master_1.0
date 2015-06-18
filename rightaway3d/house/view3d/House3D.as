@@ -58,7 +58,7 @@ package rightaway3d.house.view3d
 					
 					w.addEventListener("will_dispose",onWallDispose);
 					
-					engineManager.addCollisionObject(wall3d);
+					//engineManager.addCollisionObject(wall3d);
 				}
 				
 				var p:Point3D = w.groundHeadPoint.point;
@@ -104,7 +104,7 @@ package rightaway3d.house.view3d
 			delete wallDict[wall];
 			
 			this.removeChild(wall3d);
-			engineManager.removeCollisionObject(wall3d);
+			//engineManager.removeCollisionObject(wall3d);
 			
 			wall3d.disposeWithAnimatorAndChildren();
 		}
