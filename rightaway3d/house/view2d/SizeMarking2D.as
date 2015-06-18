@@ -12,6 +12,7 @@ package rightaway3d.house.view2d
 	import rightaway3d.house.vo.WallArea;
 	import rightaway3d.house.vo.WallHole;
 	import rightaway3d.house.vo.WallObject;
+	import rightaway3d.house.vo.WallUtils;
 	import rightaway3d.utils.MyMath;
 	import rightaway3d.utils.MyTextField;
 	
@@ -261,30 +262,6 @@ package rightaway3d.house.view2d
 			return a;
 		}
 		
-		private function sortWallObject(x0:Number,x1:Number,objects:Array):Array
-		{
-			var a:Array = [];
-			a.push(x0);
-			var len:int = objects.length;
-			//trace("sortWallObjects:"+objects);
-			for(var i:int=0;i<len;i++)
-			{
-				var o:WallObject = objects[i];
-				var x00:Number = o.x - o.width;
-				if(x00-x0>1)
-				{
-					a.push(x00);
-				}
-				x0 = o.x;
-				
-				if(o.width>1)a.push(x0);
-			}
-			
-			if(x1-x0>1)a.push(x1);
-			
-			return a;
-		}
-		
 		private function drawMark(marks:Array,legLineStart:int,legLineLen:int,headLineLen:int,leg1:Boolean,leg2:Boolean):void
 		{
 			//trace("marks:"+marks);
@@ -303,7 +280,7 @@ package rightaway3d.house.view2d
 			var len:int = gos.length;
 			if(len==0 || isAllWallHole(gos))return 0;//地面物体的数量为0，或都是墙洞，不做标注
 			
-			gos = sortWallObject(start,end,gos);
+			gos = WallUtils.sortWallObject(start,end,gos);
 			drawMark(gos,legLineStart,legLineLen,headLineLen,false,false);
 			
 			return 500;
@@ -315,7 +292,7 @@ package rightaway3d.house.view2d
 			var len:int = gos.length;
 			if(len==0 || isAllWallHole(gos))return 0;//地面物体的数量为0，或都是墙洞，不做标注
 			
-			gos = sortWallObject(start,end,gos);
+			gos = WallUtils.sortWallObject(start,end,gos);
 			drawMark(gos,legLineStart,legLineLen,headLineLen,false,false);
 			
 			return 500;

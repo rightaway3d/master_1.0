@@ -23,6 +23,7 @@ package rightaway3d.house.view3d
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.Room;
 	import rightaway3d.house.vo.Wall;
+	import rightaway3d.house.vo.WallUtils;
 	
 	import ztc.meshbuilder.room.RenderUtils;
 	
@@ -72,6 +73,7 @@ package rightaway3d.house.view3d
 			//loadNormal2("assets/map/wallnormal.jpg");
 			wall.frontCrossWall.addEventListener("material_change",onFrontMaterialChange);
 			wall.backCrossWall.addEventListener("material_change",onBackMaterialChange);
+			wall.addEventListener("size_change",onSizeChange);
 			
 			onFrontMaterialChange();
 			onBackMaterialChange();
@@ -83,9 +85,41 @@ package rightaway3d.house.view3d
 			this.pickingCollider = PickingColliderType.AS3_FIRST_ENCOUNTERED;
 		}
 		
+		protected function onSizeChange(e:Event):void
+		{
+			trace("-------onWallSizeChange");
+			markGrounCabinet();
+			markWallCabinet();
+		}
+		
 		public function get vo():Wall
 		{
 			return _wall;
+		}
+		
+		private var mark1:DimensionLineManager;
+		private var mark2:DimensionLineManager;
+		
+		//标注地柜
+		private function markGrounCabinet():void
+		{
+			if(!mark1)
+			{
+				mark1 = new DimensionLineManager();
+				mark1.wallY = 400;
+				mark1.wallZ = -(_wall.width*0.5 + 1);
+				mark1.parent = this;
+			}
+			
+			var cw:CrossWall = _wall.frontCrossWall;
+			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.groundObjects);
+			mark1.update(a);
+		}
+		
+		//标注吊柜
+		private function markWallCabinet():void
+		{
+			
 		}
 		
 		private function onBackMaterialChange(e:Event=null):void

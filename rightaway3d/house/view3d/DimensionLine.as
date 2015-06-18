@@ -68,8 +68,8 @@ package rightaway3d.house.view3d
 			dimensionMaterial.alphaBlending = true;
 			dimentPlane = new Sprite3D(dimensionMaterial,100,50);
 			addChild(dimentPlane);
-			dimentPlane.x = _center.x;
-			dimentPlane.y = linePlane_height;
+			//dimentPlane.x = _center.x;
+			//dimentPlane.y = linePlane_height;
 		}
 		
 		private function ceateArrows(point:Vector3D,color:Number=0x00ff00):Mesh
@@ -99,13 +99,13 @@ package rightaway3d.house.view3d
 			var endp2d:Point = new Point(endPoint.x,endPoint.y);
 			var centerP2d:Point = getLineCenter(startP2d,endp2d);
 			dimentPlane.x = centerP2d.x;
-			if(distance<=20)
+			/*if(distance<=20)
 			{
 				dimentPlane.y = linePlane_height+30;
 			}else
 			{
 				dimentPlane.y = linePlane_height;
-			}
+			}*/
 		}
 		
 		public function getLineCenter(p1:Point,p2:Point):Point
