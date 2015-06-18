@@ -571,7 +571,7 @@ package rightaway3d.engine.core
 		private function onMouseMove(event:MouseEvent):void
 		{
 			isMouseMove = true;
-			//trace("onMouseMove1",gvar.currProduct);
+			trace("onMouseMove1");//,gvar.currProduct);
 			
 			if(!isSwitchModel && isDragMode)
 			{
@@ -582,6 +582,9 @@ package rightaway3d.engine.core
 				var pos:Vector3D = dragByWall();
 				if(pos)
 				{
+					trace("--",pos);
+					//-- Vector3D(-259.62584938377597, 80, 1353.5730325695613)
+					//-- Vector3D(889.1038585773197, 80, -20751.752899516752)
 					pos = dragObject.draging(pos);
 					
 					p.container3d.x = pos.x;
@@ -639,11 +642,16 @@ package rightaway3d.engine.core
 							trace("----",o3d,modelDict[o3d]);
 							currCrossWall = null;
 						}*/
+						if(!(o3d is Room3D))//检测的对象不是房间地面时，当前物体不移动
+						{
+							return null;
+						}
 					}
 				}
-				else
+				else//没有检测到对象时，当前物体不移动
 				{
 					currCrossWall = null;
+					return null;
 				}
 			//}
 			
@@ -703,6 +711,7 @@ package rightaway3d.engine.core
 					else
 					{
 						currCrossWall = null;
+						return null;
 					}
 				/*}
 				else
@@ -713,7 +722,11 @@ package rightaway3d.engine.core
 			
 			if(!currCrossWall)//currCabinet.vo.objectInfo.crossWall)
 			{
-				var p:Vector3D = dragObject.draging2();
+				var p:Vector3D = picked.localPosition.clone();
+				p.x += o3d.x;
+				p.z += o3d.z;
+				//return picked.rayDirection;
+				//var p:Vector3D = dragObject.draging2();
 				/*p.x += house.x;
 				p.z += house.z;
 				
