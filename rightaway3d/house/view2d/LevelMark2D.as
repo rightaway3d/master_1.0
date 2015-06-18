@@ -1,0 +1,104 @@
+package rightaway3d.house.view2d
+{
+	import flash.display.Graphics;
+	import flash.text.TextFormatAlign;
+	
+	import rightaway3d.utils.MyTextField;
+
+	/**
+	 * 绘制标高
+	 * @author Jell
+	 * 
+	 */
+	public class LevelMark2D extends Base2D
+	{
+		private var level_txt:MyTextField;
+		
+		public function LevelMark2D()
+		{
+			level_txt = new MyTextField();
+			level_txt.textSize = 8;
+			this.addChild(level_txt);
+		}
+		
+		/**
+		 * 更新视图
+		 * @param level：标高
+		 * @param direct：尾巴方向:left,right
+		 * @param offset：标高文本是尾巴方向上的偏移量
+		 * 
+		 */
+		public function updateView(level:int,direct:String,xPos:int,yPos:int,offSetSize:int=0):void
+		{
+			this.x = Base2D.sizeToScreen(xPos);
+			this.y = -Base2D.sizeToScreen(yPos);
+			
+			var mw:int = 8;//箭头宽度
+			var mh:int = 4;//箭头高度
+			var ax:Number = mw*0.5;
+			var ox:Number = Base2D.sizeToScreen(offSetSize);
+			
+			setSizeText(level);
+			var tw:Number = level_txt.width + ox//尾巴长度
+			var th:Number = level_txt.height;
+			level_txt.y = -th-mh+2;
+
+			var lineColor:uint = Wall2D.lineColor;
+			var g:Graphics = this.graphics;
+			g.clear();
+			g.lineStyle(0,lineColor);
+			g.beginFill(lineColor);
+			if(direct=="left")
+			{
+				var tx:Number = -(tw+ax);
+				level_txt.x = tx;
+				
+				g.moveTo(tx,-mh);
+				g.lineTo(-ax,-mh);
+				
+				g.lineTo(ax,-mh);
+				g.lineTo(0,0);
+				g.lineTo(-ax,-mh);
+			}
+			else
+			{
+				level_txt.x = ax + ox;
+				
+				g.moveTo(tw+ax,-mh);
+				g.lineTo(ax,-mh);
+				
+				g.lineTo(-ax,-mh);
+				g.lineTo(0,0);
+				g.lineTo(ax,-mh);
+			}
+			g.endFill();
+		}
+		
+		private function setSizeText(level:int):void
+		{
+			level_txt.text = String(level);
+			var tmp:Number = level_txt.textWidth;
+			tmp = level_txt.textHeight;
+			tmp = level_txt.width;
+			tmp = level_txt.height;
+			level_txt.width = level_txt.textWidth + 5;
+			level_txt.height = level_txt.textHeight + 2;
+			level_txt.textColor = Wall2D.lineColor;
+			level_txt.align = TextFormatAlign.CENTER;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
