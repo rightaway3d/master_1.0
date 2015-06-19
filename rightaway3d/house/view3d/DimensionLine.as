@@ -15,6 +15,7 @@ package rightaway3d.house.view3d
 	import away3d.materials.TextureMaterial;
 	import away3d.primitives.CylinderGeometry;
 	import away3d.primitives.LineSegment;
+	import away3d.primitives.PlaneGeometry;
 	import away3d.textures.BitmapTexture;
 	import away3d.utils.Cast;
 	
@@ -32,7 +33,7 @@ package rightaway3d.house.view3d
 		public function createDimension(startPoint:Vector3D,endPoint:Vector3D):void
 		{
 			line = new SegmentSet();
-			lineSegment = new LineSegment(startPoint,endPoint,0x00ff00,0x0000FF,1);
+			lineSegment = new LineSegment(startPoint,endPoint,0x0000FF,0x0000FF,1);
 			line.addSegment(lineSegment);
 			addChild(line);
 			var startP2d:Point = new Point(startPoint.x,startPoint.y);
@@ -41,40 +42,41 @@ package rightaway3d.house.view3d
 			var center:Vector3D = new Vector3D(centerP2d.x,centerP2d.y,startPoint.z);
 			createDimensionPlane(center);
 			startArrow = ceateArrows(startPoint);
-			endArrow = ceateArrows(endPoint,0x0000ff);
+			endArrow = ceateArrows(endPoint);
 			update(startPoint,endPoint);
 //			update(new Vector3D(-200,0,0),new Vector3D(500,0,0));
 		}
 		
 		public var dimensionMaterial:TextureMaterial;
 		private var dimentTitle:TextField ;
-		private var dimentPlane:Sprite3D ;
+		private var dimentPlane:Mesh ;
 		private function createDimensionPlane(_center:Vector3D):void
 		{
 			dimentTitle = new TextField();
 			dimentTitle.width = 128;
 			dimentTitle.height = 64;
-
+			
 			var format:TextFormat = new TextFormat();
 			format.align = TextFormatAlign.CENTER;
 			format.size = 30;
 			format.color = 0xff0000;
 			dimentTitle.defaultTextFormat = format;
 			dimentTitle.text = "20.89";
-		
+			
 			var bitmapData:BitmapData = new BitmapData(256,64,true,0xFFFFFF);
 			bitmapData.draw(dimentTitle);
 			dimensionMaterial = new TextureMaterial(Cast.bitmapTexture(bitmapData));
 			dimensionMaterial.alphaBlending = true;
-			dimentPlane = new Sprite3D(dimensionMaterial,100,50);
+			dimentPlane = new Mesh(new PlaneGeometry(300,150),dimensionMaterial);
 			addChild(dimentPlane);
-			//dimentPlane.x = _center.x;
-			//dimentPlane.y = linePlane_height;
+			dimentPlane.rotationX = -90;
+			dimentPlane.x = _center.x;
+			//			dimentPlane.y = linePlane_height;
 		}
 		
-		private function ceateArrows(point:Vector3D,color:Number=0x00ff00):Mesh
+		private function ceateArrows(point:Vector3D,color:Number=0x0000FF):Mesh
 		{
-			var arrow:Mesh = new Mesh(new CylinderGeometry(1,1,50),new ColorMaterial(color));
+			var arrow:Mesh = new Mesh(new CylinderGeometry(3,3,150),new ColorMaterial(color));
 			addChild(arrow);
 			arrow.x = point.x;
 			arrow.y = point.y;
@@ -99,13 +101,14 @@ package rightaway3d.house.view3d
 			var endp2d:Point = new Point(endPoint.x,endPoint.y);
 			var centerP2d:Point = getLineCenter(startP2d,endp2d);
 			dimentPlane.x = centerP2d.x;
-			/*if(distance<=20)
+			if(distance<=70)
 			{
-				dimentPlane.y = linePlane_height+30;
+				dimentPlane.y = startPoint.y+linePlane_height+70;
 			}else
 			{
-				dimentPlane.y = linePlane_height;
-			}*/
+				dimentPlane.y = startPoint.y+linePlane_height;
+			}
+			dimentPlane.z = startPoint.z;
 		}
 		
 		public function getLineCenter(p1:Point,p2:Point):Point

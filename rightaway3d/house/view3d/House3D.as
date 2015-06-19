@@ -33,6 +33,14 @@ package rightaway3d.house.view3d
 		private var roomDict:Dictionary = new Dictionary();
 		private var dict:Dictionary = new Dictionary();
 		
+		public function updateWallMark(visible:Boolean):void
+		{
+			for each(var w3d:Wall3D in wallDict)
+			{
+				w3d.setMark(visible);
+			}
+		}
+		
 		public function update(house:House):void
 		{
 			var walls:Vector.<Wall> = house.currFloor.walls;

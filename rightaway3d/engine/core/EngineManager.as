@@ -571,7 +571,7 @@ package rightaway3d.engine.core
 		private function onMouseMove(event:MouseEvent):void
 		{
 			isMouseMove = true;
-			trace("onMouseMove1");//,gvar.currProduct);
+			//trace("onMouseMove1");//,gvar.currProduct);
 			
 			if(!isSwitchModel && isDragMode)
 			{
@@ -579,10 +579,10 @@ package rightaway3d.engine.core
 				var p:ProductObject = gvar.currProduct;
 				p.dispatchDragingEvent();
 				
-				var pos:Vector3D = dragByWall();
+				var pos:Vector3D = dragProduct(p);
 				if(pos)
 				{
-					trace("--",pos);
+					//trace("--",pos);
 					//-- Vector3D(-259.62584938377597, 80, 1353.5730325695613)
 					//-- Vector3D(889.1038585773197, 80, -20751.752899516752)
 					pos = dragObject.draging(pos);
@@ -606,134 +606,102 @@ package rightaway3d.engine.core
 			//trace("onMouseMove2",gvar.currProduct);
 		}
 		
-		private function dragByWall():Vector3D
+		private function dragProduct(p:ProductObject):Vector3D
 		{
-			//trace("----dragByWall",gvar.currProduct,gvar.currProduct.view2d);
+			var picked:PickingCollisionVO = dragObject.getPickedObject3D(engine3d.view);
+			//trace("picked:"+picked);
 			
-			/*mousePoint.x = p.x;
-			mousePoint.y = p.z;*/
-			
-			//if(!currCrossWall)
-			//{
-				/*for each(var room:Room in rooms)
+			if(picked)
+			{
+				var o3d:ObjectContainer3D = picked.entity;
+				if(o3d is Wall3D)
 				{
-					if(room.hitTestPoint(p.x,p.z))
-					{
-						currCrossWall = room.getNearestWall(mousePoint,footPoint);
-						//currCrossWall.initTestObject();
-						break;
-					}
-				}*/
-				var picked:PickingCollisionVO = dragObject.getPickedObject3D(engine3d.view);
-				//trace("picked:"+picked);
-				
-				if(picked)
-				{
-					var o3d:ObjectContainer3D = picked.entity;
-					if(o3d is Wall3D)
-					{
-						currCrossWall = Wall3D(o3d).vo.frontCrossWall;
-					}
-					else
-					{
-						currCrossWall = null;
-						/*if(!modelDict[o3d])
-						{
-							trace("----",o3d,modelDict[o3d]);
-							currCrossWall = null;
-						}*/
-						if(!(o3d is Room3D))//检测的对象不是房间地面时，当前物体不移动
-						{
-							return null;
-						}
-					}
+					currCrossWall = Wall3D(o3d).vo.frontCrossWall;
+					currCrossWall.addWallObject(gvar.currProduct.objectInfo);
 				}
-				else//没有检测到对象时，当前物体不移动
+				else
 				{
 					currCrossWall = null;
-					return null;
+					/*if(!modelDict[o3d])
+					{
+					trace("----",o3d,modelDict[o3d]);
+					currCrossWall = null;
+					}*/
+					if(!(o3d is Room3D))//检测的对象不是房间地面时，当前物体不移动
+					{
+						return null;
+					}
 				}
-			//}
+			}
+			else//没有检测到对象时，当前物体不移动
+			{
+				currCrossWall = null;
+				return null;
+			}
 			
 			if(currCrossWall)//currCabinet.vo.objectInfo.crossWall)//当前产品被吸附在某个墙上
 			{
 				var cw:CrossWall = currCrossWall;
+				cw.removeWallObject(gvar.currProduct.objectInfo);
+				
 				var wall:Wall = cw.wall;
 				var bounds:Vector3D = gvar.currProduct.productInfo.dimensions;
 				var ww:Number = wall.width * 0.5;
-				/*var dist:Number = wall.distToPoint(mousePoint,footPoint);*///计算当前点到墙体的垂直距离，及当前垂足坐标
-				//trace("dist:"+dist);
-				//if(true)//dist<800)
-				//{
-					var dx:Number = bounds.x * 0.5;
-					footPoint.x = picked.localPosition.x+dx;
-					//wall.globalToLocal2(footPoint,footPoint);
-					//trace("footPoint1:"+footPoint);
-					//footPoint.x += cw.isHead?dx:-dx;
-					var zWall:int = gvar.currProduct.objectInfo.z;
-					var dy:Number = zWall + ww;
+				var dx:Number = bounds.x * 0.5;
+				footPoint.x = picked.localPosition.x+dx;
+				var zWall:int = gvar.currProduct.objectInfo.z;
+				var dy:Number = zWall + ww;
+				
+				footPoint.y = cw.isHead?-dy:dy;
+				
+				gvar.currProduct.objectInfo.x = footPoint.x;
+				
+				var result:Boolean = currCrossWall.testAddObject(gvar.currProduct.objectInfo);
+				
+				if(result)
+				{
+					footPoint.x = gvar.currProduct.objectInfo.x;
+					//trace("footPoint2:"+footPoint);
+					wall.localToGlobal2(footPoint,footPoint);
 					
-					footPoint.y = cw.isHead?-dy:dy;
+					gvar.currProduct.container3d.x = footPoint.x - house.x;
+					gvar.currProduct.container3d.z = footPoint.y - house.z;
 					
-					//currCabinet.xWall = footPoint.x;
-					gvar.currProduct.objectInfo.x = footPoint.x;
+					//footPoint.x += house.x;
+					//footPoint.y += house.z;
 					
-					var result:Boolean = currCrossWall.testAddObject(gvar.currProduct.objectInfo);
-					//trace("testAddObject:"+result);
+					var a:Number = 360 - wall.angles;
+					a = cw.isHead ? a+180 : a;
 					
-					if(result)
+					var view2d:Sprite = gvar.currProduct.view2d;
+					if(view2d)
 					{
-						footPoint.x = gvar.currProduct.objectInfo.x;
-						//trace("footPoint2:"+footPoint);
-						wall.localToGlobal2(footPoint,footPoint);
-						
-						gvar.currProduct.container3d.x = footPoint.x - house.x;
-						gvar.currProduct.container3d.z = footPoint.y - house.z;
-						
-						//footPoint.x += house.x;
-						//footPoint.y += house.z;
-						
-						var a:Number = 360 - wall.angles;
-						a = cw.isHead ? a+180 : a;
-						
-						var view2d:Sprite = gvar.currProduct.view2d;
-						if(view2d)
-						{
-							view2d.x = Base2D.sizeToScreen(footPoint.x);
-							view2d.y = Base2D.sizeToScreen(sceneHeightSize - footPoint.y);
-							view2d.rotation = a;
-						}
-						
-						gvar.currProduct.position.x = footPoint.x;
-						gvar.currProduct.position.z = footPoint.y;
-						gvar.currProduct.rotation.y = gvar.currProduct.container3d.rotationY = a;
+						view2d.x = Base2D.sizeToScreen(footPoint.x);
+						view2d.y = Base2D.sizeToScreen(sceneHeightSize - footPoint.y);
+						view2d.rotation = a;
 					}
-					else
-					{
-						currCrossWall = null;
-						return null;
-					}
-				/*}
+					
+					gvar.currProduct.position.x = footPoint.x;
+					gvar.currProduct.position.z = footPoint.y;
+					gvar.currProduct.rotation.y = gvar.currProduct.container3d.rotationY = a;
+					
+					currCrossWall.addWallObject(gvar.currProduct.objectInfo);
+					currCrossWall.wall.dispatchSizeChangeEvent();
+				}
 				else
 				{
 					currCrossWall = null;
-				}*/
+					return null;
+				}
 			}
 			
 			if(!currCrossWall)//currCabinet.vo.objectInfo.crossWall)
 			{
-				var p:Vector3D = picked.localPosition.clone();
-				p.x += o3d.x;
-				p.z += o3d.z;
-				//return picked.rayDirection;
-				//var p:Vector3D = dragObject.draging2();
-				/*p.x += house.x;
-				p.z += house.z;
+				var pos:Vector3D = picked.localPosition.clone();
+				pos.x += o3d.x;
+				pos.z += o3d.z;
 				
-				p.x -= house.x;
-				p.z -= house.z;*/
-				
-				return p;
+				return pos;
 			}
 			
 			return null;
@@ -756,8 +724,8 @@ package rightaway3d.engine.core
 				if(currCrossWall && p.objectInfo)
 				{
 					//trace("addWallObject");
-					currCrossWall.addWallObject(p.objectInfo);
-					currCrossWall.wall.dispatchSizeChangeEvent();
+//					currCrossWall.addWallObject(p.objectInfo);
+//					currCrossWall.wall.dispatchSizeChangeEvent();
 					p.dispatchChangeEvent();
 				}
 				

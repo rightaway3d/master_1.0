@@ -87,9 +87,10 @@ package rightaway3d.house.view3d
 		
 		protected function onSizeChange(e:Event):void
 		{
-			trace("-------onWallSizeChange");
-			markGrounCabinet();
-			markWallCabinet();
+			//trace("-------onWallSizeChange");
+			var cw:CrossWall = _wall.frontCrossWall;
+			if(cw.groundObjects.length>0)markGrounCabinet(cw);
+			if(cw.wallObjects.length>0)markWallCabinet(cw);
 		}
 		
 		public function get vo():Wall
@@ -97,29 +98,48 @@ package rightaway3d.house.view3d
 			return _wall;
 		}
 		
+		/**
+		 * 设置标注是否显示
+		 * @param value
+		 * 
+		 */
+		public function setMark(visible:Boolean):void
+		{
+			if(mark1)mark1.parent.visible = visible;
+			if(mark2)mark2.parent.visible = visible;
+		}
+		
 		private var mark1:DimensionLineManager;
 		private var mark2:DimensionLineManager;
 		
 		//标注地柜
-		private function markGrounCabinet():void
+		private function markGrounCabinet(cw:CrossWall):void
 		{
 			if(!mark1)
 			{
 				mark1 = new DimensionLineManager();
-				mark1.wallY = 400;
-				mark1.wallZ = -(_wall.width*0.5 + 1);
-				mark1.parent = this;
+				mark1.wallY = 950;
+				mark1.wallZ = -(_wall.width*0.5 + 30);
+				this.addChild(mark1.parent);
 			}
 			
-			var cw:CrossWall = _wall.frontCrossWall;
 			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.groundObjects);
 			mark1.update(a);
 		}
 		
 		//标注吊柜
-		private function markWallCabinet():void
+		private function markWallCabinet(cw:CrossWall):void
 		{
+			if(!mark2)
+			{
+				mark2 = new DimensionLineManager();
+				mark2.wallY = 1250;
+				mark2.wallZ = -(_wall.width*0.5 + 30);
+				this.addChild(mark2.parent);
+			}
 			
+			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.wallObjects);
+			mark2.update(a);
 		}
 		
 		private function onBackMaterialChange(e:Event=null):void

@@ -14,7 +14,7 @@ package rightaway3d.house.view3d
 	{
 		public var wallY:int=0;
 		public var wallZ:int = 0;
-		public var parent:ObjectContainer3D;
+		public var parent:ObjectContainer3D = new ObjectContainer3D();
 		private static var _instance:DimensionLineManager = null;
 		private var created:Boolean = false;
 		private	var oldlen:int =-1;
@@ -67,7 +67,7 @@ package rightaway3d.house.view3d
 		
 		private function xyzToVector3D(p:int):Vector3D
 		{
-			return new Vector3D(p,wallY,wallZ);
+			return new Vector3D(p,0,0);
 		}
 		
 		private function createLine(start:Vector3D,end:Vector3D):DimensionLine
