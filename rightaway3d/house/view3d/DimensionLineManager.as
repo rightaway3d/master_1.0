@@ -15,6 +15,8 @@ package rightaway3d.house.view3d
 		public var wallY:int=0;
 		public var wallZ:int = 0;
 		public var parent:ObjectContainer3D = new ObjectContainer3D();
+		public var wallMax:int = 0;
+		public var wallMin:int = 0;
 		private static var _instance:DimensionLineManager = null;
 		private var created:Boolean = false;
 		private	var oldlen:int =-1;
@@ -33,6 +35,7 @@ package rightaway3d.house.view3d
 		{
 			var i:uint;
 			var len:uint = points.length;
+			if(!points)return ;
 			if(len ==oldlen)
 			{
 				created = false;
@@ -41,6 +44,8 @@ package rightaway3d.house.view3d
 			{
 				created = true;
 			}
+			wallMin = points[0];
+			wallMax = points[points.length-1];
 			if(created)
 			{
 				lines=[];
@@ -77,6 +82,8 @@ package rightaway3d.house.view3d
 			parent.addChild(line);
 			line.y= wallY;
 			line.z = wallZ;
+			line.max = wallMax;
+			line.min = wallMin;
 			return line;
 		}
 		

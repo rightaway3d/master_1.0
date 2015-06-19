@@ -26,6 +26,8 @@ package rightaway3d.house.view3d
 		public var startArrow:Mesh;
 		public var endArrow:Mesh;
 		public var linePlane_height :uint = 10;
+		public var max:int;
+		public var min:int;
 		public function DimensionLine()
 		{
 			super();
@@ -100,7 +102,7 @@ package rightaway3d.house.view3d
 			var startP2d:Point = new Point(startPoint.x,startPoint.y);
 			var endp2d:Point = new Point(endPoint.x,endPoint.y);
 			var centerP2d:Point = getLineCenter(startP2d,endp2d);
-			dimentPlane.x = centerP2d.x;
+			dimentPlane.x = Math.max(min+35,Math.min(centerP2d.x,max-35));
 			if(distance<=70)
 			{
 				dimentPlane.y = startPoint.y+linePlane_height+70;
