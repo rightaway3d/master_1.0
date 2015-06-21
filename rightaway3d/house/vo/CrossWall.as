@@ -8,10 +8,13 @@ package rightaway3d.house.vo
 	import rightaway3d.utils.MyMath;
 	
 	[Event(name="material_change", type="flash.events.Event")]
+	
+	[Event(name="size_change", type="flash.events.Event")]
 
 	public final class CrossWall extends BaseVO
 	{
 		static public const MATERIAL_CHANGE:String = "material_change";
+		static public const SIZE_CHANGE:String = "size_change";
 		
 		
 		/**
@@ -47,6 +50,14 @@ package rightaway3d.house.vo
 			if(this.hasEventListener(MATERIAL_CHANGE))
 			{
 				this.dispatchEvent(new Event(MATERIAL_CHANGE));
+			}
+		}
+		
+		public function dispatchSizeChangeEvent():void
+		{
+			if(this.hasEventListener(SIZE_CHANGE))
+			{
+				this.dispatchEvent(new Event(SIZE_CHANGE));
 			}
 		}
 
@@ -360,13 +371,18 @@ package rightaway3d.house.vo
 			
 			this.initTestObject();
 			this.wall.isChanged = true;
+			//this.wall.dispatchChangeEvent();
 			
 			if(object.object is ProductObject)
 			{
 				this.headCrossWall.initTestObject();
 				this.endCrossWall.initTestObject();
+				
 				this.headCrossWall.wall.isChanged = true;
 				this.endCrossWall.wall.isChanged = true;
+				
+				//headCrossWall.wall.dispatchChangeEvent();
+				//endCrossWall.wall.dispatchChangeEvent();
 			}
 		}
 		

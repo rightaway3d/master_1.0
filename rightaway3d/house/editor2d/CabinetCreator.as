@@ -3770,8 +3770,9 @@ package rightaway3d.house.editor2d
 			var file:String = o.file;
 			if(!name)name=file;
 			var width:int = o.width;
+			var depth:int = o.depth;
 			//trace("------createGroundCabinet:"+width);
-			var p:Product2D = cabinetCtr.createCabinet(id,file,"text",cw,x,CrossWall.IGNORE_OBJECT_HEIGHT,name,false,width,550);
+			var p:Product2D = cabinetCtr.createCabinet(id,file,"text",cw,x,CrossWall.IGNORE_OBJECT_HEIGHT,name,false,width,depth);
 			//if(door)//动态添加门
 			//{
 				//productManager.addDynamicSubProduct(p.vo,door);

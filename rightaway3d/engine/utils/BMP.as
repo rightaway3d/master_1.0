@@ -18,7 +18,7 @@ package rightaway3d.engine.utils
 		 * @return 
 		 * 
 		 */
-		static public function scaleBmpData(bmpData:BitmapData,width:int=0,height:int=0,disposeBmpData:Boolean=true):BitmapData
+		static public function scaleBmpData(bmpData:BitmapData,width:int=0,height:int=0,disposeBmpData:Boolean=true,transparent:Boolean=false):BitmapData
 		{
 			var bw:uint = bmpData.width;
 			var bh:uint = bmpData.height;
@@ -39,7 +39,7 @@ package rightaway3d.engine.utils
 				var sprite2:Sprite = new Sprite();
 				sprite2.addChild(bmp);
 				
-				var bmpData2:BitmapData = new BitmapData(pw,ph,false,0);
+				var bmpData2:BitmapData = new BitmapData(pw,ph,transparent,0);
 				//bmpData2.drawWithQuality(sprite2,null,null,null,null,true,StageQuality.HIGH);					
 				try{
 					bmpData2.drawWithQuality(sprite2,null,null,null,null,true,StageQuality.HIGH_8X8);					

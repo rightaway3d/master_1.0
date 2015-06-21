@@ -35,7 +35,8 @@ package rightaway3d.house.view3d
 		{
 			var i:uint;
 			var len:uint = points.length;
-			if(!points)return ;
+			//if(!points)return ;
+			
 			if(len ==oldlen)
 			{
 				created = false;
@@ -44,8 +45,10 @@ package rightaway3d.house.view3d
 			{
 				created = true;
 			}
+			
 			wallMin = points[0];
 			wallMax = points[points.length-1];
+			
 			if(created)
 			{
 				lines=[];
@@ -64,7 +67,10 @@ package rightaway3d.house.view3d
 			{
 				for ( i = 0; i < len-1; i++) 
 				{
-					lines[i].update(xyzToVector3D(points[i]),xyzToVector3D(points[i+1]));
+					var line:DimensionLine = lines[i];
+					line.max = wallMax;
+					line.min = wallMin;
+					line.update(xyzToVector3D(points[i]),xyzToVector3D(points[i+1]));
 				}
 			}
 			oldlen = len;		
@@ -78,12 +84,13 @@ package rightaway3d.house.view3d
 		private function createLine(start:Vector3D,end:Vector3D):DimensionLine
 		{
 			var line:DimensionLine = new DimensionLine();
-			line.createDimension(start,end);
 			parent.addChild(line);
 			line.y= wallY;
 			line.z = wallZ;
 			line.max = wallMax;
 			line.min = wallMin;
+			trace("------createLine,line.max,line.min:",line.max,line.min);
+			line.createDimension(start,end);
 			return line;
 		}
 		

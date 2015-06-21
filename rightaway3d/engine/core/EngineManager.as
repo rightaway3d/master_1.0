@@ -547,7 +547,9 @@ package rightaway3d.engine.core
 				{
 					currCrossWall = p.objectInfo.crossWall;
 					//trace("removeWallObject");
-					currCrossWall.removeWallObject(p.objectInfo);
+					//currCrossWall.removeWallObject(p.objectInfo);
+					//currCrossWall.wall.dispatchChangeEvent();
+					//currCrossWall.dispatchSizeChangeEvent();
 					//currCrossWall.initTestObject();
 				}
 				
@@ -579,6 +581,19 @@ package rightaway3d.engine.core
 				var p:ProductObject = gvar.currProduct;
 				p.dispatchDragingEvent();
 				
+				/*if(p.objectInfo.crossWall)
+				{
+					var cw:CrossWall = p.objectInfo.crossWall;
+					cw.removeWallObject(p.objectInfo);
+					cw.dispatchSizeChangeEvent();
+				}*/
+				if(currCrossWall)
+				{
+					currCrossWall.removeWallObject(p.objectInfo);
+					currCrossWall.dispatchSizeChangeEvent();
+					currCrossWall = null;
+				}
+				
 				var pos:Vector3D = dragProduct(p);
 				if(pos)
 				{
@@ -606,7 +621,7 @@ package rightaway3d.engine.core
 			//trace("onMouseMove2",gvar.currProduct);
 		}
 		
-		private function dragProduct(p:ProductObject):Vector3D
+		private function dragProduct(po:ProductObject):Vector3D
 		{
 			var picked:PickingCollisionVO = dragObject.getPickedObject3D(engine3d.view);
 			//trace("picked:"+picked);
@@ -617,7 +632,8 @@ package rightaway3d.engine.core
 				if(o3d is Wall3D)
 				{
 					currCrossWall = Wall3D(o3d).vo.frontCrossWall;
-					currCrossWall.addWallObject(gvar.currProduct.objectInfo);
+					currCrossWall.addWallObject(po.objectInfo);
+					currCrossWall.dispatchSizeChangeEvent();
 				}
 				else
 				{
@@ -642,30 +658,31 @@ package rightaway3d.engine.core
 			if(currCrossWall)//currCabinet.vo.objectInfo.crossWall)//当前产品被吸附在某个墙上
 			{
 				var cw:CrossWall = currCrossWall;
-				cw.removeWallObject(gvar.currProduct.objectInfo);
+				cw.removeWallObject(po.objectInfo);
+				cw.dispatchSizeChangeEvent();
 				
 				var wall:Wall = cw.wall;
-				var bounds:Vector3D = gvar.currProduct.productInfo.dimensions;
+				var bounds:Vector3D = po.productInfo.dimensions;
 				var ww:Number = wall.width * 0.5;
 				var dx:Number = bounds.x * 0.5;
 				footPoint.x = picked.localPosition.x+dx;
-				var zWall:int = gvar.currProduct.objectInfo.z;
+				var zWall:int = po.objectInfo.z;
 				var dy:Number = zWall + ww;
 				
 				footPoint.y = cw.isHead?-dy:dy;
 				
-				gvar.currProduct.objectInfo.x = footPoint.x;
+				po.objectInfo.x = footPoint.x;
 				
-				var result:Boolean = currCrossWall.testAddObject(gvar.currProduct.objectInfo);
+				var result:Boolean = cw.testAddObject(po.objectInfo);
 				
 				if(result)
 				{
-					footPoint.x = gvar.currProduct.objectInfo.x;
+					footPoint.x = po.objectInfo.x;
 					//trace("footPoint2:"+footPoint);
 					wall.localToGlobal2(footPoint,footPoint);
 					
-					gvar.currProduct.container3d.x = footPoint.x - house.x;
-					gvar.currProduct.container3d.z = footPoint.y - house.z;
+					po.container3d.x = footPoint.x - house.x;
+					po.container3d.z = footPoint.y - house.z;
 					
 					//footPoint.x += house.x;
 					//footPoint.y += house.z;
@@ -673,7 +690,7 @@ package rightaway3d.engine.core
 					var a:Number = 360 - wall.angles;
 					a = cw.isHead ? a+180 : a;
 					
-					var view2d:Sprite = gvar.currProduct.view2d;
+					var view2d:Sprite = po.view2d;
 					if(view2d)
 					{
 						view2d.x = Base2D.sizeToScreen(footPoint.x);
@@ -681,12 +698,12 @@ package rightaway3d.engine.core
 						view2d.rotation = a;
 					}
 					
-					gvar.currProduct.position.x = footPoint.x;
-					gvar.currProduct.position.z = footPoint.y;
-					gvar.currProduct.rotation.y = gvar.currProduct.container3d.rotationY = a;
+					po.position.x = footPoint.x;
+					po.position.z = footPoint.y;
+					po.rotation.y = po.container3d.rotationY = a;
 					
-					currCrossWall.addWallObject(gvar.currProduct.objectInfo);
-					currCrossWall.wall.dispatchSizeChangeEvent();
+					cw.addWallObject(po.objectInfo);
+					cw.dispatchSizeChangeEvent();
 				}
 				else
 				{
@@ -726,6 +743,15 @@ package rightaway3d.engine.core
 					//trace("addWallObject");
 //					currCrossWall.addWallObject(p.objectInfo);
 //					currCrossWall.wall.dispatchSizeChangeEvent();
+					//currCrossWall.wall.dispatchChangeEvent();
+					//currCrossWall.headCrossWall.wall.dispatchChangeEvent();
+					//currCrossWall.endCrossWall.wall.dispatchChangeEvent();
+					if(!p.objectInfo.crossWall)
+					{
+						currCrossWall.addWallObject(p.objectInfo);
+					}
+					currCrossWall.dispatchSizeChangeEvent();
+					
 					p.dispatchChangeEvent();
 				}
 				

@@ -10,7 +10,6 @@ package rightaway3d.house.view3d
 	import away3d.containers.ObjectContainer3D;
 	import away3d.entities.Mesh;
 	import away3d.entities.SegmentSet;
-	import away3d.entities.Sprite3D;
 	import away3d.materials.ColorMaterial;
 	import away3d.materials.TextureMaterial;
 	import away3d.primitives.CylinderGeometry;
@@ -18,6 +17,8 @@ package rightaway3d.house.view3d
 	import away3d.primitives.PlaneGeometry;
 	import away3d.textures.BitmapTexture;
 	import away3d.utils.Cast;
+	
+	import rightaway3d.engine.object.Text3D;
 	
 	public class DimensionLine extends ObjectContainer3D
 	{
@@ -65,12 +66,14 @@ package rightaway3d.house.view3d
 			dimentTitle.defaultTextFormat = format;
 			dimentTitle.text = "20.89";
 			
-			var bitmapData:BitmapData = new BitmapData(256,64,true,0xFFFFFF);
+			var bitmapData:BitmapData = new BitmapData(256,64,true,0);
 			bitmapData.draw(dimentTitle);
+			
 			dimensionMaterial = new TextureMaterial(Cast.bitmapTexture(bitmapData));
 			dimensionMaterial.alphaBlending = true;
+			
 			dimentPlane = new Mesh(new PlaneGeometry(300,150),dimensionMaterial);
-			addChild(dimentPlane);
+			//addChild(dimentPlane);
 			dimentPlane.rotationX = -90;
 			dimentPlane.x = _center.x;
 			//			dimentPlane.y = linePlane_height;
@@ -95,14 +98,19 @@ package rightaway3d.house.view3d
 			endArrow.position = endPoint;
 			var distance:int = Vector3D.distance(startPoint,endPoint);
 			dimentTitle.text = distance+"";
+			//trace("------distance:"+distance);
+			
 			var bitmapData:BitmapData = new BitmapData(128,64,true,0xFFFFFF);
 			bitmapData.draw(dimentTitle);
 			var bitmapTexture:BitmapTexture = Cast.bitmapTexture(bitmapData);
 			dimensionMaterial.texture = bitmapTexture;
+			
 			var startP2d:Point = new Point(startPoint.x,startPoint.y);
 			var endp2d:Point = new Point(endPoint.x,endPoint.y);
 			var centerP2d:Point = getLineCenter(startP2d,endp2d);
+			
 			dimentPlane.x = Math.max(min+35,Math.min(centerP2d.x,max-35));
+			
 			if(distance<=70)
 			{
 				dimentPlane.y = startPoint.y+linePlane_height+70;
@@ -111,6 +119,14 @@ package rightaway3d.house.view3d
 				dimentPlane.y = startPoint.y+linePlane_height;
 			}
 			dimentPlane.z = startPoint.z;
+			
+			trace("dimentPlane.x,min,max,centerP2d.x:"+dimentPlane.x,min,max,centerP2d.x);
+			
+			var text3d:Text3D = new Text3D();
+			this.addChild(text3d);
+			text3d.text = distance+"";
+			text3d.position = dimentPlane.position;
+			text3d.update();
 		}
 		
 		public function getLineCenter(p1:Point,p2:Point):Point

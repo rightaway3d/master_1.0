@@ -513,6 +513,8 @@ package rightaway3d.house.editor2d
 			
 			initCabinet(cw,xPos,yPos,0);
 			//initCabinet(cw,xPos,yPos,-1);
+			trace(p.vo);
+			GlobalEvent.event.dispatchProductCreatedEvent(p.vo);
 			
 			return p;
 		}

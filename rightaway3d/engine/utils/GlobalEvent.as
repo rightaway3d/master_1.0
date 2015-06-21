@@ -44,6 +44,8 @@ package rightaway3d.engine.utils
 	
 	[Event(name="material_lib_complete", type="flash.events.Event")]
 	
+	[Event(name="product_created", type="flash.events.Event")]
+	
 	public class GlobalEvent extends EventDispatcher
 	{
 		static public const PRODUCT_MOUSE_DOWN:String = "product_mouse_down";
@@ -77,6 +79,8 @@ package rightaway3d.engine.utils
 		static public const SET_SCENE_COMPLETE:String = "set_scene_complete";
 		
 		static public const MATERIAL_LIB_COMPLETE:String = "material_lib_complete";
+		
+		static public const PRODUCT_CREATED:String = "product_created";
 		
 		//-----------------------------------------------------------------------------------------------------
 		public var currentTarget:*;
@@ -211,6 +215,13 @@ package rightaway3d.engine.utils
 		public function dispatchMaterialLibCompleteEvent():void
 		{
 			dispatch(MATERIAL_LIB_COMPLETE,null);
+		}
+		
+		//-----------------------------------------------------------------------------------------------------
+		//派发产品创建完成事件
+		public function dispatchProductCreatedEvent(po:ProductObject):void
+		{
+			dispatch(PRODUCT_CREATED,po);
 		}
 		
 		//-----------------------------------------------------------------------------------------------------

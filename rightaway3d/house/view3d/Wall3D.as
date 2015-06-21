@@ -16,6 +16,7 @@ package rightaway3d.house.view3d
 	import away3d.materials.TextureMaterial;
 	import away3d.textures.BitmapTexture;
 	
+	import rightaway3d.engine.object.Text3D;
 	import rightaway3d.engine.utils.BMP;
 	import rightaway3d.engine.utils.GlobalEvent;
 	import rightaway3d.house.editor2d.CabinetController;
@@ -73,7 +74,9 @@ package rightaway3d.house.view3d
 			//loadNormal2("assets/map/wallnormal.jpg");
 			wall.frontCrossWall.addEventListener("material_change",onFrontMaterialChange);
 			wall.backCrossWall.addEventListener("material_change",onBackMaterialChange);
-			wall.addEventListener("size_change",onSizeChange);
+			//wall.addEventListener("size_change",onSizeChange);
+			//wall.addEventListener("changed",onSizeChange);
+			wall.frontCrossWall.addEventListener("size_change",onSizeChange);
 			
 			onFrontMaterialChange();
 			onBackMaterialChange();
@@ -83,14 +86,22 @@ package rightaway3d.house.view3d
 			
 			this.mouseEnabled = this.mouseChildren = true;
 			this.pickingCollider = PickingColliderType.AS3_FIRST_ENCOUNTERED;
+			
+			/*var text3d:Text3D = new Text3D("欢迎光临Wall3D墙");
+			this.addChild(text3d);
+			text3d.x = 200;
+			text3d.y = 1000;
+			text3d.z = -200;*/
 		}
 		
 		protected function onSizeChange(e:Event):void
 		{
 			//trace("-------onWallSizeChange");
 			var cw:CrossWall = _wall.frontCrossWall;
-			if(cw.groundObjects.length>0)markGrounCabinet(cw);
-			if(cw.wallObjects.length>0)markWallCabinet(cw);
+			if(mark1 || cw.groundObjects.length>0)
+				markGrounCabinet(cw);
+			if(mark2 || cw.wallObjects.length>0)
+				markWallCabinet(cw);
 		}
 		
 		public function get vo():Wall
@@ -105,22 +116,22 @@ package rightaway3d.house.view3d
 		 */
 		public function setMark(visible:Boolean):void
 		{
-			if(mark1)mark1.parent.visible = visible;
-			if(mark2)mark2.parent.visible = visible;
+			if(mark1)mark1.visible = visible;
+			if(mark2)mark2.visible = visible;
 		}
 		
-		private var mark1:DimensionLineManager;
-		private var mark2:DimensionLineManager;
+		private var mark1:SizeMarking3D;
+		private var mark2:SizeMarking3D;
 		
 		//标注地柜
 		private function markGrounCabinet(cw:CrossWall):void
 		{
 			if(!mark1)
 			{
-				mark1 = new DimensionLineManager();
-				mark1.wallY = 950;
-				mark1.wallZ = -(_wall.width*0.5 + 30);
-				this.addChild(mark1.parent);
+				mark1 = new SizeMarking3D();
+				mark1.ypos = 950;
+				mark1.zpos = -(_wall.width*0.5 + 30);
+				this.addChild(mark1);
 			}
 			
 			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.groundObjects);
@@ -132,6 +143,19 @@ package rightaway3d.house.view3d
 		{
 			if(!mark2)
 			{
+				mark2 = new SizeMarking3D();
+				mark2.ypos = 1250;
+				mark2.zpos = -(_wall.width*0.5 + 30);
+				this.addChild(mark2);
+			}
+			
+			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.wallObjects);
+			mark2.update(a);
+		}
+		/*private function markWallCabinet(cw:CrossWall):void
+		{
+			if(!mark2)
+			{
 				mark2 = new DimensionLineManager();
 				mark2.wallY = 1250;
 				mark2.wallZ = -(_wall.width*0.5 + 30);
@@ -140,7 +164,7 @@ package rightaway3d.house.view3d
 			
 			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.wallObjects);
 			mark2.update(a);
-		}
+		}*/
 		
 		private function onBackMaterialChange(e:Event=null):void
 		{

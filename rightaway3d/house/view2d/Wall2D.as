@@ -31,6 +31,7 @@ package rightaway3d.house.view2d
 		{
 			_vo = value;
 			_vo.addEventListener("size_change",onSizeChange);
+			_vo.frontCrossWall.addEventListener("size_change",onSizeChange);
 		}
 		
 		protected function onSizeChange(event:Event):void
