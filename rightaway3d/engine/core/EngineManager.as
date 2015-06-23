@@ -733,7 +733,7 @@ package rightaway3d.engine.core
 			engine3d.camCtrl.enable();
 			//engine3d.enableScene();
 			
-			trace("onmouseup1",gvar.currProduct);
+			trace("onmouseup1");//,gvar.currProduct);
 			var p:ProductObject = gvar.currProduct;
 			if(p)
 			{

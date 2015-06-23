@@ -398,9 +398,9 @@ package rightaway3d.engine.product
 		
 		override public function dispose():void
 		{
-			trace("----------disposeProductObject objectID:",objectID);
-			trace("id:",id," pid:",parentProductObject?parentProductObject.id:"");
-			trace("fileURL:"+productInfo.fileURL);
+			//trace("----------disposeProductObject objectID:",objectID);
+			//trace("id:",id," pid:",parentProductObject?parentProductObject.id:"");
+			//trace("fileURL:"+productInfo.fileURL);
 			
 			this.dispatchWillDisposeEvent();
 			//trace("ProductObjects:"+productInfo.getProductObjects());

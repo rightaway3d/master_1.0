@@ -78,6 +78,7 @@ package rightaway3d.engine.object
 			{
 				_material = new TextureMaterial(texture);
 				_material.alphaBlending = true;
+				_material.bothSides = true;
 			}
 			
 			if(!plane)

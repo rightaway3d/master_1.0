@@ -94,9 +94,13 @@ package rightaway3d.house.view3d
 			text3d.z = -200;*/
 		}
 		
+		private var showMark:Boolean = false;
+		
 		protected function onSizeChange(e:Event):void
 		{
 			//trace("-------onWallSizeChange");
+			if(!showMark)return;
+			
 			var cw:CrossWall = _wall.frontCrossWall;
 			if(mark1 || cw.groundObjects.length>0)
 				markGrounCabinet(cw);
@@ -116,6 +120,7 @@ package rightaway3d.house.view3d
 		 */
 		public function setMark(visible:Boolean):void
 		{
+			showMark = visible;
 			if(mark1)mark1.visible = visible;
 			if(mark2)mark2.visible = visible;
 		}

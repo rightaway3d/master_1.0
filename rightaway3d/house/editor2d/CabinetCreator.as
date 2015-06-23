@@ -1958,8 +1958,6 @@ package rightaway3d.house.editor2d
 				wo.y = yPos;
 				wo.z = zPos;
 				wo.crossWall = cw;
-				
-				plateDict[po] = po;
 			}
 			else
 			{
@@ -1967,6 +1965,8 @@ package rightaway3d.house.editor2d
 				po.position.y = yPos;
 				po.position.z = zPos;
 			}
+			
+			plateDict[po] = po;
 			
 			return po;
 		}
