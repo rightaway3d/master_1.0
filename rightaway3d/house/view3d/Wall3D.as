@@ -191,11 +191,18 @@ package rightaway3d.house.view3d
 		
 		override public function dispose():void
 		{
-			super.dispose();
-			
 			this.removeEventListener(MouseEvent3D.MOUSE_DOWN,onMouseDown);
 			this.removeEventListener(MouseEvent3D.MOUSE_UP,onMouseUp);
-			
+			if(mark1)
+			{
+				mark1.dispose();
+				mark1 = null;
+			}
+			if(mark2)
+			{
+				mark2.dispose();
+				mark2 = null;
+			}
 			if(_wall)
 			{
 				_wall.frontCrossWall.removeEventListener("material_change",onFrontMaterialChange);
@@ -205,6 +212,8 @@ package rightaway3d.house.view3d
 			wallGeom = null;
 			frontFace = null;
 			backFace = null;
+			
+			super.dispose();
 		}
 		
 		private var isMouseDown:Boolean;

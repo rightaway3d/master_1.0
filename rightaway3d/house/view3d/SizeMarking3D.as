@@ -23,6 +23,7 @@ package rightaway3d.house.view3d
 		public var zpos:Number = 100;
 		
 		private var lineSegment:LineSegment;
+		private var setmentSet:SegmentSet;
 		
 		private var arrows:Array = [];
 		private var texts:Array = [];
@@ -129,16 +130,54 @@ package rightaway3d.house.view3d
 			
 			if(!lineSegment)
 			{
-				var line:SegmentSet = new SegmentSet();
+				setmentSet = new SegmentSet();
 				lineSegment = new LineSegment(startPoint,endPoint,lineColor,lineColor,1);
-				line.addSegment(lineSegment);
-				addChild(line);
+				setmentSet.addSegment(lineSegment);
+				addChild(setmentSet);
 			}
 			else
 			{
 				lineSegment.start = startPoint;
 				lineSegment.end = endPoint;
 			}
+		}
+		
+		override public function dispose():void
+		{
+			if(arrows)
+			{
+				while(arrows.length>0)//移除多出的箭头到缓存池中
+				{
+					var arrow:Mesh = arrows.pop();
+					this.removeChild(arrow);
+					arrowPool.push(arrow);
+				}
+				arrows = null;
+			}
+			
+			if(texts)
+			{
+				while(texts.length>0)//移除多出的文字到缓存池中
+				{
+					var text3d:Text3D = texts.pop();
+					this.removeChild(text3d);
+					textPool.push(text3d);
+				}
+				texts = null;
+			}
+			
+			if(setmentSet)
+			{
+				setmentSet.dispose();
+				setmentSet = null;
+			}
+			if(lineSegment)
+			{
+				lineSegment.dispose();
+				lineSegment = null;
+			}
+			
+			super.dispose();
 		}
 	}
 }
