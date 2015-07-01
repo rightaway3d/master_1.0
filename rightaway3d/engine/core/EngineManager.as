@@ -38,7 +38,6 @@ package rightaway3d.engine.core
 	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.engine.utils.GlobalEvent;
 	import rightaway3d.engine.utils.GlobalVar;
-	import rightaway3d.house.cabinet.CabinetType;
 	import rightaway3d.house.editor2d.CabinetCreator;
 	import rightaway3d.house.editor2d.Scene2D;
 	import rightaway3d.house.lib.CabinetLib;
@@ -534,7 +533,7 @@ package rightaway3d.engine.core
 			}
 			
 			if(p.isLock)isSwitchModel = true;//如果模型被锁定时，也不准移动
-			trace("onMouseDown2",isSwitchModel,isDragMode,p.objectInfo);
+			trace("onMouseDown2,isLock,isSwitchModel,isDragMode,objectInfo:",p.isLock,isSwitchModel,isDragMode,p.objectInfo);
 			
 			currCrossWall = null;
 			
@@ -572,6 +571,8 @@ package rightaway3d.engine.core
 		
 		private function onMouseMove(event:MouseEvent):void
 		{
+			event.stopImmediatePropagation();
+			
 			isMouseMove = true;
 			//trace("onMouseMove1");//,gvar.currProduct);
 			

@@ -10,6 +10,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.engine.core.EngineManager;
 	import rightaway3d.engine.product.ProductManager;
 	import rightaway3d.engine.product.ProductObject;
+	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.engine.utils.ActionHistory;
 	import rightaway3d.engine.utils.ActionType;
 	import rightaway3d.engine.utils.GlobalEvent;
@@ -390,6 +391,13 @@ package rightaway3d.house.editor2d
 				delete roomPillarDict[po];
 			}
 			
+			if(po.objectInfo && po.objectInfo.crossWall)
+			{
+				var cw:CrossWall = po.objectInfo.crossWall;
+				cw.removeWallObject(po.objectInfo);
+				cw.dispatchSizeChangeEvent();
+			}
+			
 			gvar.currProduct2 = null;
 			
 			p.dispose();
@@ -444,7 +452,11 @@ package rightaway3d.house.editor2d
 		{
 			for(var po:ProductObject in cabinetDict)
 			{
-				po.isLock = value;
+				//烟机不允许解锁，只能跟随灶台柜而移动，另外水槽和灶台实例不在cabinetDict字典集合中，所以此处不会将这两种产品解锁
+				if(po.name!=ProductObjectName.HOOD)
+				{
+					po.isLock = value;
+				}
 			}
 		}
 		
@@ -633,7 +645,7 @@ package rightaway3d.house.editor2d
 		 */
 		public function createRoomSquarePillar(width:uint,depth:uint,color:uint,zPos:uint=0):void
 		{
-			var pName:String = "RoomSquarePillar";
+			var pName:String = ProductObjectName.ROOM_SQUARE_PILLAR;//"RoomSquarePillar";
 			var height:int = scene.currFloor.vo.ceilingHeight;
 			var yPos:uint = 0;
 			var p:Product2D = createSquareObject(pName,width,height,depth,color,yPos,zPos);

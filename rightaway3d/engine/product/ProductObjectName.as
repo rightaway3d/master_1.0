@@ -28,6 +28,11 @@ package rightaway3d.engine.product
 		static public const FLUE_CABINET:String = "_flueCabinet_";
 		
 		/**
+		 * 灶台柜
+		 */
+		static public const CORNER_CABINET:String = "_cornerCabinet_";
+		
+		/**
 		 * 烟机
 		 */
 		static public const HOOD:String = "_hoodProduct_";
@@ -41,6 +46,12 @@ package rightaway3d.engine.product
 		 * 消毒柜
 		 */
 		static public const STERILIZER:String = "_sterilizerProduct_";
+		
+		/**
+		 * 与房间同高的立柱
+		 */
+		static public const ROOM_SQUARE_PILLAR:String = "_RoomSquarePillar_";
+
 		
 	}
 }

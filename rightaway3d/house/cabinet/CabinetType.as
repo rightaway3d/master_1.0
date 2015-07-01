@@ -11,6 +11,14 @@ package rightaway3d.house.cabinet
 		 */
 		static public var DOOR:String = "cabinet_door";
 		/**
+		 * 拉篮柜门
+		 */
+		static public var DOOR_BASKET:String = "cabinet_door_basket";
+		/**
+		 * 抽屉柜门
+		 */
+		static public var DOOR_DRAWER:String = "cabinet_door_drawer";
+		/**
 		 * 柜体板件
 		 */
 		static public var BODY_PLANK:String = "cabinet_body_plank";

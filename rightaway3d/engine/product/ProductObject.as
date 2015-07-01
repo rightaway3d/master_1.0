@@ -179,6 +179,19 @@ package rightaway3d.engine.product
 			removeSlaveProduct(po);
 		}
 		
+		private var _type:String;
+
+		public function get type():String
+		{
+			return _type?_type:productInfo.type;
+		}
+
+		public function set type(value:String):void
+		{
+			_type = value;
+		}
+
+		
 		/**
 		 * 此产品实例的产品信息
 		 */
@@ -307,6 +320,17 @@ package rightaway3d.engine.product
 		 * 此产品关联到墙体的一些数据信息
 		 */
 		public var objectInfo:WallObject;
+		
+		/**
+		 * 此物体在所吸附墙面上的x位置
+		 * @return 
+		 * 
+		 */
+		public function get objectX():int
+		{
+			return objectInfo?objectInfo.x:0;
+		}
+		
 		/**
 		 * 2D视图的图片地址
 		 */
@@ -509,6 +533,8 @@ package rightaway3d.engine.product
 			s += "\"isOrder\":\"" + isOrder + "\",";
 			s += "\"view3d\":\"" + this.container3d.visible + "\",";
 			s += "\"view2d\":\"" + (view2d?"true":"false") + "\",";
+			
+			if(_type)s += "\"type\":\"" + _type + "\",";
 			
 			if(memo)s += "\"memo\":\"" + memo + "\",";
 			

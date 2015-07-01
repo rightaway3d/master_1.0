@@ -3,7 +3,6 @@ package rightaway3d.engine.product
 	import flash.events.Event;
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
-	import flash.utils.setInterval;
 	import flash.utils.setTimeout;
 	
 	import away3d.containers.ObjectContainer3D;
@@ -803,15 +802,6 @@ package rightaway3d.engine.product
 				var info:ProductInfo = getProductInfo(data);
 				var pObj:ProductObject = _parseProductObject(data);
 				info.addProductObject(pObj);
-				
-				//setProductObject(pObj,info);
-				
-				//updateScale(pObj);
-				
-				//engineManager.addRootChild(pObj.container3d);
-				//engineManager.addCollisionObject(pObj.container3d);
-				//info.createSubObject(pObj);
-				
 			}
 			
 			if(parent)
@@ -835,25 +825,11 @@ package rightaway3d.engine.product
 				}
 			}
 			
-			if(data.view3d)
-			{
-				pObj.container3d.visible = data.view3d=="true"?true:false;
-			}
-			
-			if(data.memo)
-			{
-				pObj.memo = data.memo;
-			}
-			
-			if(data.customMaterial)
-			{
-				pObj.customMaterialName = data.customMaterial;
-			}
-			
-			if(data.dynaminReplaceName)
-			{
-				pObj.dynaminReplaceName = data.dynaminReplaceName;
-			}
+			if(data.view3d)pObj.container3d.visible = data.view3d=="true"?true:false;
+			if(data.memo)pObj.memo = data.memo;
+			if(data.type)pObj.type = data.type;
+			if(data.customMaterial)pObj.customMaterialName = data.customMaterial;
+			if(data.dynaminReplaceName)pObj.dynaminReplaceName = data.dynaminReplaceName;
 			
 			/*if(data.slaveProducts)
 			{
@@ -1100,12 +1076,34 @@ package rightaway3d.engine.product
 			return a;
 		}
 		
-		/*public function getProductObjectsByType(type:String):Array
+		/**
+		 * 查找指定类型的产品实例
+		 * @param type：要查找的类型
+		 * @return Array:[ProductObject...]
+		 * 
+		 */
+		public function getProductObjectsByType(type:String):Array
 		{
-			var a:Array = getProductsByType(type);
+			var a:Array = [];
+			for each(var po:ProductObject in objectDict)
+			{
+				if(po.type==type)
+				{
+					a.push(po);
+				}
+			}
 			
 			return a;
-		}*/
+		}
+		
+		public function deleteProductObjectsByType(type:String):void
+		{
+			var a:Array = getProductObjectsByType(type);
+			for each(var po:ProductObject in a)
+			{
+				po.dispose();
+			}
+		}
 		
 		//==================================================
 		

@@ -134,13 +134,21 @@ package rightaway3d.house.view3d
 			if(!mark1)
 			{
 				mark1 = new SizeMarking3D();
-				mark1.ypos = 950;
-				mark1.zpos = -(_wall.width*0.5 + 30);
+				mark1.ypos = 1000;
+				mark1.zpos = -(_wall.width*0.5 + 5);
 				this.addChild(mark1);
 			}
 			
 			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.groundObjects);
-			mark1.update(a);
+			if(a.length>2)
+			{
+				mark1.update(a);
+				mark1.visible = true;
+			}
+			else
+			{
+				mark1.visible = false;
+			}
 		}
 		
 		//标注吊柜
@@ -150,12 +158,20 @@ package rightaway3d.house.view3d
 			{
 				mark2 = new SizeMarking3D();
 				mark2.ypos = 1250;
-				mark2.zpos = -(_wall.width*0.5 + 30);
+				mark2.zpos = -(_wall.width*0.5 + 5);
 				this.addChild(mark2);
 			}
 			
 			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.wallObjects);
-			mark2.update(a);
+			if(a.length>2)
+			{
+				mark2.update(a);
+				mark2.visible = true;
+			}
+			else
+			{
+				mark2.visible = false;
+			}
 		}
 		/*private function markWallCabinet(cw:CrossWall):void
 		{

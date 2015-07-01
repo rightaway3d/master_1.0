@@ -7,6 +7,7 @@ package rightaway3d.house.editor2d
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
+	import away3d.animators.transitions.CrossfadeTransition;
 	import away3d.core.pick.PickingColliderType;
 	import away3d.events.MouseEvent3D;
 	
@@ -935,9 +936,80 @@ package rightaway3d.house.editor2d
 			for each(var po:ProductObject in plateDict)
 			{
 				po.dispose();
+				delete plateDict[po];
 			}
+			
 			this.sceneGroundCabinets.length = 0;
 			this.sceneWallCabinets.length = 0;
+		}
+		
+		/**
+		 * 清除所有挡板、封板
+		 */
+		public function claerAllPlate():void
+		{
+			trace("clearAllPlate");
+			//productManager.deleteProductObjectsByType(CabinetType.LEG_BAFFLE);
+			//productManager.deleteProductObjectsByType(CabinetType.DOOR_PLANK);
+			productManager.deleteProductObjectsByType(CabinetType.BAFFLE);
+		}
+		
+		/**
+		 * 清除所有单开门柜的门板，包括拐角柜的封板
+		 */
+		public function clearSingleDoor():void
+		{
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
+			for each(var pi:ProductInfo in a)//遍历厨柜信息
+			{
+				var pos:Array = pi.getProductObjects();
+				for each(var po:ProductObject in pos)//遍历厨柜实例
+				{
+					var spos:Vector.<ProductObject> = po.dynamicSubProductObjects;
+					if(spos && spos.length==1)//厨柜中只有一个动态子产品（门）
+					{
+						var spo:ProductObject = spos[0];
+						if((!spo.subProductObjects || spo.subProductObjects.length==0) && spo.dynamicSubProductObjects && spo.dynamicSubProductObjects.length==2)//单开门只有两个动态子产品（门板和拉手）
+						{
+							spo.dispose();
+							spos.pop();
+						}
+					}
+					else if(po.objectInfo.height>800)//高柜，中高柜
+					{
+						if(spos)deleteDoor(spos);
+						//if(po.subProductObjects)deleteDoor(po.subProductObjects);
+					}
+				}
+			}
+		}
+		
+		private function deleteDoor(spos:Vector.<ProductObject>):void
+		{
+			//trace("len:"+spos.length);
+			var a:Array = [];
+			for each(var spo:ProductObject in spos)
+			{
+				//trace("type:"+spo.productInfo.type);
+				if(spo.productInfo.type==CabinetType.DOOR)//删除掉中高柜及高柜的门
+				{
+					a.push(spo);
+				}
+			}
+			for each(spo in a)
+			{
+				spo.dispose();
+			}
+		}
+		
+		/**
+		 * 清除厨柜台面及封板、单开门门板
+		 */
+		public function clearCabinetTalbes():void
+		{
+			removeTableMeshs();
+			claerAllPlate();
+			//clearSingleDoor();
 		}
 		
 		private function createTableMesh(dangshui:Array,points:Array,holes:Array=null,r:int=1,segment:uint=8,height:Number=40):void
@@ -1029,6 +1101,11 @@ package rightaway3d.house.editor2d
 			return s;
 		}
 		
+		/**
+		 * 还原台面
+		 * @param cabinetTable
+		 * 
+		 */
 		public function createCabinetTable(cabinetTable:Object):void
 		{
 			//removeTableMeshs();
@@ -1104,7 +1181,7 @@ package rightaway3d.house.editor2d
 			
 			createGroundCabinetArea(tss);
 			
-			createCabinetTable3(tss);
+			createCabinetTable3(tss,[[600,600,600],[600,600,600],[600,600,600]]);
 			
 			setWallCabinetArea(tss);
 			
@@ -1117,8 +1194,9 @@ package rightaway3d.house.editor2d
 		
 		public function updateCabinetTable():void
 		{
+			trace("updateCabinetTable");
 			this.removeTableMeshs();
-			createCabinetTable3(cabinetData);
+			createCabinetTable3(cabinetData,[[600,600,600],[600,600,600],[600,600,600]]);
 			updateTableMeshsPos(houseDX,houseDZ);
 		}
 		
@@ -1827,82 +1905,11 @@ package rightaway3d.house.editor2d
 					tableData.x1 = areaData.x1 = x1;
 				}
 			}
-			
-			/*else if(ht==ObstacleType.HOLE || ht==ObstacleType.NULL || ht==ObstacleType.WALL)//台面首端没有障碍物，或者为门洞时
-			{
-				if(ec)//转角柜结尾
-				{
-					if(cw.localEnd.x-x1<100)//转角柜至墙的间距至少为100
-					{
-						x1 = cw.localEnd.x - 100;
-					}
-				}
-				if(ht==ObstacleType.WALL)
-				{
-					startOffset = x1 - gw - x0;
-				}
-				else
-				{
-					x0 = x1 - gw;//厨柜开始位置
-					x0 -= 30;//台面开始位置
-					
-					tableData.x0 = areaData.x0 = x0;
-					
-					startOffset = 30;
-				}
-			}*/
-			/*else if(et==ObstacleType.HOLE || et==ObstacleType.NULL || et==ObstacleType.WALL)//台面尾端没有障碍物，或者为门洞时
-			{
-				if(hc)//转角柜开头
-				{
-					if(x0-cw.localHead.x<100)//转角柜至墙的间距至少为100
-					{
-						startOffset = cw.localHead.x+100-x0;
-						x0 = cw.localHead.x + 100;
-					}
-				}
-				
-				x1 = x0 + gw;//厨柜开始位置
-				x1 += 30;//台面开始位置
-				
-				tableData.x1 = areaData.x1 = x1;
-				//trace("x0,x1,gw,startOffset:",x0,x1,gw,startOffset);
-			}*/
-			/*else if(hc)//转角柜开头
-			{
-				if(x0-cw.localHead.x<100)
-				{
-					startOffset = cw.localHead.x+100-x0;
-				}
-			}*/
-			/*else if(ec)//转角柜结尾
-			{
-				if(cw.localEnd.x-x1<100)//转角柜至墙的间距至少为100
-				{
-					startOffset = aw - gw - (x1 + 100 - cw.localEnd.x);
-				}
-			}*/
-			/*else if(ht==ObstacleType.HOLE)
-			{
-				startOffset = 50;
-			}*/
-			/*else if(et==ObstacleType.CORNER_CABINET || et==ObstacleType.OBJECT)// || et==ObstacleType.WALL
-			{
-				startOffset = aw - gw;
-			}*/
-			/*else if(ht==ObstacleType.WALL)//厨柜到墙体的距离
-			{
-				startOffset = 40;
-			}*/
 			else//未处理的意外情况
 			{
 				trace("未处理的意外情况 ht,et,hc,ec:",ht,et,hc,ec);
 			}
-			//trace("ht,et,hc,ec:",ht,et,hc,ec);
 			trace("x0,x1,aw,gw,startOffset,ht,et,hc,ec,hw,ew:",x0,x1,aw,gw,startOffset,ht,et,hc,ec,hw,ew);
-			
-			//cw.initTestObject();
-			//cw.wall.dispatchChangeEvent();
 			
 			return startOffset;
 		}
@@ -1913,13 +1920,15 @@ package rightaway3d.house.editor2d
 		 * 创建厨柜封板
 		 * 
 		 */
-		private function createCabinetPlate(cw:CrossWall,width:int,height:int,depth:int,xPos:Number,yPos:Number,zPos:Number,ctype:String,name:String):ProductObject
+		public function createCabinetPlate(cw:CrossWall,width:int,height:int,depth:int,xPos:Number,yPos:Number,zPos:Number,ctype:String,name:String):ProductObject
 		{
+			trace("width,height,depth,xPos,yPos,zPos,ctype,name:",width,height,depth,xPos,yPos,zPos,ctype,name);
 			var mtype:String = ModelType.BOX_C;
 			var enName:String = CabinetType.BAFFLE;
 			var po:ProductObject = ProductManager.own.createCustomizeProduct(mtype,name,enName,width,height,depth,0xffffff,false);
 			po.productInfo.name = enName;
 			po.productInfo.type = ctype;
+			po.type = enName;
 			
 			if(ctype==CabinetType.DOOR_PLANK)
 				po.customMaterialName = _cabinetDoorDefaultMaterial;
@@ -2179,13 +2188,16 @@ package rightaway3d.house.editor2d
 					flueProduct.isLock = true;
 				}
 				
+				var isCornerCabinet:Boolean = false;
 				if(i==0 && type=="corner")
 				{
 					var door:XML = CabinetLib.lib.getDoor("ground_cabinet","left",900);
+					isCornerCabinet = true;
 				}
 				else if(i==len-1 && type=="corner")
 				{
 					door = CabinetLib.lib.getDoor("ground_cabinet","right",900);
+					isCornerCabinet = true;
 				}
 				else if(xml.door!=undefined)
 				{
@@ -2213,6 +2225,11 @@ package rightaway3d.house.editor2d
 				{
 					p.vo.name = ProductObjectName.FLUE_CABINET;//灶台柜标识
 				}
+				else if(isCornerCabinet)
+				{
+					p.vo.name = ProductObjectName.CORNER_CABINET;
+				}
+				
 				this.createCabinetPlate(cw,width,80,10,start,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//创建柜腿挡板
 			}
 			
@@ -2384,13 +2401,13 @@ package rightaway3d.house.editor2d
 			}
 		}
 		
-		private function addGroundCabinet(po:ProductObject):void
+		public function addGroundCabinet(po:ProductObject):void
 		{
 			sceneGroundCabinets.push(po);
 			po.addEventListener("dispose",onProductDispose);
 		}
 		
-		private function addWallCabinet(po:ProductObject):void
+		public function addWallCabinet(po:ProductObject):void
 		{
 			sceneWallCabinets.push(po);
 			po.addEventListener("dispose",onProductDispose);
@@ -2765,60 +2782,6 @@ package rightaway3d.house.editor2d
 			}
 		}
 		
-		//计算从首端开始可以放置地柜的有效长度
-		/*private function getHeadLength(cw:CrossWall):Number
-		{
-			var gos:Array = [];
-			var x0:Number = cw.localHead.x;
-			var x1:Number = cw.localEnd.x;
-			
-			cw.getGroundObjectOfPos(x0,x1,gos);
-			
-			var len:int = gos.length;
-			//trace("getHeadLength:"+len);
-			if(len>0)
-			{
-				for(var i:int=0;i<len;i++)
-				{
-					var wo:WallObject = gos[i];
-					var n:Number = wo.x-wo.width-x0;
-					//trace(i+":"+n);
-					if(n>570)
-					{
-						return n;
-					}
-				}
-			}
-			return x1-x0;
-		}*/
-		
-		//计算从尾端开始可以放置地柜的有效长度
-		/*private function getEndLength(cw:CrossWall):Number
-		{
-			var gos:Array = [];
-			var x0:Number = cw.localHead.x;
-			var x1:Number = cw.localEnd.x;
-			
-			cw.getGroundObjectOfPos(x0,x1,gos);
-			
-			var len:int = gos.length;
-			//trace("getEndLength:"+len);
-			if(len>0)
-			{
-				for(var i:int=len-1;i>-1;i--)
-				{
-					var wo:WallObject = gos[i];
-					var n:Number = x1-wo.x;
-					//trace(i+":"+n);
-					if(n>570)
-					{
-						return n;
-					}
-				}
-			}
-			return x1-x0;
-		}*/
-		
 		private function setGroundCabinetArea2(tables:Array):Array
 		{
 			var tss:Array = [];
@@ -3076,132 +3039,6 @@ package rightaway3d.house.editor2d
 		{
 			return object.depth>220?false:true;
 		}
-		
-		//设置地柜区间
-		//groundObjects:[{x0,x1,headCorner,endCorner,headType,endType,flags:[flag,flag],cabinets:[{id,width,data,type,x},{}]},{}]
-		/*private function setGroundObjectArea2(tableData:WallSubArea,cw:CrossWall,x0:Number,x1:Number,headCorner:Boolean,endCorner:Boolean,headType:String,endType:String):void
-		{
-			var groundObjects:Array = [];
-			tableData.groundObjects = groundObjects;
-			
-			var cornerWidth:int = 570+50;
-			
-			if(headType==ObstacleType.CORNER_CABINET)//首端相邻墙放置拐角柜
-			{
-				x0 += cornerWidth;//起始位置让出拐角柜的空间
-			}
-			
-			if(endType==ObstacleType.CORNER_CABINET)//尾端相邻墙放置拐角柜
-			{
-				x1 -= cornerWidth;//结束位置让出拐角柜的空间
-			}
-			
-			var objects:Array = [];
-			cw.getGroundObjectOfPos(x0,x1,objects);//查找区间内已经存在的物体，并作为障碍物来区隔当前墙面区域
-			
-			var alen:int = objects.length;
-			
-			var tx0:Number,tx1:Number;
-			var headCorner2:Boolean,endCorner2:Boolean;
-			var headType2:String,endType2:String;
-			
-			tx0 = x0;
-			headCorner2 = headCorner;
-			headType2 = headType;
-			
-			if(alen==0)//区域内没有障碍物
-			{
-				tx1 = x1;
-				endCorner2 = endCorner;
-				endType2 = endType;
-			}
-			else//有障碍物，计算第一个区间
-			{
-				var wo:WallObject = objects[0];
-				//trace("wo:"+wo);
-				tx1 = wo.x - wo.width;
-				endCorner2 = false;
-				endType2 = ObstacleType.OBJECT;
-			}
-			
-			//trace("----headType:"+headType,alen,tx1,tx0);
-			
-			if(tx1-tx0>=300+30)//判断空间是否可以放置最小规格厨柜
-			{
-				//trace("1");
-				var o:WallSubArea = getCabinetAreaData(cw,tx0,tx1,headCorner2,endCorner2,headType2,endType2);
-				groundObjects.push(o);
-			}
-			
-			if(alen>0)//计算障碍物后面的区间
-			{
-				for(var i:int=1;i<alen;i++)//障碍物之间的区间
-				{
-					tx0 = wo.x;
-					wo = objects[i];
-					tx1 = wo.x - wo.width;
-					
-					if(tx1-tx0>=300)
-					{
-						headType2 = ObstacleType.OBJECT;
-						if(!o)//前面区间不够放置厨柜
-						{
-							headCorner2 = headCorner;
-							if(headType==ObstacleType.CORNER_CABINET)//隔着障碍物顶着拐角柜
-							{
-								headType2 = ObstacleType.OBJECT_CORNER_CABINET;
-							}
-						}
-						else
-						{
-							headCorner2 = false;
-						}
-						endCorner2 = false;
-						endType2 = ObstacleType.OBJECT;
-						
-						//trace("2");
-						o = getCabinetAreaData(cw,tx0,tx1,headCorner2,endCorner2,headType2,endType2);
-						groundObjects.push(o);
-					}
-				}
-				
-				//障碍物最后面的区间
-				tx0 = wo.x;
-				tx1 = x1;
-				
-				if(tx1-tx0>=300)
-				{
-					//headCorner2 = false;
-					headType2 = ObstacleType.OBJECT;
-					if(!o)//前面区间不够放置厨柜
-					{
-						headCorner2 = headCorner;
-						if(headType==ObstacleType.CORNER_CABINET)//隔着障碍物顶着拐角柜
-						{
-							headType2 = ObstacleType.OBJECT_CORNER_CABINET;
-						}
-					}
-					else
-					{
-						headCorner2 = false;
-					}
-					endCorner2 = endCorner;
-					endType2 = endType;
-					
-					//trace("3");
-					o = getCabinetAreaData(cw,tx0,tx1,headCorner2,endCorner2,headType2,endType2);
-					groundObjects.push(o);
-				}
-				else if(o)//重新设置前一区间的尾部标志
-				{
-					o.endCorner=endCorner;
-					if(endType==ObstacleType.CORNER_CABINET)//如果尾部顶着另一边墙上的拐角柜
-					{
-						o.endType = ObstacleType.OBJECT_CORNER_CABINET;
-					}
-				}
-			}
-		}*/
 		
 		//设置厨柜区间数据
 		private function getCabinetAreaData(cw:CrossWall,x0:Number,x1:Number,
@@ -3475,32 +3312,25 @@ package rightaway3d.house.editor2d
 			return type;
 		}
 		
-		/*private function addTableData(cw:CrossWall,h:Point3D,e:Point3D,ts:Array):void
-		{
-			var co:Object = {};
-			co.cw = cw;
-			co.h = h;
-			co.e = e;
-			ts.push(co);
-		}*/
-		
-		private function createCabinetTable3(tabless:Array,depth:int=600):void
+		public function createCabinetTable3(tabless:Array,depthss:Array):void
 		{
 			trace("createCabinetTable3");
+			//var depth:int=600;
 			var tlen:int = tabless.length;
 			for(var i:int=0;i<tlen;i++)
 			{
 				var tables:Array = tabless[i];//每个独立台面分区
+				var depths:Array = depthss[i];
 				
 				var points:Array = [];
 				var dangshui:Array = [];
 				
 				var tableData:WallSubArea = tables[0];
 				var cw:CrossWall = tableData.cw;
-				
+					
 				var x0:Number = tableData.x0;
 				var x1:Number = tableData.x1;
-				
+				trace("0:",x0,x1);
 				if(tableData.headCabinet)x0+=tableData.headCabinet.objectInfo.width;
 				if(tableData.endCabinet)x1-=tableData.endCabinet.objectInfo.width;
 				
@@ -3513,6 +3343,7 @@ package rightaway3d.house.editor2d
 				var head:Point = new Point();
 				var end:Point = new Point();
 				
+				var depth:int=depths[0];
 				offsetCrossWall(cw,depth,head,end,h,e);
 				
 				var p:Point = cw.isHead?head:end;
@@ -3531,6 +3362,7 @@ package rightaway3d.house.editor2d
 					cw = tableData.cw;
 					x0 = tableData.x0;
 					x1 = tableData.x1;
+					trace(j+":",x0,x1,cw.wall.index);
 					
 					if(tableData.headCabinet)x0+=tableData.headCabinet.objectInfo.width;
 					if(tableData.endCabinet)x1-=tableData.endCabinet.objectInfo.width;
@@ -3543,10 +3375,11 @@ package rightaway3d.house.editor2d
 					var head2:Point = new Point();
 					var end2:Point = new Point();
 					
+					depth=depths[j];
 					offsetCrossWall(cw,depth,head2,end2,h,e);
 					
 					var cp:Point = Geom.intersection(head,end,head2,end2);//计算台面外沿相交点坐标
-					//trace("cp:"+cp);
+					trace("cp:"+cp,h,e);
 					points.push(cp);
 					
 					head = head2;
@@ -3555,7 +3388,7 @@ package rightaway3d.house.editor2d
 				
 				p = cw.isHead?end:head;
 				points.push(p);
-				var endType:String = tableData.endType;
+				//var endType:String = tableData.endType;
 				/*if(endType!=ObstacleType.HOLE && endType!=ObstacleType.NULL)
 				{
 					dangshui.push(p);//台面外沿，挡水起始坐标
@@ -3609,9 +3442,12 @@ package rightaway3d.house.editor2d
 					var holeWidth:int = drainerProduct.objectInfo.width;
 					var holeDepth:int = drainerProduct.objectInfo.depth;
 					
-					var flag:WallObject = drainerFlag.vo.objectInfo;
+					//var flag:WallObject = drainerFlag.vo.objectInfo;
+					var flag:WallObject = drainerProduct.objectInfo;
 					
-					var ww:Number = drainerFlag.wall.vo.width*0.5 + depth*0.5;
+					var wall:Wall = drainerProduct.objectInfo.crossWall.wall;
+					var ww:Number = wall.width*0.5 + depth*0.5;
+					//var ww:Number = drainerFlag.wall.vo.width*0.5 + depth*0.5;
 					
 					var x:int = flag.x-flag.width*0.5;
 					var y:int = flag.crossWall.isHead?-ww:ww;
@@ -3624,7 +3460,7 @@ package rightaway3d.house.editor2d
 					var p3:Point = new Point(x-dx,y-dy);
 					var p4:Point = new Point(x+dx,y-dy);
 					
-					var wall:Wall = drainerFlag.wall.vo;
+					//var wall:Wall = drainerFlag.wall.vo;
 					wall.localToGlobal2(p1,p1);
 					wall.localToGlobal2(p2,p2);
 					wall.localToGlobal2(p3,p3);
@@ -3647,19 +3483,22 @@ package rightaway3d.house.editor2d
 		private function isDrainerArea(tables:Array):Boolean
 		{
 			drainerProduct = getProduct(ProductObjectName.DRAINER);
+			trace("isDrainerArea drainerProduct:"+drainerProduct);
 			if(!drainerProduct)return false;
 			
 			var o:WallObject = drainerProduct.objectInfo;
-			//trace("isDrainerArea cw:"+o.crossWall);
+			trace("isDrainerArea cw:"+o.crossWall);
 			for each(var tableData:Object in tables)
 			{
 				var cw:CrossWall = tableData.cw;
 				var x0:Number = tableData.x0;
 				var x1:Number = tableData.x1;
+				trace("x0,x1,o.x,o.width:",x0,x1,o.x,o.width);
 				
 				if(o.crossWall==cw && o.x-o.width>x0 && x1>o.x)return true;//此处只考虑了墙面为正面的情况
+				//if(o.crossWall==cw && o.x>x0 && o.x<x1)return true;//此处只考虑了墙面为正面的情况
 			}
-			//trace("isDrainerArea2");
+			trace("isDrainerArea2");
 			return false;
 		}
 		
@@ -3708,6 +3547,7 @@ package rightaway3d.house.editor2d
 			var wo:WallObject = new WallObject();
 			wo.object = vo;
 			vo.objectInfo = wo;
+			vo.isLock = true;
 			
 			wo.width = width;
 			wo.height = height;
@@ -3751,7 +3591,15 @@ package rightaway3d.house.editor2d
 			wo.z = n;
 			//wo.x = x;
 			
+			if(wo.crossWall)
+			{
+				var tcw:CrossWall = wo.crossWall;
+				tcw.removeWallObject(wo);
+				tcw.dispatchSizeChangeEvent();
+			}
+			
 			cw.addWallObject(wo);
+			cw.dispatchSizeChangeEvent();
 		}
 		
 		public var hoodProduct:Product2D;
@@ -3880,15 +3728,6 @@ package rightaway3d.house.editor2d
 			//}
 			return p;
 		}
-		
-		/*private var testObject:WallObject = new WallObject();
-		private function setTestObject(x:Number,y:Number,width:Number,height:Number):void
-		{
-			testObject.x = x;
-			testObject.y = y;
-			testObject.width = width;
-			testObject.height = height;
-		}*/
 		
 		/**
 		 * 设置相机默认角度
