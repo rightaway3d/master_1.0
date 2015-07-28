@@ -229,15 +229,16 @@ package rightaway3d.house.editor2d
 			for each(var hd:Object in holesData)
 			{
 				var wh:WallHole = new WallHole();
-				wh.x = hd.x;
-				wh.y = hd.y;
 				wh.width = hd.width;
 				wh.height = hd.height;
+				wh.x = hd.x;
+				wh.y = hd.y;
 				wh.modelThickness = hd.thickness;
 				wh.modelType = hd.type;
 				wh.modelURL = hd.url;
 				
 				wall.addHole(wh);
+				trace("-----------wh:",wh.objectInfo);
 			}
 		}
 		
@@ -268,11 +269,20 @@ package rightaway3d.house.editor2d
 		private function parseProductData(products:Array):void
 		{
 			//traceObject2(products);
-			
-			for each(var p:Object in products)
+			products.sortOn("objectID",Array.NUMERIC);
+			var len:int = products.length;
+			for(var i:int=0;i<len;i++)
 			{
+				trace("");
+				var p:Object = products[i];
+				trace("objectID1:",p.objectID);
 				parseProduct(p);
 			}
+			
+			/*for each(var p:Object in products)
+			{
+				parseProduct(p);
+			}*/
 		}
 		
 		public function parseProduct(p:Object):ProductObject
@@ -298,7 +308,7 @@ package rightaway3d.house.editor2d
 					}
 				}
 			}
-			
+			//trace("objectID2:",po.objectID);
 			return po;
 		}
 		

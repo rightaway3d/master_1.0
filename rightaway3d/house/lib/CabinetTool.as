@@ -1,7 +1,7 @@
 package rightaway3d.house.lib
 {
-	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.engine.product.ProductObject;
+	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.house.utils.TestNumer;
 	import rightaway3d.house.view2d.Product2D;
 	import rightaway3d.house.vo.CrossWall;
@@ -265,31 +265,31 @@ package rightaway3d.house.lib
 				if(flagPos==Pos.END)
 				{
 					a.unshift(xml);
-					addDoor(xml,doorType,"left",addWidth);
+					//addDoor(xml,doorType,"left",addWidth);
 				}
 				else if(flagPos==Pos.HEAD)
 				{
 					a.push(xml);
-					addDoor(xml,doorType,"right",addWidth);
+					//addDoor(xml,doorType,"right",addWidth);
 				}
 				else
 				{
 					if(i%2==0)
 					{
 						a.push(xml);
-						addDoor(xml,doorType,"right",addWidth);
+						//addDoor(xml,doorType,"right",addWidth);
 					}
 					else
 					{
 						a.unshift(xml);
-						addDoor(xml,doorType,"left",addWidth);
+						//addDoor(xml,doorType,"left",addWidth);
 					}
 				}
 			}
 			return a;
 		}
 		
-		private function addDoor(parent:XML,type_:String,kind_:String,size:int):void
+		/*private function addDoor(parent:XML,type_:String,kind_:String,size:int):void
 		{
 			//trace("addDoor:",type_,kind_,size);
 			if(size<800)
@@ -302,7 +302,7 @@ package rightaway3d.house.lib
 				parent.kind = kind_;
 			}
 			//var door:XML = CabinetLib.lib.getDoor("ground_cabinet","left",900);
-		}
+		}*/
 		
 		/**
 		 * 获取普通柜门数据
@@ -310,9 +310,9 @@ package rightaway3d.house.lib
 		 * @return 
 		 * 
 		 */
-		public function getDoorData(po:ProductObject):XML
+		public function getDoorData(po:ProductObject,direction:String):XMLList
 		{
-			var type:String,kind:String,size:int;
+			var type:String,kind:String,size:String;
 			
 			var wo:WallObject = po.objectInfo;
 			//trace("getdoor dimensions:",po.productInfo.dimensions);
@@ -334,7 +334,7 @@ package rightaway3d.house.lib
 			var center:Number = cw.validLength*0.5+cw.localHead.x;//墙体中心位置
 			var dx:Number = wo.x - wo.width*0.5;//产品的中心位置
 			
-			if(dx<center)
+			if((!direction && dx<center) || direction=="left")
 			{
 				kind = "left";//左开门
 				b = "左";
@@ -345,12 +345,18 @@ package rightaway3d.house.lib
 				b = "右";
 			}
 			
-			size = wo.width;
+			//中高柜用型号来匹配
+			size = wo.height<1000 ? wo.width+"x"+wo.height+"x"+wo.depth : po.productInfo.productModel;
 			
-			var xml:XML = CabinetLib.lib.getDoor(type,kind,size);
-			xml.memo = a+b;
+			var list:XMLList = CabinetLib.lib.getDoor(type,kind,size);
+			var len:int = list.length();
+			for(var i:int=0;i<len;i++)
+			{
+				var xml:XML = list[i];
+				xml.memo = a+b;
+			}
 			
-			return xml;
+			return list;
 		}
 		
 		/**

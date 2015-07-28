@@ -317,7 +317,7 @@ package rightaway3d.house.vo
 			for(var i:int=0;i<len;i++)
 			{
 				var o:WallObject = sources[i];
-				if(o.x>x0 && o.x-o.width<x1)//找出与（x0，x1）区间有重叠的物体，并添加到数组中返回
+				if(o.x>=x0 && o.x-o.width<=x1)//找出与[x0，x1]区间有重叠的物体，并添加到数组中返回
 				{
 					objects.push(o);
 					//trace(i+" : "+o);
@@ -337,6 +337,17 @@ package rightaway3d.house.vo
 		 */
 		public function addWallObject(object:WallObject):void
 		{
+			//trace("addWallObject_1");
+			if(object.crossWall==this)return;
+			
+			if(object.crossWall)
+			{
+				var cw:CrossWall = object.crossWall;
+				cw.removeWallObject(object);
+				cw.dispatchSizeChangeEvent();
+			}
+			//trace("addWallObject_2");
+			
 			//关联到此墙面的圆柱体，可以与其它物体重叠在一块
 			if(object.isIgnoreObject)//object.type==ModelType.CYLINDER || object.type==ModelType.CYLINDER_C || object.y+object.height<IGNORE_OBJECT_HEIGHT)
 			{
@@ -348,10 +359,6 @@ package rightaway3d.house.vo
 			//trace("_wallObjects1:"+_wallObjects);
 			//trace("addWallObject2");
 			
-			if(object.crossWall)
-			{
-				object.crossWall.removeWallObject(object);
-			}
 			object.crossWall = this;
 			
 			if(object.y<GROUND_OBJECT_HEIGHT)
@@ -365,7 +372,7 @@ package rightaway3d.house.vo
 				_wallObjects.push(object);
 				_wallObjects.sortOn("x",Array.NUMERIC);//进行排序
 			}
-			//trace("--groundObjects num:"+_groundObjects.length+","+_groundObjects);
+			//trace("addWallObject_groundObjects.length:"+_groundObjects.length);
 			//trace("--wallObjects num:"+_wallObjects.length+","+_wallObjects);
 			//trace("--addWallObject index:",wall.index,object,"ground:",_groundObjects.length,"wall:",_wallObjects.length);
 			
@@ -391,20 +398,22 @@ package rightaway3d.house.vo
 		 * @param object
 		 * 
 		 */
-		public function removeWallObject(object:WallObject):void
+		public function removeWallObject(object:WallObject):Boolean
 		{
 			//trace("removeWallObject1");
+			if(object.crossWall!=this)return false;
+			
 			object.crossWall = null;
+			//trace("removeWallObject2");
 			
 			if(object.isIgnoreObject)//object.type==ModelType.CYLINDER || object.type==ModelType.CYLINDER_C || object.y+object.height<IGNORE_OBJECT_HEIGHT)
-				return;
-			//trace("removeWallObject2");
+				return true;
 			
 			if(object.y<GROUND_OBJECT_HEIGHT)
 			{
 				_groundObjects.splice(_groundObjects.indexOf(object),1);
 			}
-			
+			//trace("removeWallObject_groundObjects.length:",_groundObjects.length);
 			if(object.y+object.height>WALL_OBJECT_HEIGHT)
 			{
 				_wallObjects.splice(_wallObjects.indexOf(object),1);
@@ -426,6 +435,8 @@ package rightaway3d.house.vo
 					this.endCrossWall.wall.isChanged = true;
 				}
 			}
+			
+			return true;
 		}
 		
 		public function initTestObject(groundObjectDepth:int=570,wallObjectDepth:int=350):void
@@ -469,7 +480,7 @@ package rightaway3d.house.vo
 					two.y = wo.y;
 					
 					two.type = wo.type;
-					two.object = wo.object;
+					two.object = null;//wo.object;
 					
 					removeRepeatObject1(tmpGroundObjects,two);
 					
@@ -488,7 +499,7 @@ package rightaway3d.house.vo
 					two.y = wo.y;
 					
 					two.type = wo.type;
-					two.object = wo.object;
+					two.object = null;//wo.object;
 					
 					removeRepeatObject1(tmpWallObjects,two);
 					
@@ -531,7 +542,7 @@ package rightaway3d.house.vo
 					two.y = wo.y;
 					
 					two.type = wo.type;
-					two.object = wo.object;
+					two.object = null;//wo.object;
 					
 					removeRepeatObject2(tmpGroundObjects,two);
 					
@@ -550,7 +561,7 @@ package rightaway3d.house.vo
 					two.y = wo.y;
 					
 					two.type = wo.type;
-					two.object = wo.object;
+					two.object = null;//wo.object;
 					
 					removeRepeatObject2(tmpWallObjects,two);
 					
@@ -1083,6 +1094,24 @@ package rightaway3d.house.vo
 			return result;
 		}
 		
+		public function testAddCabinet(object:WallObject):Boolean
+		{
+			var result:Boolean = true;
+			if(object.isIgnoreObject)return result;
+			
+			if(MyMath.isLessEqual(object.y,IGNORE_OBJECT_HEIGHT))
+			{
+				result = testAddObjectHead(object,tmpGroundObjects);
+			}
+			
+			if(result && object.y+object.height>GROUND_OBJECT_HEIGHT)
+			{
+				result = testAddObjectHead(object,tmpWallObjects);
+			}
+			
+			return result;
+		}
+		
 		/**
 		 * 测试指定区域是否可以容纳特定的物体，并在此物体的中心点在指定范围内时，自动移动物体使其整体进入指定范围
 		 * @param x0：指定区域开始位置
@@ -1091,7 +1120,7 @@ package rightaway3d.house.vo
 		 * @return 返回是否可以容纳特定的物体，并自动移动
 		 * 
 		 */
-		public function testObject(x0:Number,x1:Number,object:WallObject):Boolean
+		public function testObject3(x0:Number,x1:Number,object:WallObject):Boolean
 		{
 			//trace("testObject x0:"+x0+" x1:"+x1);
 			var x:Number = object.x - object.width * 0.5;//计算物体中心位置
@@ -1105,6 +1134,25 @@ package rightaway3d.house.vo
 			{
 				//trace("区间位置不够容纳物体");
 				return false;//
+			}
+			
+			if(object.x>x1)object.x = x1;
+			else if(object.x-object.width<x0)object.x = x0 + object.width;
+			
+			return true;
+		}
+		
+		public function testObject(x0:Number,x1:Number,object:WallObject):Boolean
+		{
+			if(MyMath.isGreater(object.width,x1-x0))
+			{
+				//trace("区间位置不够容纳物体");
+				return false;//
+			}
+			
+			if(object.x<x0 || object.x-object.width>x1)//当前物体完全不在区域内
+			{
+				return false;
 			}
 			
 			if(object.x>x1)object.x = x1;

@@ -43,7 +43,7 @@ package rightaway3d.house.vo
 		/**
 		 * 当前区域中放置的产品列表（仅当此区域为子分区时）
 		 */
-		public var products:Array;
+		//public var products:Array;
 		
 		/**
 		 * 区域中厨柜的起始偏移量

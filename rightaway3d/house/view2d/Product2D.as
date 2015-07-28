@@ -51,7 +51,7 @@ package rightaway3d.house.view2d
 			vo.objectInfo.height = productHeight;
 			vo.objectInfo.depth = productDepth;
 			
-			trace("product dimensions:",vo.productInfo.dimensions);
+			//trace("product dimensions:",vo.productInfo.dimensions);
 			
 			if(vo.modelObject)
 			{

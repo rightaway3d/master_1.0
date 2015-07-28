@@ -1,24 +1,25 @@
 package rightaway3d.house.editor2d
 {
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	
 	import rightaway3d.house.view2d.WallFace2D;
 	import rightaway3d.house.vo.CrossWall;
 
-	public class WallFaceViewer
+	public class WallFaceViewer extends Sprite
 	{
-		private var _container:Sprite;
+		//private var _container:Sprite;
 		private var _cws:Vector.<CrossWall>;
 		
 		private var wallFace:WallFace2D;
 		
-		public function WallFaceViewer(container:Sprite,cws:Vector.<CrossWall>)
+		public function WallFaceViewer(cws:Vector.<CrossWall>)
 		{
-			_container = container;
+			//_container = container;
 			_cws = cws;
 			
 			wallFace = new WallFace2D();
-			_container.addChild(wallFace);
+			this.addChild(wallFace);
 		}
 		
 		public function reset():void
@@ -55,16 +56,17 @@ package rightaway3d.house.editor2d
 		
 		private function show(cw:CrossWall,face:WallFace2D):void
 		{
+			updateBG();
 			face.updateView(cw);
 			
-			var n:Number = 0.8;
+			var n:Number = 0.9;
 			var s:Number = 1;
 			
 			face.scaleX = s;
 			face.scaleY = s;
 			
-			var sw:int = face.stage.stageWidth;
-			var sh:int = face.stage.stageHeight;
+			var sw:int = stage.stageWidth;
+			var sh:int = stage.stageHeight;
 			var w:Number = face.width;
 			var h:Number = face.height;
 			
@@ -86,6 +88,18 @@ package rightaway3d.house.editor2d
 			
 			face.x = (sw-w)/2;
 			face.y = h+(sh-h)/2;
+		}
+		
+		private function updateBG(color:uint=0x0):void
+		{
+			var sw:int = stage.stageWidth;
+			var sh:int = stage.stageHeight;
+			
+			var g:Graphics = this.graphics;
+			g.clear();
+			g.beginFill(color,1);
+			g.drawRect(0,0,sw,sh);
+			g.endFill();
 		}
 	}
 }

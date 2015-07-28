@@ -28,7 +28,7 @@ package rightaway3d.engine.product
 		static public const FLUE_CABINET:String = "_flueCabinet_";
 		
 		/**
-		 * 灶台柜
+		 * 拐角柜
 		 */
 		static public const CORNER_CABINET:String = "_cornerCabinet_";
 		

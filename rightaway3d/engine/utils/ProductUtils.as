@@ -10,12 +10,13 @@ package rightaway3d.engine.utils
 		{
 		}
 		
-		static public function showBounds(po:ProductObject,value:Boolean):void
+		static public function showBounds(po:ProductObject,value:Boolean,color:uint):void
 		{
 			if(po.modelObject)
 			{
 				for each(var m:Mesh in po.modelObject.meshs)
 				{
+					if(value)m.bounds.boundingRenderable.color = color;
 					m.showBounds = value;
 				}
 				return;
@@ -23,14 +24,14 @@ package rightaway3d.engine.utils
 			
 			for each(var sp:ProductObject in po.subProductObjects)
 			{
-				showBounds(sp,value);
+				showBounds(sp,value,color);
 			}
 			
 			if(po.dynamicSubProductObjects)
 			{
 				for each(sp in po.dynamicSubProductObjects)
 				{
-					showBounds(sp,value);
+					showBounds(sp,value,color);
 				}
 			}
 		}

@@ -36,7 +36,7 @@ package rightaway3d.engine.product
 	{
 		//==========================================================================
 		//根产品对象索引值
-		static private var index:int = 0;
+		static public var index:int = 0;
 		static public function getNextIndex():int
 		{
 			return ++index;
@@ -45,9 +45,13 @@ package rightaway3d.engine.product
 		{
 			if(value>index)index = value;
 		}
+		static public function resetIndex():void
+		{
+			index = 0;
+		}
 		//==========================================================================
 		//当前产品对象的子产品对象的索引值，当往当前产品动态添加子产品的时候，从此处获取对象id
-		private var index:int = 0;
+		public var index:int = 0;
 		public function getNextIndex():int
 		{
 			return ++index;
@@ -252,7 +256,7 @@ package rightaway3d.engine.product
 			ProductManager.own.setProductObject(subpo);
 			ProductManager.own.updateProductModel(subpo);
 			
-			trace("----addSubProduct objectID:",subpo.objectID);
+			//trace("----addSubProduct objectID:",subpo.objectID);
 		}
 		
 		/**

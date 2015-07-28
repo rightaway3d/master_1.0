@@ -36,8 +36,10 @@ package rightaway3d.engine.core
 	import rightaway3d.engine.product.ProductInfoLoader;
 	import rightaway3d.engine.product.ProductManager;
 	import rightaway3d.engine.product.ProductObject;
+	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.engine.utils.GlobalEvent;
 	import rightaway3d.engine.utils.GlobalVar;
+	import rightaway3d.engine.utils.ProductUtils;
 	import rightaway3d.house.editor2d.CabinetCreator;
 	import rightaway3d.house.editor2d.Scene2D;
 	import rightaway3d.house.lib.CabinetLib;
@@ -48,6 +50,7 @@ package rightaway3d.engine.core
 	import rightaway3d.house.vo.House;
 	import rightaway3d.house.vo.Room;
 	import rightaway3d.house.vo.Wall;
+	import rightaway3d.house.vo.WallObject;
 	
 	import ztc.meshbuilder.room.CabinetTable3D;
 	import ztc.meshbuilder.room.DragObject;
@@ -293,6 +296,7 @@ package rightaway3d.engine.core
 		public function addModelEvent(modelObj:ModelObject):void
 		{
 			var po:ProductObject = modelObj.parentProductObject;
+			//trace("addModelEvent:",po.name,po.isActive);
 			if(po.isActive)
 			{
 				po.addEventListener("will_dispose",onModelWillDispose);
@@ -332,7 +336,7 @@ package rightaway3d.engine.core
 					var cpo:ProductObject = getRootProduct(mousedownObject);
 					gvar.currProduct = cpo;
 					
-					flash.utils.setTimeout(dispathchModelDownEvent,1,mesh);
+					flash.utils.setTimeout(dispathchModelDownEvent,50,mesh);
 				}
 			}
 			
@@ -455,13 +459,13 @@ package rightaway3d.engine.core
 			if(!picked)return;
 			
 			var o3d:ObjectContainer3D = picked.entity;
-			//trace("--------onStageRightClick:"+o3d,mo,picked.index,picked.subGeometryIndex);
+			trace("--------onStageRightClick:"+o3d,modelDict[o3d],picked.index,picked.subGeometryIndex);
 			
 			if(modelDict[o3d])
 			{
 				var mo:ModelObject = modelDict[o3d];
 				var rp:ProductObject = getRootProduct(mo);
-				
+				trace(mo);
 				//if(gvar.currProduct!=rp)
 				//{
 					gvar.currProduct = rp;
@@ -588,12 +592,12 @@ package rightaway3d.engine.core
 					cw.removeWallObject(p.objectInfo);
 					cw.dispatchSizeChangeEvent();
 				}*/
-				if(currCrossWall)
+				/*if(currCrossWall)
 				{
 					currCrossWall.removeWallObject(p.objectInfo);
 					currCrossWall.dispatchSizeChangeEvent();
 					currCrossWall = null;
-				}
+				}*/
 				
 				var pos:Vector3D = dragProduct(p);
 				if(pos)
@@ -622,36 +626,94 @@ package rightaway3d.engine.core
 			//trace("onMouseMove2",gvar.currProduct);
 		}
 		
+		private var xPos:Number;
+		
 		private function dragProduct(po:ProductObject):Vector3D
 		{
 			var picked:PickingCollisionVO = dragObject.getPickedObject3D(engine3d.view);
 			//trace("picked:"+picked);
+			var pillar:WallObject = null;
+			var wo:WallObject = po.objectInfo;
+			wo.z= 0;
 			
 			if(picked)
 			{
 				var o3d:ObjectContainer3D = picked.entity;
+				//trace(o3d);
 				if(o3d is Wall3D)
 				{
-					currCrossWall = Wall3D(o3d).vo.frontCrossWall;
-					currCrossWall.addWallObject(po.objectInfo);
-					currCrossWall.dispatchSizeChangeEvent();
+					cw = Wall3D(o3d).vo.frontCrossWall;
+					if(cw!=currCrossWall)//从一个墙面拖拽到另一面墙上
+					{
+						if(currCrossWall)
+						{
+							currCrossWall.removeWallObject(wo);
+							currCrossWall.dispatchSizeChangeEvent();
+						}
+						
+						currCrossWall = cw;
+						/*if(!wo.crossWall)
+						{
+							currCrossWall.addWallObject(wo);
+							currCrossWall.dispatchSizeChangeEvent();
+						}*/
+					}
 				}
-				else
+				else if(o3d is Room3D)
 				{
-					currCrossWall = null;
-					/*if(!modelDict[o3d])
+					if(currCrossWall)
 					{
-					trace("----",o3d,modelDict[o3d]);
-					currCrossWall = null;
-					}*/
-					if(!(o3d is Room3D))//检测的对象不是房间地面时，当前物体不移动
+						currCrossWall.removeWallObject(wo);
+						currCrossWall.dispatchSizeChangeEvent();
+						currCrossWall = null;
+					}
+				}
+				/*else if(o3d is Mesh)
+				{
+					var mo:ModelObject = modelDict[o3d];
+					if(!mo)return null;
+					
+					var p:ProductObject = mo.parentProductObject;
+					//trace("----",p.name);
+					pillar = p.objectInfo;
+					
+					if(p.name != ProductObjectName.ROOM_SQUARE_PILLAR || !pillar.crossWall || pillar.z+pillar.depth>220 || wo.depth!=330)
 					{
+						//ProductUtils.showBounds(po,true,gvar.errorColor);
 						return null;
 					}
+					wo.z = 220;
+					cw = p.objectInfo.crossWall;
+					if(cw!=currCrossWall)
+					{
+						if(currCrossWall)
+						{
+							currCrossWall.removeWallObject(p.objectInfo);
+							currCrossWall.dispatchSizeChangeEvent();
+						}
+						
+						currCrossWall = cw;
+						if(!wo.crossWall)
+						{
+							currCrossWall.addWallObject(wo);
+							currCrossWall.dispatchSizeChangeEvent();
+						}
+					}
+					//trace("----",picked.localPosition.x);
+				}*/
+				else//检测的对象不是房间地面时，当前物体不移动
+				{
+					currCrossWall = null;
+					
+					//ProductUtils.showBounds(po,true,gvar.errorColor);
+					
+					return null;
 				}
 			}
 			else//没有检测到对象时，当前物体不移动
 			{
+				//ProductUtils.showBounds(po,true,gvar.errorColor);
+				
 				currCrossWall = null;
 				return null;
 			}
@@ -659,26 +721,30 @@ package rightaway3d.engine.core
 			if(currCrossWall)//currCabinet.vo.objectInfo.crossWall)//当前产品被吸附在某个墙上
 			{
 				var cw:CrossWall = currCrossWall;
-				cw.removeWallObject(po.objectInfo);
-				cw.dispatchSizeChangeEvent();
+				var isReset:Boolean = cw.removeWallObject(wo);
+				//cw.dispatchSizeChangeEvent();
 				
 				var wall:Wall = cw.wall;
 				var bounds:Vector3D = po.productInfo.dimensions;
 				var ww:Number = wall.width * 0.5;
 				var dx:Number = bounds.x * 0.5;
-				footPoint.x = picked.localPosition.x+dx;
-				var zWall:int = po.objectInfo.z;
+				
+				footPoint.x = (pillar ? pillar.x-pillar.width*0.5-picked.localPosition.x : picked.localPosition.x) + dx;
+				
+				var zWall:int = wo.z;
 				var dy:Number = zWall + ww;
 				
 				footPoint.y = cw.isHead?-dy:dy;
 				
-				po.objectInfo.x = footPoint.x;
+				xPos = wo.x;
+				wo.x = footPoint.x;
 				
-				var result:Boolean = cw.testAddObject(po.objectInfo);
+				//var result:Boolean = cw.testAddObject(wo);
+				var result:Boolean = cw.testAddCabinet(wo);//true;//
 				
 				if(result)
 				{
-					footPoint.x = po.objectInfo.x;
+					footPoint.x = wo.x;
 					//trace("footPoint2:"+footPoint);
 					wall.localToGlobal2(footPoint,footPoint);
 					
@@ -703,12 +769,23 @@ package rightaway3d.engine.core
 					po.position.z = footPoint.y;
 					po.rotation.y = po.container3d.rotationY = a;
 					
-					cw.addWallObject(po.objectInfo);
+					cw.addWallObject(wo);
 					cw.dispatchSizeChangeEvent();
+					
+					ProductUtils.showBounds(po,true,gvar.defaultColor);
 				}
 				else
 				{
-					currCrossWall = null;
+					//ProductUtils.showBounds(po,true,gvar.errorColor);
+					
+					//currCrossWall = null;
+					if(isReset)
+					{
+						wo.x = xPos;
+						cw.addWallObject(wo);
+					}
+					//cw.dispatchSizeChangeEvent();
+					
 					return null;
 				}
 			}
@@ -719,9 +796,12 @@ package rightaway3d.engine.core
 				pos.x += o3d.x;
 				pos.z += o3d.z;
 				
+				ProductUtils.showBounds(po,true,gvar.errorColor);
+				
 				return pos;
 			}
 			
+			//currCrossWall = null;
 			return null;
 		}
 		
@@ -739,7 +819,7 @@ package rightaway3d.engine.core
 			if(p)
 			{
 				//trace("objectInfo",gvar.currProduct.objectInfo);
-				if(currCrossWall && p.objectInfo)
+				if(currCrossWall && p.objectInfo.crossWall)
 				{
 					//trace("addWallObject");
 //					currCrossWall.addWallObject(p.objectInfo);
@@ -747,13 +827,19 @@ package rightaway3d.engine.core
 					//currCrossWall.wall.dispatchChangeEvent();
 					//currCrossWall.headCrossWall.wall.dispatchChangeEvent();
 					//currCrossWall.endCrossWall.wall.dispatchChangeEvent();
-					if(!p.objectInfo.crossWall)
+					/*if(!p.objectInfo.crossWall)
 					{
 						currCrossWall.addWallObject(p.objectInfo);
 					}
-					currCrossWall.dispatchSizeChangeEvent();
+					currCrossWall.dispatchSizeChangeEvent();*/
 					
 					p.dispatchChangeEvent();
+					
+					ProductUtils.showBounds(p,true,gvar.defaultColor);
+				}
+				else
+				{
+					ProductUtils.showBounds(p,true,gvar.errorColor);
 				}
 				
 				p.dispatchEndDragEvent();

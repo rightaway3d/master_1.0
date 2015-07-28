@@ -472,9 +472,11 @@ package rightaway3d.engine.core
 			//view.camera.lens.far = n*3;
 			
 			var x0:Number = (max.x+min.x)/2;
-			var z0:Number = (max.z+min.z)/2;
 			var y0:Number = (max.y+min.y)/2;
+			var z0:Number = (max.z+min.z)/2;
+			
 			var len:int = aligns.length;
+			
 			for(var i:int=0;i<len;i++)
 			{
 				var s:String = aligns[i];

@@ -22,7 +22,7 @@ package ztc.meshbuilder.room
 			for(var i:int=0;i<len;i++)
 			{
 				var p:flash.geom.Point = tablePoints[i];
-				ps[i] = new org.poly2tri.Point(p.x,p.y);
+				ps[i] = new org.poly2tri.Point(int(p.x+0.5),int(p.y+0.5));
 			}
 			
 			//trace("holePoints:"+holePoints);
@@ -42,7 +42,7 @@ package ztc.meshbuilder.room
 			for(i=0;i<len;i++)
 			{
 				p = dangshui[i];
-				ds[i] = new org.poly2tri.Point(p.x,p.y);
+				ds[i] = new org.poly2tri.Point(int(p.x+0.5),int(p.y+0.5));
 			}
 			return new CabinetTable3D(ps,hole,radius,segment,height,ds)//,textureURL,normalURL,color,ambient,specular,gloss);
 		}

@@ -50,15 +50,15 @@ package rightaway3d.house.lib
 			return list[0];
 		}
 		
-		public function getDoor(type_:String,kind_:String,size:int):XML
+		public function getDoor(type_:String,kind_:String,size_:String):XMLList
 		{
-			var list:XMLList = doorsList.(type==type_ && kind==kind_ && matching==size);
+			var list:XMLList = doorsList.(type==type_ && kind==kind_ && matching==size_);
 			if(list.length()==0)
 			{
-				throw new Error("找不到指定的厨柜门："+type_+","+kind_+","+size);
+				throw new Error("找不到指定的厨柜门："+type_+","+kind_+","+size_);
 			}
 			
-			return list[0];
+			return list;
 		}
 		
 		public function getDoors(type_:String,kind_:String,productModel:String):XMLList

@@ -93,7 +93,7 @@ package rightaway3d.engine.model
 		//在满足条件时，会被自动清理掉
 		private function dispose():void
 		{
-			trace("-------dispose modelInfo:"+this.infoFileURL);
+			//trace("-------dispose modelInfo:"+this.infoFileURL);
 			
 			ModelManager.own.deleteModelInfo(this);
 			
@@ -251,7 +251,7 @@ package rightaway3d.engine.model
 				p = p.parentProductObject;
 			}
 			
-			trace("addModelObject id="+id,modelObjects,this.infoFileURL);
+			//trace("addModelObject id="+id,modelObjects,this.infoFileURL);
 			modelObject.objectID = id;
 			
 			modelObjects[id] = modelObject;

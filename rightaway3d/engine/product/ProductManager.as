@@ -125,8 +125,6 @@ package rightaway3d.engine.product
 			var newProduct:ProductObject = this.createProductObject(info,objID,name,"",targetObject.isActive,targetObject.position);
 			//trace("newProduct1:"+newProduct.position.y);
 			
-			addProductToScene(newProduct);
-			
 			//updateScale2(newProduct);
 			
 			if(targetObject.objectInfo)
@@ -160,12 +158,6 @@ package rightaway3d.engine.product
 				d0.z = depth;
 			}
 			
-			if(targetObject.view2d)
-			{
-				CabinetController.getInstance().createProduct(newProduct);
-				trace("wo2:",wo);
-			}
-			
 			//trace("newProduct2:"+newProduct.position.y);
 			var cw:CrossWall = targetObject.objectInfo?targetObject.objectInfo.crossWall:null;
 			if(cw)
@@ -181,12 +173,21 @@ package rightaway3d.engine.product
 				a = targetObject.container3d.rotationY;
 			}
 			
+			addProductToScene(newProduct);
+			
+			if(targetObject.view2d)
+			{
+				CabinetController.getInstance().createProduct(newProduct);
+				trace("wo2:",wo);
+			}
+			
 			newProduct.rotation.y = newProduct.container3d.rotationY = a;
 			
 			if(newProduct.view2d)
 			{
 				newProduct.view2d.rotation = a;
 			}
+			
 			trace("dimensions:",info.dimensions);
 			trace("wo3:",wo);
 			return newProduct;
@@ -258,7 +259,7 @@ package rightaway3d.engine.product
 			//trace("x1:"+newProduct1.objectInfo.x);
 			//trace("w1:"+w1);
 			//trace("w2:"+wo.x);
-			CabinetController.getInstance().setCabinetPos(newProduct2.view2d,cw,wo.x,wo.y,wo.z);
+			CabinetController.getInstance().setProductPos(newProduct2,cw,wo.x,wo.y,wo.z);
 			this.updateProductModel(newProduct2);
 			
 			target.dispose();
@@ -407,7 +408,7 @@ package rightaway3d.engine.product
 		public function parseProductInfo(xml:XML):ProductInfo
 		{
 			var id:int = xml.id;
-			trace("parseProductInfo id:",id," infoDict[id]:",infoDict[id]);
+			//trace("parseProductInfo id:",id," infoDict[id]:",infoDict[id]);
 			if(infoDict[id])
 			{
 				var pInfo:ProductInfo = infoDict[id];
@@ -662,7 +663,7 @@ package rightaway3d.engine.product
 			
 			updateProductModel(pObj);
 			
-			flash.utils.setTimeout(cloneObject,1,pObj);
+			flash.utils.setTimeout(cloneObject,100,pObj);
 		}
 		
 		private function cloneObject(pObj:ProductObject):void
@@ -775,7 +776,7 @@ package rightaway3d.engine.product
 		public function parseProductObject(data:Object,parent:ProductObject=null):ProductObject
 		{
 			var type:String = data.objectInfo?data.objectInfo.type:"";
-			trace("parseProductObject name:"+data.name+" file:"+data.file);
+			//trace("parseProductObject name:"+data.name+" file:"+data.file);
 			
 			if(type==ModelType.BOX_C || type==ModelType.CYLINDER_C)//用户动态创建的物体
 			{
@@ -860,7 +861,7 @@ package rightaway3d.engine.product
 			if(data.masterProducts)
 			{
 				pObj.masterProducts = data.masterProducts;
-				trace("------------"+pObj.toString());
+				//trace("------------"+pObj.toString());
 				
 //				var wo:WallObject = pObj.objectInfo;
 //				CabinetController.getInstance().setProductPos(pObj,wo.x,wo.y,wo.z);
@@ -921,7 +922,7 @@ package rightaway3d.engine.product
 		{
 			
 			var info:ProductInfo = infoDict[infoID];
-			trace("createProductInfo:",infoID,infoDict[infoID]);
+			//trace("createProductInfo:",infoID,infoDict[infoID]);
 			if(!info)
 			{
 				info = new ProductInfo();
@@ -942,7 +943,7 @@ package rightaway3d.engine.product
 		{
 			//throw new Error();
 			
-			trace("-----deleteProductInfo:"+info.infoID);
+			//trace("-----deleteProductInfo:"+info.infoID);
 			if(infoDict[info.infoID]==info)
 			{
 				delete infoDict[info.infoID];
@@ -992,7 +993,7 @@ package rightaway3d.engine.product
 		
 		public function updateProductModel(obj:ProductObject):void
 		{
-			//trace("updateScale:"+obj.productInfo.infoID+">"+obj.position.y);
+			//trace("updateProductModel:"+obj.productInfo.infoID);
 			var container:ObjectContainer3D = obj.container3d;
 			var infoScale:Vector3D = obj.productInfo.scale;
 			
@@ -1005,9 +1006,9 @@ package rightaway3d.engine.product
 				container.x = obj.position.x + houseDX;
 				container.z = obj.position.z + houseDZ;
 				container.y = obj.position.y;
+				//trace("-------container:",container.x,container.y,container.z,obj.position,houseDX,houseDZ);
 			}
 			
-			//trace("container:"+container.y);
 			container.rotationX = obj.rotation.x;
 			container.rotationY = obj.rotation.y;
 			container.rotationZ = obj.rotation.z;
@@ -1025,10 +1026,10 @@ package rightaway3d.engine.product
 		//==================================================
 		public function setProductObject(obj:ProductObject):void
 		{
-			trace("");
-			trace("--setProductObject:"+obj.id,obj.productInfo.fileURL);
+			//trace("");
+			//trace("--setProductObject:"+obj.id,obj.productInfo.fileURL);
 			
-			trace("objectID1:"+obj.objectID);
+			//trace("objectID1:"+obj.objectID);
 			if(objectDict[obj.objectID])
 			{
 				delete objectDict[obj.objectID];
@@ -1037,6 +1038,7 @@ package rightaway3d.engine.product
 			}
 			
 			var objectID:String = String(obj.id);
+			//trace("objectID3:",objectID);
 			var p:ProductObject = obj.parentProductObject;
 			while(p)
 			{
@@ -1045,7 +1047,7 @@ package rightaway3d.engine.product
 			}
 			
 			obj.objectID = objectID;
-			trace("objectID2:"+obj.objectID);
+			//trace("objectID3:"+obj.objectID);
 			
 			if(objectDict[obj.objectID])
 			{
@@ -1068,6 +1070,7 @@ package rightaway3d.engine.product
 			var a:Array = [];
 			for each(var info:ProductInfo in infoDict)
 			{
+				//trace(info.type);
 				if(info.type==type)
 				{
 					a.push(info);
@@ -1111,6 +1114,7 @@ package rightaway3d.engine.product
 		{
 			if(objectDict[pObj.objectID]==pObj)
 			{
+				trace("removeProductObject:",pObj.objectID);
 				delete objectDict[pObj.objectID];
 				//trace(pObj);
 				//throw new Error();
@@ -1197,7 +1201,7 @@ package rightaway3d.engine.product
 		private var loader:ProductInfoLoader = ProductInfoLoader.own;
 		public function loadProduct():void
 		{
-			trace("-------------start load productInfo");
+			//trace("-------------start load productInfo");
 			if(loader.hasNotLoaded && !loader.isLoading)//加载器中还存在未加载的内容，同时加载器也不在加载中，则启动加载
 			{
 				loader.startLoad();

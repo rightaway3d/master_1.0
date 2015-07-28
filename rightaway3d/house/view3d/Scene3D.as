@@ -134,7 +134,7 @@ package rightaway3d.house.view3d
 			this.engine3d.camCtrl.maxWhellDistance = d;
 			this.engine3d.camCtrl.cc.distance = d*0.5;
 			this.engine3d.camCtrl.cc.panAngle = house.currPanAngle;
-			this.engine3d.camCtrl.cc.tiltAngle = 25;
+			this.engine3d.camCtrl.cc.tiltAngle = 10;//85;//25;
 			this.engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,house.currFloor.ceilingHeight/2,0);
 
 			/*var ssmm:SoftShadowMapMethod = new SoftShadowMapMethod(engine3d.sunLight, 30);

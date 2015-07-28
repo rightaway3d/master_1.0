@@ -1,7 +1,11 @@
 package rightaway3d.house.view2d
 {
 	import flash.display.Graphics;
+	import flash.display.Shape;
+	import flash.geom.Point;
 	
+	import rightaway3d.engine.core.ModelAlign;
+	import rightaway3d.engine.product.ProductInfo;
 	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.house.cabinet.CabinetType;
 	import rightaway3d.house.vo.CrossWall;
@@ -17,20 +21,20 @@ package rightaway3d.house.view2d
 		{
 			//trace("WallFace2D updateView");
 			
-			var lineColor:uint = Wall2D.lineColor;
-			
+			clearCabinetShapes();
 			clearLevelMarks();
 			clearWallSockets();
 			
+			var lineColor:uint = Wall2D.lineColor;
 			var g:Graphics = this.graphics;
 			g.clear();
 			g.lineStyle(0,lineColor);
 			
 			//cw.initTestObject();
-			
+			var wallHeight:Number = cw.wall.height;
 			var w:Number = Base2D.sizeToScreen(cw.validLength);
-			var h:Number = Base2D.sizeToScreen(cw.wall.height);
-			var dx:Number = cw.localHead.x;
+			var h:Number = Base2D.sizeToScreen(wallHeight);
+			var x0:Number = cw.localHead.x;
 			//trace(w,h,dx);
 			
 			g.beginFill(0);
@@ -45,17 +49,18 @@ package rightaway3d.house.view2d
 				var wo:WallObject = gos[i];
 				var ww:Number = Base2D.sizeToScreen(wo.width);
 				var wh:Number = Base2D.sizeToScreen(wo.height);
-				var wx:Number = Base2D.sizeToScreen(wo.x-dx)-ww;
+				var wx:Number = Base2D.sizeToScreen(wo.x-wo.width-x0);
 				var wy:Number = Base2D.sizeToScreen(wo.y==0&&wo.height==720?80:wo.y);
 				//trace(i,wx,wy,ww,wh);18911273446
-				g.drawRect(wx,-(wy+wh),ww,wh);
+				//g.drawRect(wx,-(wy+wh),ww,wh);
+				drawCabinetShape(wo,x0,wallHeight);
 				
-				trace(i+" wallObject:"+wo.object);
+				//trace(i+" wallObject:"+wo.object);
 				if(wo.object is ProductObject)
 				{
 					var po:ProductObject = wo.object;
 					var style:String = po.productInfo.style;
-					trace(style);
+					//trace(style);
 					var ty:Number = 300;
 					
 					switch(style)
@@ -90,13 +95,23 @@ package rightaway3d.house.view2d
 			{
 				wo = wos[i];
 				var oy:int = 0;
-				trace(i+" wallObject:"+wo.object);
+				
+				ww = Base2D.sizeToScreen(wo.width);
+				wh = Base2D.sizeToScreen(wo.height);
+				wx = Base2D.sizeToScreen(wo.x-x0)-ww;
+				wy = Base2D.sizeToScreen(wo.y-oy);
+				//trace(i,wx,wy,ww,wh);
+				
+				//g.drawRect(wx,-(wy+wh),ww,wh);
+				drawCabinetShape(wo,x0,wallHeight);
+				//trace(i+" wallObject:"+wo.object);
+				
 				if(wo.object is ProductObject)
 				{
 					po = wo.object;
 					oy = po.productInfo.alignOffset.y;
 					style = po.productInfo.style;
-					trace(style);
+					//trace(style);
 					
 					switch(style)
 					{
@@ -108,14 +123,6 @@ package rightaway3d.house.view2d
 							break;
 					}
 				}
-				
-				ww = Base2D.sizeToScreen(wo.width);
-				wh = Base2D.sizeToScreen(wo.height);
-				wx = Base2D.sizeToScreen(wo.x-dx)-ww;
-				wy = Base2D.sizeToScreen(wo.y-oy);
-				//trace(i,wx,wy,ww,wh);
-				
-				g.drawRect(wx,-(wy+wh),ww,wh);
 			}
 			
 			//setLevelMark(1100,"left",1300,1100);
@@ -148,6 +155,9 @@ package rightaway3d.house.view2d
 			setWallSocket(tx-320,ty);
 		}
 		
+		private var inLevelMarks:Array = [];
+		private var outLevelMarks:Array = [];
+		
 		private function clearLevelMarks():void
 		{
 			while(inLevelMarks.length>0)
@@ -158,18 +168,6 @@ package rightaway3d.house.view2d
 			}
 		}
 		
-		private function clearWallSockets():void
-		{
-			while(inWallSockets.length>0)
-			{
-				var s:WallSocket2D = inWallSockets.pop();
-				this.removeChild(s);
-				outWallSockets.push(s);
-			}
-		}
-		
-		private var inLevelMarks:Array = [];
-		private var outLevelMarks:Array = [];
 		private function setLevelMark(level:int,direct:String,xPos:int,yPos:int,offSetSize:int=0):void
 		{
 			if(outLevelMarks.length>0)
@@ -189,6 +187,17 @@ package rightaway3d.house.view2d
 		
 		private var inWallSockets:Array = [];
 		private var outWallSockets:Array = [];
+		
+		private function clearWallSockets():void
+		{
+			while(inWallSockets.length>0)
+			{
+				var s:WallSocket2D = inWallSockets.pop();
+				this.removeChild(s);
+				outWallSockets.push(s);
+			}
+		}
+		
 		private function setWallSocket(xPos:int,yPos:int):void
 		{
 			if(outWallSockets.length>0)
@@ -204,6 +213,188 @@ package rightaway3d.house.view2d
 			s.updateView(xPos,yPos);
 			
 			this.addChild(s);
+		}
+		
+		private var inCabinetShapes:Array = [];
+		private var outCabinetShapes:Array = [];
+		
+		private function clearCabinetShapes():void
+		{
+			while(inCabinetShapes.length>0)
+			{
+				var m:Shape = inCabinetShapes.pop();
+				this.removeChild(m);
+				outCabinetShapes.push(m);
+			}
+		}
+		
+		private function drawCabinetShape(wo:WallObject,x0:Number,wallHeight:Number):void
+		{
+			if(outCabinetShapes.length>0)
+			{
+				s = outCabinetShapes.pop();
+			}
+			else
+			{
+				var s:Shape = new Shape();
+			}
+			inCabinetShapes.push(s);
+			
+			this.addChild(s);
+			
+			updateCabinetShape(s,wo,x0,wallHeight);
+		}
+		
+		private function updateCabinetShape(s:Shape,wo:WallObject,x0:Number,wallHeight:Number):void
+		{
+			var lineColor:uint = Wall2D.lineColor;
+			
+			var g:Graphics = s.graphics;
+			g.clear();
+			
+			var ww:Number = Base2D.sizeToScreen(wo.width);
+			var wh:Number = Base2D.sizeToScreen(wo.height);
+			var wx:Number = Base2D.sizeToScreen(wo.x-x0);
+			var wy:Number = Base2D.sizeToScreen(wo.y==0&&wo.height==720?80:wo.y);
+			
+			s.x = wx;
+			s.y = -wy;
+			
+			g.lineStyle(0,lineColor);
+			g.drawRect(-ww,-wh,ww,wh);
+			
+			if(wo.object is ProductObject)
+			{
+				var po:ProductObject = wo.object;
+				if(po.dynamicSubProductObjects)
+				{
+					var len:int = po.dynamicSubProductObjects.length;
+					for(var i:int=0;i<len;i++)
+					{
+						var spo:ProductObject = po.dynamicSubProductObjects[i];
+						var info:ProductInfo = spo.productInfo;
+						if(info.type.indexOf(CabinetType.DOOR)>-1)
+						{
+							var tw:Number = Base2D.sizeToScreen(info.dimensions.x);
+							var th:Number = Base2D.sizeToScreen(info.dimensions.y);
+							var tx:Number = Base2D.sizeToScreen(spo.position.x);
+							var ty:Number = Base2D.sizeToScreen(spo.position.y);
+							var file:String = info.fileURL;
+							//trace("fileURL,dimensions,tw,th,tx,ty:",file,info.dimensions,tw,th,tx,ty);
+							
+							var doorPlank:ProductObject = getSubProductByType(spo,CabinetType.DOOR_PLANK);
+							if(doorPlank)
+							{
+								var p:Point = getProductOffset(doorPlank.productInfo);
+								var x:Number = -tx-p.x;
+								var y:Number = -(ty+th+p.y);
+								//trace("p3:",x,y);
+								
+								//g.lineStyle(0,0xff0000);
+								g.drawRect(x,y,tw,th);
+								
+								if(file.indexOf("left")>-1)//左开门
+								{
+									g.moveTo(x+tw,y);
+									g.lineTo(x,y+th*0.5);
+									g.lineTo(x+tw,y+th);
+								}
+								else if(file.indexOf("right")>-1)
+								{
+									g.moveTo(x,y);
+									g.lineTo(x+tw,y+th*0.5);
+									g.lineTo(x,y+th);
+								}
+							}
+							
+							var handle:ProductObject = getSubProductByType(spo,CabinetType.HANDLE);
+							if(handle)
+							{
+								info = handle.productInfo;
+								p = getProductOffset(info);
+								tw = Base2D.sizeToScreen(info.dimensions.x);
+								th = Base2D.sizeToScreen(info.dimensions.y);
+								tx = Base2D.sizeToScreen(handle.position.x) + tx;
+								ty = Base2D.sizeToScreen(handle.position.y) + ty;
+								//trace("tw,th,tx,ty:",tw,th,tx,ty);
+								x = -tx-p.x;
+								y = -(ty+th+p.y);
+								//trace("p4:",x,y);
+								
+								//g.lineStyle(0,0x00ff00);
+								g.drawRect(x,y,tw,th);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		private function getProductOffset(info:ProductInfo):Point
+		{
+			var p:Point = new Point();
+			var dw:Number = info.dimensions.x;
+			var dh:Number = info.dimensions.y;
+			
+			p.x = dw * 0.5;
+			p.y = dh * 0.5;
+			
+			var aligns:Array = info.aligns;
+			for each(var s:String in aligns)
+			{
+				//trace("align:",s);
+				if(s==ModelAlign.TOP)
+				{
+					p.y = -dh;
+				}
+				else if(s==ModelAlign.BOTTOM)
+				{
+					p.y = 0;
+				}
+				else if(s==ModelAlign.LEFT)
+				{
+					p.x = dw;
+				}
+				else if(s==ModelAlign.RIGHT)
+				{
+					p.x = 0;
+				}
+			}
+			//trace("p0:",p);
+			p.x -= info.alignOffset.x;
+			p.y -= info.alignOffset.y;
+			//trace("p1:",p);
+			
+			p.x = Base2D.sizeToScreen(p.x);
+			p.y = Base2D.sizeToScreen(p.y);
+			//trace("p2:",p);
+			
+			return p;
+		}
+		
+		/*private function getDoorPlankProduct(po:ProductObject):ProductObject
+		{
+			return getSubProductByType(po,CabinetType.DOOR_PLANK);
+		}*/
+		
+		private function getSubProductByType(po:ProductObject,type:String):ProductObject
+		{
+			if(po.productInfo.type.indexOf(type)>-1)return po;
+			
+			if(!po.dynamicSubProductObjects)return null;
+			
+			var len:int = po.dynamicSubProductObjects.length;
+			for(var i:int=0;i<len;i++)
+			{
+				var spo:ProductObject = po.dynamicSubProductObjects[i];
+				var info:ProductInfo = spo.productInfo;
+				if(info.type.indexOf(type)>-1)
+				{
+					return spo;
+				}
+			}
+			
+			return null;
 		}
 	}
 }

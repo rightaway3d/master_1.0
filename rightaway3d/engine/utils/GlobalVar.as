@@ -33,7 +33,14 @@ package rightaway3d.engine.utils
 				//trace("currCabinet:"+currCabinet.selected);
 				//_currCabinet.selected = false;
 				//_currCabinet.updateView();
-				updateSelect(_currProduct.view2d,_currProduct,false);
+				if(_currProduct.objectInfo && !_currProduct.objectInfo.crossWall)//当前产品未吸附到墙面上
+				{
+					updateSelect(_currProduct.view2d,_currProduct,true,errorColor);
+				}
+				else
+				{
+					updateSelect(_currProduct.view2d,_currProduct,false);
+				}
 				_currProduct = null;
 			}
 			
@@ -145,7 +152,13 @@ package rightaway3d.engine.utils
 			}
 		}
 		
-		private function updateSelect(p2d:Product2D,po:ProductObject,value:Boolean):void
+		//public var boundsColor:uint = 0x00ff00;
+		
+		public var defaultColor:uint = 0x00ff00;
+		
+		public var errorColor:uint = 0xff0000;
+		
+		private function updateSelect(p2d:Product2D,po:ProductObject,value:Boolean,boundsColor:uint=0x00ff00):void
 		{
 			if(p2d && p2d.selected!=value)
 			{
@@ -157,7 +170,7 @@ package rightaway3d.engine.utils
 			
 			if(po)
 			{
-				ProductUtils.showBounds(po,value);
+				ProductUtils.showBounds(po,value,boundsColor);
 			}
 		}
 		

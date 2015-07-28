@@ -279,8 +279,9 @@ package rightaway3d.house.view2d
 			var gos:Array = vo.frontCrossWall.groundObjects;
 			var len:int = gos.length;
 			if(len==0 || isAllWallHole(gos))return 0;//地面物体的数量为0，或都是墙洞，不做标注
-			
+			//trace("gos1:",gos);
 			gos = WallUtils.sortWallObject(start,end,gos);
+			//trace("gos2:",gos);
 			drawMark(gos,legLineStart,legLineLen,headLineLen,false,false);
 			
 			return 500;
@@ -292,7 +293,9 @@ package rightaway3d.house.view2d
 			var len:int = gos.length;
 			if(len==0 || isAllWallHole(gos))return 0;//地面物体的数量为0，或都是墙洞，不做标注
 			
+			//trace("wos1:",gos);
 			gos = WallUtils.sortWallObject(start,end,gos);
+			//trace("wos2:",gos);
 			drawMark(gos,legLineStart,legLineLen,headLineLen,false,false);
 			
 			return 500;

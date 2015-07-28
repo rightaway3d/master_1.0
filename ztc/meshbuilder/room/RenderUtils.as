@@ -23,7 +23,7 @@ package ztc.meshbuilder.room
 		public static function loadTexture(str:String, completeFunc:Function):void {
 			var loader:Loader = new Loader();
 			//var url:String = decodeURI(str);
-			trace("load texture:"+str);
+			//trace("load texture:"+str);
 			var url:String = encodeURI(str);
 			loader.load(new URLRequest(url));
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(event:Event):void {
