@@ -51,6 +51,11 @@ package rightaway3d.engine.product
 		 * 与房间同高的立柱
 		 */
 		static public const ROOM_SQUARE_PILLAR:String = "_RoomSquarePillar_";
+		
+		/**
+		 * 增项产品容器
+		 */
+		static public const ROOT_INCREASE_PRODUCT:String = "_RootIncreaseProduct_";
 
 		
 	}

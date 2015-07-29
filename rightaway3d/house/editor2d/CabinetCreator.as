@@ -630,7 +630,7 @@ package rightaway3d.house.editor2d
 			s += getProductsData(CabinetType.HANDLE,subtotal);
 			s += getLetPlankData(subtotal);
 			s += getProductsData(CabinetType.LEG_PLANK_CONNECTION,subtotal);
-			//s += getProductsData(CabinetType.LEG,subtotal);
+			s += getIncreaseProductData(subtotal);
 			s = s.slice(0,-1);
 			return s;
 		}
@@ -808,7 +808,6 @@ package rightaway3d.house.editor2d
 			var s:String = "";
 			var infos:Array = productManager.getProductsByType(type);
 			var len:int = infos.length;
-			//trace("getProductsData type1:"+type+" num:"+len);
 			
 			for(var i:int=0;i<len;i++)
 			{
@@ -839,6 +838,38 @@ package rightaway3d.house.editor2d
 					//s += toOrderJson1(info.name,info.specifications,info.price,plen,total,info.memo) + ",";
 					//trace("部件名称："+info.name+" 规格："+info.specifications+" 单价："+info.price+" 数量："+plen+" 金额："+info.price*plen+" 备注："+info.memo);
 				}
+			}
+			return s;
+		}
+		
+		private function getIncreaseProductData(subtotal:Object):String
+		{
+			var type:String = CabinetType.INCREASE_PRODUCT;
+			var s:String = "";
+			var pos:Array = productManager.getProductObjectsByType(type);
+			var plen:int = pos.length;
+			
+			for(var i:int=0;i<plen;i++)
+			{
+				var po:ProductObject = pos[i];
+				var info:ProductInfo = po.productInfo;
+				
+				var num:Number = Number(po.memo);
+				var total:Number = po.price*num;
+				var c:int = Math.ceil(total*100);
+				total = c*0.01;//保留两位小数
+				
+				if(subtotal[type])
+				{
+					subtotal[type] += total;
+				}
+				else
+				{
+					subtotal[type] = total;
+				}
+				
+				s += toOrderJson3(info.infoID,po.name,po.type,po.productModel,po.specifications,po.productCode,"","",
+					po.unit,po.price,num,total,info.memo,po.image3dURL) + ",";
 			}
 			return s;
 		}

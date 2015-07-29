@@ -375,7 +375,7 @@ package rightaway3d.engine.product
 			if(subData is ProductObject)
 			{
 				pObj = subData;
-				info = pObj.productInfo;
+				//info = pObj.productInfo;
 			}
 			else
 			{
@@ -674,7 +674,7 @@ package rightaway3d.engine.product
 		/**
 		 * 创建自定义尺寸产品对象
 		 */
-		public function createCustomizeProduct(type:String,pName:String,enName:String,width:int,height:int,depth:int,color:uint,
+		public function createCustomizeProduct(modelType:String,pName:String,enName:String,width:int,height:int,depth:int,color:uint,
 													  isActive:Boolean=true,infoID:int=0,objID:int=0,rotation:Vector3D=null):ProductObject
 		{
 			if(infoID==0)
@@ -689,7 +689,7 @@ package rightaway3d.engine.product
 			if(objID==0)objID = ProductObject.getNextIndex();
 			
 			var aligns:Array = [ModelAlign.BOTTOM,ModelAlign.LEFT,ModelAlign.FRONT];
-			var po:ProductObject = createCustomizeProductObject(type,infoID,objID,pName,enName,width,height,depth,color,aligns,isActive);
+			var po:ProductObject = createCustomizeProductObject(modelType,infoID,objID,pName,enName,width,height,depth,color,aligns,isActive);
 			var mi:ModelInfo = po.productInfo.modelInfo;
 			
 			if(rotation)
@@ -707,7 +707,7 @@ package rightaway3d.engine.product
 		/**
 		 * 创建自定义尺寸产品对象
 		 */
-		private function createCustomizeProductObject(type:String,infoID:int,objID:int,objName:String,enName:String,width:int,height:int,depth:int,color:uint,aligns:Array=null,isActive:Boolean=true):ProductObject
+		private function createCustomizeProductObject(modelType:String,infoID:int,objID:int,objName:String,enName:String,width:int,height:int,depth:int,color:uint,aligns:Array=null,isActive:Boolean=true):ProductObject
 		{
 			var pInfo:ProductInfo = createProductInfo(infoID);
 			if(aligns)pInfo.aligns = aligns;
@@ -723,7 +723,7 @@ package rightaway3d.engine.product
 			//updateScale(pObj);
 			
 			var mInfo:ModelInfo = ModelManager.own.getModelInfoByID(infoID);//创建此产品所关联的模型信息
-			mInfo.modelType = type;
+			mInfo.modelType = modelType;
 			mInfo.bounds = pInfo.dimensions;
 			mInfo.color = color;
 			
@@ -738,7 +738,7 @@ package rightaway3d.engine.product
 			wo.height = height;
 			wo.depth = depth;
 			
-			wo.type = type;
+			wo.type = modelType;
 			
 			wo.object = pObj;
 			
@@ -749,7 +749,7 @@ package rightaway3d.engine.product
 			return pObj;
 		}
 		
-		private function createProductObject(info:ProductInfo,objID:int,name:String,name_en:String="",isActive:Boolean=true,position:Vector3D=null):ProductObject
+		public function createProductObject(info:ProductInfo,objID:int,name:String,name_en:String="",isActive:Boolean=true,position:Vector3D=null):ProductObject
 		{
 			var o:ProductObject = new ProductObject();
 			o.id = objID;
@@ -776,7 +776,7 @@ package rightaway3d.engine.product
 		public function parseProductObject(data:Object,parent:ProductObject=null):ProductObject
 		{
 			var type:String = data.objectInfo?data.objectInfo.type:"";
-			//trace("parseProductObject name:"+data.name+" file:"+data.file);
+			trace("parseProductObject name:"+data.name+" file:"+data.file);
 			
 			if(type==ModelType.BOX_C || type==ModelType.CYLINDER_C)//用户动态创建的物体
 			{
@@ -817,6 +817,20 @@ package rightaway3d.engine.product
 				setObjectInfo(data,pObj);
 			}
 			
+			if(data.image2dURL)pObj.image2dURL = data.image2dURL;
+			if(data.image3dURL)pObj.image3dURL = data.image3dURL;
+			
+			if(data.view3d)pObj.container3d.visible = data.view3d=="true"?true:false;
+			if(data.memo)pObj.memo = data.memo;
+			if(data.type)pObj.type = data.type;
+			if(data.unit)pObj.unit = data.unit;
+			if(data.price)pObj.price = data.price;
+			if(data.productCode)pObj.productCode = data.productCode;
+			if(data.productModel)pObj.productModel = data.productModel;
+			if(data.specifications)pObj.specifications = data.specifications;
+			if(data.customMaterial)pObj.customMaterialName = data.customMaterial;
+			if(data.dynaminReplaceName)pObj.dynaminReplaceName = data.dynaminReplaceName;
+			
 			if(data.subProductObjects)
 			{
 				var subs:Array = data.subProductObjects;
@@ -825,12 +839,6 @@ package rightaway3d.engine.product
 					parseProductObject(sub,pObj);
 				}
 			}
-			
-			if(data.view3d)pObj.container3d.visible = data.view3d=="true"?true:false;
-			if(data.memo)pObj.memo = data.memo;
-			if(data.type)pObj.type = data.type;
-			if(data.customMaterial)pObj.customMaterialName = data.customMaterial;
-			if(data.dynaminReplaceName)pObj.dynaminReplaceName = data.dynaminReplaceName;
 			
 			/*if(data.slaveProducts)
 			{
@@ -872,8 +880,6 @@ package rightaway3d.engine.product
 		
 		private function setObjectInfo(data:Object,po:ProductObject):void
 		{
-			if(data.image2dURL)po.image2dURL = data.image2dURL;
-			
 			if(data.objectInfo!=undefined)
 			{
 				var objData:Object = data.objectInfo;
@@ -918,7 +924,7 @@ package rightaway3d.engine.product
 			return createProductInfo(infoID,fileURL,dataFormat);
 		}
 		
-		private function createProductInfo(infoID:int,fileURL:String="",dataFormat:String=""):ProductInfo
+		public function createProductInfo(infoID:int,fileURL:String="",dataFormat:String=""):ProductInfo
 		{
 			
 			var info:ProductInfo = infoDict[infoID];

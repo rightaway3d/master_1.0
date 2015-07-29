@@ -183,6 +183,7 @@ package rightaway3d.engine.product
 			removeSlaveProduct(po);
 		}
 		
+		//---------------------------------------------------
 		private var _type:String;
 
 		public function get type():String
@@ -195,7 +196,75 @@ package rightaway3d.engine.product
 			_type = value;
 		}
 
+		//---------------------------------------------------
+		private var _specifications:String;
+
+		/**
+		 * 产品规格
+		 */
+		public function get specifications():String
+		{
+			return _specifications?_specifications:productInfo.specifications;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set specifications(value:String):void
+		{
+			_specifications = value;
+		}
+
 		
+		//---------------------------------------------------
+		private var _unit:String;
+		
+		public function get unit():String
+		{
+			return _unit?_unit:productInfo.unit;
+		}
+		
+		public function set unit(value:String):void
+		{
+			_unit = value;
+		}
+		
+		
+		//---------------------------------------------------
+		private var _productCode:String;
+		
+		public function get productCode():String
+		{
+			return _productCode?_productCode:productInfo.productCode;
+		}
+		
+		public function set productCode(value:String):void
+		{
+			_productCode = value;
+		}
+		
+		
+		//---------------------------------------------------
+		private var _price:Number = 0;
+
+		/**
+		 * 产品价格
+		 */
+		public function get price():Number
+		{
+			return _price>0?_price:productInfo.price;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set price(value:Number):void
+		{
+			_price = value;
+		}
+
+		
+		//---------------------------------------------------
 		/**
 		 * 此产品实例的产品信息
 		 */
@@ -335,15 +404,43 @@ package rightaway3d.engine.product
 			return objectInfo?objectInfo.x:0;
 		}
 		
+		private var _image2dURL:String = "";
+
 		/**
 		 * 2D视图的图片地址
 		 */
-		public var image2dURL:String = "";
+		public function get image2dURL():String
+		{
+			return _image2dURL?_image2dURL:productInfo.image2dURL;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set image2dURL(value:String):void
+		{
+			_image2dURL = value;
+		}
+
 		
+		private var _image3dURL:String = "";
+
 		/**
 		 * 3D视图的图片地址
 		 */
-		public var image3dURL:String = "";
+		public function get image3dURL():String
+		{
+			return _image3dURL?_image3dURL:productInfo.image3dURL;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set image3dURL(value:String):void
+		{
+			_image3dURL = value;
+		}
+
 		
 		private var _customMaterialName:String;
 
@@ -419,6 +516,25 @@ package rightaway3d.engine.product
 		 * 在触发特定交互事件时，所要执行的动作列表
 		 */
 		public var actions:Vector.<PropertyAction>;
+		
+		private var _productModel:String;
+
+		/**
+		 *产品型号 
+		 */
+		public function get productModel():String
+		{
+			return _productModel?_productModel:productInfo.productModel;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set productModel(value:String):void
+		{
+			_productModel = value;
+		}
+
 		
 		public function ProductObject()
 		{
@@ -539,10 +655,17 @@ package rightaway3d.engine.product
 			s += "\"view2d\":\"" + (view2d?"true":"false") + "\",";
 			
 			if(_type)s += "\"type\":\"" + _type + "\",";
+			if(_specifications)s += "\"specifications\":\"" + _specifications + "\",";
+			if(_productCode)s += "\"productCode\":\"" + _productCode + "\",";
+			if(_unit)s += "\"unit\":\"" + _unit + "\",";
+			if(_price>0)s += "\"price\":\"" + _price + "\",";
 			
 			if(memo)s += "\"memo\":\"" + memo + "\",";
 			
-			if(image2dURL)s += "\"image2dURL\":\"" + image2dURL + "\",";
+			if(_productModel)s += "\"productModel\":\"" + _productModel + "\",";
+			
+			if(_image2dURL)s += "\"image2dURL\":\"" + _image2dURL + "\",";
+			if(_image3dURL)s += "\"image3dURL\":\"" + _image3dURL + "\",";
 			
 			if(dynaminReplaceName)s += "\"dynaminReplaceName\":\"" + dynaminReplaceName + "\",";
 			

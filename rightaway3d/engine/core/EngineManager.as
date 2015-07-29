@@ -57,6 +57,8 @@ package rightaway3d.engine.core
 
 	public class EngineManager
 	{
+		static public var instance:EngineManager;
+		
 		public var engine3d:Engine3D;
 		
 		private var modelLoader:ModelLoader;
@@ -89,6 +91,15 @@ package rightaway3d.engine.core
 			gevent.addEventListener("cabinet_table_mouse_down",unSelectCurrProduct);
 			
 			engine3d.view.stage.addEventListener(MouseEvent.RIGHT_CLICK,onStageRightClick);
+			
+			if(!instance)
+			{
+				instance = this;
+			}
+			else
+			{
+				throw new Error("======EngineManager实例化错误");
+			}
 		}
 		
 		private function onAllModelParsed(e:Event):void

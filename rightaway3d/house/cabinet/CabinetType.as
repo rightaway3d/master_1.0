@@ -106,5 +106,9 @@ package rightaway3d.house.cabinet
 		 * 水盆柜
 		 */
 		static public const DRAINER_CABINET:String = "cabinet_drainer";
+		/**
+		 * 增项产品
+		 */
+		static public const INCREASE_PRODUCT:String = "increase_product";
 	}
 }
