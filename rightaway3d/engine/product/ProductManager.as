@@ -926,7 +926,6 @@ package rightaway3d.engine.product
 		
 		public function createProductInfo(infoID:int,fileURL:String="",dataFormat:String=""):ProductInfo
 		{
-			
 			var info:ProductInfo = infoDict[infoID];
 			//trace("createProductInfo:",infoID,infoDict[infoID]);
 			if(!info)
@@ -939,6 +938,11 @@ package rightaway3d.engine.product
 				infoDict[infoID] = info;
 				
 				if(fileURL)ProductInfoLoader.own.addInfo(info);
+				
+				if(infoID<0)
+				{
+					CustomizeProduct2D.setNextIndex(infoID);//重置产品id号，避免新创建的产品id重复
+				}
 			}
 			//trace("createProductInfo2:",infoID,infoDict[infoID]);
 			

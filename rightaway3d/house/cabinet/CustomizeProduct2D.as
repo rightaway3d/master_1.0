@@ -8,7 +8,7 @@ package rightaway3d.house.cabinet
 		static private var index:int = -1;
 		static public function getNextIndex():int
 		{
-			return index--;//自定义产品的infoID为负值
+			return --index;//自定义产品的infoID为负值
 		}
 		static public function setNextIndex(value:int):void
 		{
