@@ -103,7 +103,7 @@ package rightaway3d.engine.core
 			//setColorSkyBox(0x808080,0x808080,0x808080);
 			rm = new RendingManager(view,"assets/resources/material.xml");
 			
-			startRender();
+			//startRender();
 		}
 		
 		public function get lightPicker():StaticLightPicker
