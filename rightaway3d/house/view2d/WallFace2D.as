@@ -13,6 +13,8 @@ package rightaway3d.house.view2d
 
 	public class WallFace2D extends Base2D
 	{
+		static public const lineColor:uint = 0x0;
+		
 		public function WallFace2D()
 		{
 		}
@@ -20,12 +22,10 @@ package rightaway3d.house.view2d
 		public function updateView(cw:CrossWall):void
 		{
 			//trace("WallFace2D updateView");
-			
 			clearCabinetShapes();
 			clearLevelMarks();
 			clearWallSockets();
 			
-			var lineColor:uint = Wall2D.lineColor;
 			var g:Graphics = this.graphics;
 			g.clear();
 			g.lineStyle(0,lineColor);
@@ -37,7 +37,8 @@ package rightaway3d.house.view2d
 			var x0:Number = cw.localHead.x;
 			//trace(w,h,dx);
 			
-			g.beginFill(0);
+			var bgColor:uint = 0xffffff;
+			g.beginFill(bgColor);
 			g.drawRect(0,-h,w,h);
 			g.endFill();
 			
@@ -247,7 +248,7 @@ package rightaway3d.house.view2d
 		
 		private function updateCabinetShape(s:Shape,wo:WallObject,x0:Number,wallHeight:Number):void
 		{
-			var lineColor:uint = Wall2D.lineColor;
+			//var lineColor:uint =0xffffff;
 			
 			var g:Graphics = s.graphics;
 			g.clear();

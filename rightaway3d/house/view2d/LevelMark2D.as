@@ -18,6 +18,8 @@ package rightaway3d.house.view2d
 		{
 			level_txt = new MyTextField();
 			level_txt.textSize = 8;
+			level_txt.textColor = WallFace2D.lineColor;
+			
 			this.addChild(level_txt);
 		}
 		
@@ -43,7 +45,7 @@ package rightaway3d.house.view2d
 			var th:Number = level_txt.height;
 			level_txt.y = -th-mh+2;
 
-			var lineColor:uint = Wall2D.lineColor;
+			var lineColor:uint = WallFace2D.lineColor;
 			var g:Graphics = this.graphics;
 			g.clear();
 			g.lineStyle(0,lineColor);
@@ -83,7 +85,7 @@ package rightaway3d.house.view2d
 			tmp = level_txt.height;
 			level_txt.width = level_txt.textWidth + 5;
 			level_txt.height = level_txt.textHeight + 2;
-			level_txt.textColor = Wall2D.lineColor;
+			level_txt.textColor = WallFace2D.lineColor;
 			level_txt.align = TextFormatAlign.CENTER;
 		}
 	}

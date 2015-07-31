@@ -90,7 +90,7 @@ package rightaway3d.house.editor2d
 			face.y = h+(sh-h)/2;
 		}
 		
-		private function updateBG(color:uint=0x0):void
+		private function updateBG(color:uint=0xffffff):void
 		{
 			var sw:int = stage.stageWidth;
 			var sh:int = stage.stageHeight;

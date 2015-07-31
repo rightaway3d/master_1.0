@@ -24,7 +24,7 @@ package rightaway3d.house.view2d
 			
 			var aw:Number = w*0.5;
 			
-			var lineColor:uint = Wall2D.lineColor;
+			var lineColor:uint = WallFace2D.lineColor;
 			var g:Graphics = this.graphics;
 			g.clear();
 			g.lineStyle(0.1,lineColor);
