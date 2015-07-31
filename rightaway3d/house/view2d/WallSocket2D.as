@@ -22,13 +22,13 @@ package rightaway3d.house.view2d
 			var w:Number = Base2D.sizeToScreen(width);
 			var h:Number = Base2D.sizeToScreen(height);
 			
-			var aw:Number = w*0.5;
+			var aw:Number = -w*0.5;
 			
 			var lineColor:uint = WallFace2D.lineColor;
 			var g:Graphics = this.graphics;
 			g.clear();
 			g.lineStyle(0.1,lineColor);
-			g.drawRect(-aw,-h,w,h);
+			g.drawRect(aw,-h,w,h);
 			
 			g.lineStyle(1,lineColor);
 			g.moveTo(0,-Base2D.sizeToScreen(80));

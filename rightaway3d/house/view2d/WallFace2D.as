@@ -48,13 +48,15 @@ package rightaway3d.house.view2d
 			for(var i:int=0;i<len;i++)
 			{
 				var wo:WallObject = gos[i];
-				var ww:Number = Base2D.sizeToScreen(wo.width);
-				var wh:Number = Base2D.sizeToScreen(wo.height);
-				var wx:Number = Base2D.sizeToScreen(wo.x-wo.width-x0);
-				var wy:Number = Base2D.sizeToScreen(wo.y==0&&wo.height==720?80:wo.y);
+				//var ww:Number = Base2D.sizeToScreen(wo.width);
+				//var wh:Number = Base2D.sizeToScreen(wo.height);
+				//var wx:Number = Base2D.sizeToScreen(wo.x-wo.width-x0);
+				//var wy:Number = Base2D.sizeToScreen(wo.y==0&&wo.height==720?80:wo.y);
 				//trace(i,wx,wy,ww,wh);18911273446
 				//g.drawRect(wx,-(wy+wh),ww,wh);
 				drawCabinetShape(wo,x0,wallHeight);
+				
+				var wox:Number = wo.x - x0;
 				
 				//trace(i+" wallObject:"+wo.object);
 				if(wo.object is ProductObject)
@@ -67,23 +69,37 @@ package rightaway3d.house.view2d
 					switch(style)
 					{
 						case CabinetType.DRAINER_CABINET:
-							var tx:Number = wo.x-wo.width*0.5;
-							setWallSocket(tx-110,ty);
-							setWallSocket(tx+10,ty);
-							setLevelMark(ty,"right",tx+200,ty);
+							var tx:Number = wox-wo.width*0.5;
+							setWallSocket(tx-55,ty);
+							setWallSocket(tx+55,ty);
+							//setLevelMark(ty,"right",tx+250,ty);
+							if(tx>cw.validLength*0.5)
+							{
+								setLevelMark(ty,"right",cw.validLength+80,ty);
+							}
+							else
+							{
+								setLevelMark(ty,"left",-80,ty);
+							}
 							break;
 						case CabinetType.ELECTRIC_GROUND:
 							if(i<len-1)
 							{
-								tx = wo.x + 100;
-								setLevelMark(ty,"right",tx+200,ty);
+								tx = wox + 30;
+								setWallSocket(tx+50,ty);
+								setWallSocket(tx+160,ty);
+								
+								//setLevelMark(ty,"right",tx+350,ty);
+								setLevelMark(ty,"right",cw.validLength+80,ty);
 							}
 							else
 							{
-								tx = wo.x - wo.width - 400;
-								setLevelMark(ty,"left",tx-100,ty);
+								tx = wox - wo.width - 30;
+								setWallSocket(tx-50,ty);
+								setWallSocket(tx-160,ty);
+								//setLevelMark(ty,"left",tx-350,ty);
+								setLevelMark(ty,"left",-80,ty);
 							}
-							setWallSocket(tx,ty);
 							break;
 					}
 				}
@@ -97,10 +113,12 @@ package rightaway3d.house.view2d
 				wo = wos[i];
 				var oy:int = 0;
 				
-				ww = Base2D.sizeToScreen(wo.width);
-				wh = Base2D.sizeToScreen(wo.height);
-				wx = Base2D.sizeToScreen(wo.x-x0)-ww;
-				wy = Base2D.sizeToScreen(wo.y-oy);
+				wox = wo.x - x0;
+				
+				//ww = Base2D.sizeToScreen(wo.width);
+				//wh = Base2D.sizeToScreen(wo.height);
+				//wx = Base2D.sizeToScreen(wo.x-x0)-ww;
+				//wy = Base2D.sizeToScreen(wo.y-oy);
 				//trace(i,wx,wy,ww,wh);
 				
 				//g.drawRect(wx,-(wy+wh),ww,wh);
@@ -117,10 +135,11 @@ package rightaway3d.house.view2d
 					switch(style)
 					{
 						case CabinetType.HOOD:
-							tx = wo.x-wo.width*0.5-50;
+							tx = wox-wo.width*0.5;
 							ty = wo.y+wo.height-oy+100;
-							setWallSocket(tx,ty);
-							setLevelMark(ty,"right",tx+200,ty);
+							setWallSocket(tx-55,ty);
+							setWallSocket(tx+55,ty);
+							setLevelMark(ty,"right",tx+250,ty);
 							break;
 					}
 				}
@@ -142,14 +161,16 @@ package rightaway3d.house.view2d
 			setWallSocket(tx,ty);
 			setWallSocket(tx+110,ty);
 			setWallSocket(tx+220,ty);
-			setLevelMark(ty,"left",tx-200,ty);
+			//setLevelMark(ty,"left",tx-200,ty);
+			setLevelMark(ty,"left",-80,ty);
 		}
 		
 		public function drawEndSocket(cw:CrossWall):void
 		{
 			var tx:Number = cw.localEnd.x - 400;
 			var ty:Number = 1100;
-			setLevelMark(ty,"right",tx+100,ty);
+			//setLevelMark(ty,"right",tx+100,ty);
+			setLevelMark(ty,"right",cw.validLength+80,ty);
 			
 			setWallSocket(tx-100,ty);
 			setWallSocket(tx-210,ty);
