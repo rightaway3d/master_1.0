@@ -354,6 +354,7 @@ package rightaway3d.house.view2d
 			bmd.draw(txt,null,null,null,null,true);
 			
 			var bmp:Bitmap = new Bitmap(bmd,"auto",true);
+			bmp.smoothing = true;
 			
 			//trace(bmp.width+"x"+bmp.height);
 			bmp.scaleX = bmp.scaleY = 0.1;

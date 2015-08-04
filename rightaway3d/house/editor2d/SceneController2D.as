@@ -474,6 +474,7 @@ package rightaway3d.house.editor2d
 			var room2d:Room2D = _createRoom(room);
 			
 			var wall:Wall2D = wallCtr.createWall(floor,x,y,w,0);
+			wall.vo.name = "A";
 			//wall.vo.findCrossWall();
 			scene.addWall(wall);
 			
@@ -487,6 +488,7 @@ package rightaway3d.house.editor2d
 			//trace("wall angles:"+(wall.vo.angles));
 			
 			wall = wallCtr.createWall(floor,x+w,y,0,h);
+			wall.vo.name = "B";
 			wall.vo.findCrossWall();
 			wall.vo.countCrossWall();
 			scene.addWall(wall);
@@ -500,6 +502,7 @@ package rightaway3d.house.editor2d
 			//trace("wall angles:"+(wall.vo.angles));
 			
 			wall = wallCtr.createWall(floor,x+w,y+h,-w,0);
+			wall.vo.name = "C";
 			wall.vo.findCrossWall();
 			wall.vo.countCrossWall();
 			scene.addWall(wall);
@@ -513,6 +516,7 @@ package rightaway3d.house.editor2d
 			//trace("wall angles:"+(wall.vo.angles));
 			
 			wall = wallCtr.createWall(floor,x,y+h,0,-h);
+			wall.vo.name = "D";
 			wall.vo.findCrossWall();
 			wall.vo.countCrossWall();
 			scene.addWall(wall);

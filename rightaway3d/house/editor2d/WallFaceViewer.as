@@ -36,15 +36,25 @@ package rightaway3d.house.editor2d
 				if(index<len)
 				{
 					var cw:CrossWall = _cws[index];
+					var x0:Number = cw.localHead.x;
+					var x1:Number = cw.localEnd.x;
+					var a:Array = [0];
 					
 					show(cw,wallFace);
-					wallFace.drawHeadSocket(cw);
+					var n:Number = wallFace.drawHeadSocket(cw);
+					a.push(n);
 					
 					index++;
 					if(index==len)
 					{
-						wallFace.drawEndSocket(cw);
+						n = wallFace.drawEndSocket(cw);
+						a.push(n);
 					}
+					
+					trace("wallMarkPoint:",a);
+					wallFace.updateSizeMark(a,wallFace.wallMark,x1-x0);
+					wallFace.wallMark.y = -60;
+					
 					return true;
 				}
 				
@@ -87,7 +97,7 @@ package rightaway3d.house.editor2d
 			h = face.height;
 			
 			face.x = (sw-w)/2;
-			face.y = h+(sh-h)/2;
+			face.y = h+(sh-h)/2 - sh*0.16;
 		}
 		
 		private function updateBG(color:uint=0xffffff):void
