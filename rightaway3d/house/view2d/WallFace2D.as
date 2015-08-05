@@ -95,7 +95,7 @@ package rightaway3d.house.view2d
 							gs.push(tx);
 							
 							setWallSocket(tx-55,ty);
-							setWallSocket(tx+55,ty);
+							setWallSocket(tx-165,ty);
 							//setLevelMark(ty,"right",tx+250,ty);
 							/*if(tx>cw.validLength*0.5)
 							{
@@ -106,6 +106,13 @@ package rightaway3d.house.view2d
 								setLevelMark(ty,"left",-80,ty);
 							}*/
 							setLevelMark(ty,"right",cw.validLength+80,ty);
+							drawWaterPipe(g,tx+60,-500);
+							drawWaterPipe(g,tx+210,-500);
+							g.drawRect(Base2D.sizeToScreen(tx+135-30),
+								Base2D.sizeToScreen(-280),
+								Base2D.sizeToScreen(60),
+								Base2D.sizeToScreen(200));
+							
 							break;
 						case CabinetType.ELECTRIC_GROUND:
 							if(i<len-1)
@@ -170,8 +177,8 @@ package rightaway3d.house.view2d
 			updateSizeMark(gs,groundMark,x1);
 			groundMark.y = -42;
 			
-			updateSizeMark(ws,wallMark,x1);
-			wallMark.y = -125;//-56;
+			updateSizeMark(ws,hoodMark,x1);
+			hoodMark.y = -125;//-56;
 		}
 		
 		public function updateSizeMark(points:Array,mark:BaseMarking,x1:Number):void
@@ -186,6 +193,26 @@ package rightaway3d.house.view2d
 			{
 				mark.visible = false;
 			}
+		}
+		
+		private function drawWaterPipe(g:Graphics,x:Number,y:Number):void
+		{
+			var r:int = 50;//半径
+			var x0:Number = Base2D.sizeToScreen(x-r);
+			var x1:Number = Base2D.sizeToScreen(x+r);
+			var y0:Number = Base2D.sizeToScreen(y-r);
+			var y1:Number = Base2D.sizeToScreen(y+r);
+			
+			x = Base2D.sizeToScreen(x);
+			y = Base2D.sizeToScreen(y);
+			
+			g.moveTo(x0,y);
+			g.lineTo(x1,y);
+			
+			g.moveTo(x,y0);
+			g.lineTo(x,y1);
+			
+			g.drawCircle(x,y,Base2D.sizeToScreen(r-25));
 		}
 		
 		public function drawHeadSocket(cw:CrossWall):Number

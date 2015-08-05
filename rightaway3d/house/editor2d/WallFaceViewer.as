@@ -51,7 +51,6 @@ package rightaway3d.house.editor2d
 						a.push(n);
 					}
 					
-					trace("wallMarkPoint:",a);
 					wallFace.updateSizeMark(a,wallFace.wallMark,x1-x0);
 					wallFace.wallMark.y = -60;
 					

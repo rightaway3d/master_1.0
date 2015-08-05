@@ -64,6 +64,9 @@ package rightaway3d.house.view2d
 				g.lineTo(ax,-mh);
 				g.lineTo(0,0);
 				g.lineTo(-ax,-mh);
+				
+				g.moveTo(ax,0);
+				g.lineTo(-ax,0);
 			}
 			else
 			{
@@ -75,6 +78,9 @@ package rightaway3d.house.view2d
 				g.lineTo(-ax,-mh);
 				g.lineTo(0,0);
 				g.lineTo(ax,-mh);
+				
+				g.moveTo(-ax,0);
+				g.lineTo(ax,0);
 			}
 			//g.endFill();
 		}
