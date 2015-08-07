@@ -215,9 +215,9 @@ package rightaway3d.house.view2d
 			g.drawCircle(x,y,Base2D.sizeToScreen(r-25));
 		}
 		
-		public function drawHeadSocket(cw:CrossWall):Number
+		public function drawHeadSocket(cw:CrossWall,dx:int):Number
 		{
-			var tx:Number = 400;
+			var tx:Number = dx + 400;
 			var ty:Number = 1100;
 			setWallSocket(tx,ty);
 			setWallSocket(tx+110,ty);
@@ -229,9 +229,9 @@ package rightaway3d.house.view2d
 			return tx;
 		}
 		
-		public function drawEndSocket(cw:CrossWall):Number
+		public function drawEndSocket(cw:CrossWall,dx:int):Number
 		{
-			var tx:Number = cw.localEnd.x - cw.localHead.x - 400;
+			var tx:Number = cw.localEnd.x - cw.localHead.x - dx - 400;
 			var ty:Number = 1100;
 			//setLevelMark(ty,"right",tx+100,ty);
 			setLevelMark(ty,"right",cw.validLength+80,ty);

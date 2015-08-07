@@ -3,8 +3,10 @@ package rightaway3d.house.editor2d
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	
+	import rightaway3d.house.view2d.Base2D;
 	import rightaway3d.house.view2d.WallFace2D;
 	import rightaway3d.house.vo.CrossWall;
+	import rightaway3d.house.vo.WallObject;
 
 	public class WallFaceViewer extends Sprite
 	{
@@ -35,24 +37,30 @@ package rightaway3d.house.editor2d
 			{
 				if(index<len)
 				{
-					var cw:CrossWall = _cws[index];
-					var x0:Number = cw.localHead.x;
-					var x1:Number = cw.localEnd.x;
-					var a:Array = [0];
-					
+					var cw:CrossWall = _cws[index++];
 					show(cw,wallFace);
-					var n:Number = wallFace.drawHeadSocket(cw);
-					a.push(n);
 					
-					index++;
-					if(index==len)
+					var gos:Array = cw.groundObjects;
+					if(!isAllHeightCabinet(gos))
 					{
-						n = wallFace.drawEndSocket(cw);
+						var x0:Number = cw.localHead.x;
+						var x1:Number = cw.localEnd.x;
+						var dx0:int = getHeadStartPos(gos);
+						var dx1:int = getEndStartPos(gos);
+						
+						var a:Array = [0];
+						var n:Number = wallFace.drawHeadSocket(cw,dx0);//放置墙面首端插座
 						a.push(n);
+						
+						if(x1-dx1-dx0-x0>2000)//墙面空白长度大于2米时，尾端也要放置插座
+						{
+							n = wallFace.drawEndSocket(cw,dx1);
+							a.push(n);
+						}
+						
+						wallFace.updateSizeMark(a,wallFace.wallMark,x1-x0);
+						wallFace.wallMark.y = -60;
 					}
-					
-					wallFace.updateSizeMark(a,wallFace.wallMark,x1-x0);
-					wallFace.wallMark.y = -60;
 					
 					return true;
 				}
@@ -63,11 +71,61 @@ package rightaway3d.house.editor2d
 			return false;
 		}
 		
+		//地柜中是否都是高柜
+		private function isAllHeightCabinet(gos:Array):Boolean
+		{
+			for each(var wo:WallObject in gos)
+			{
+				if(wo.height<CrossWall.GROUND_OBJECT_HEIGHT)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		//地柜头端错开高柜的起始位置
+		private function getHeadStartPos(gos:Array):int
+		{
+			var len:int = gos.length;
+			var pos:int = 0;
+			for(var i:int=0;i<len;i++)
+			{
+				var wo:WallObject = gos[i];
+				if(wo.height>CrossWall.GROUND_OBJECT_HEIGHT)
+				{
+					pos += wo.width;
+				}
+			}
+			return pos;
+		}
+		
+		//地柜尾端错开高柜的起始位置
+		private function getEndStartPos(gos:Array):int
+		{
+			var len:int = gos.length;
+			var pos:int = 0;
+			for(var i:int=len-1;i>=0;i--)
+			{
+				var wo:WallObject = gos[i];
+				if(wo.height>CrossWall.GROUND_OBJECT_HEIGHT)
+				{
+					pos += wo.width;
+				}
+			}
+			return pos;
+		}
+		
 		private function show(cw:CrossWall,face:WallFace2D):void
 		{
 			updateBG();
 			face.updateView(cw);
 			
+			/*flash.utils.setTimeout(updateFace,1,face);
+		}
+		
+		private function updateFace(face:WallFace2D):void
+		{			*/
 			var n:Number = 0.9;
 			var s:Number = 1;
 			
@@ -76,10 +134,10 @@ package rightaway3d.house.editor2d
 			
 			var sw:int = stage.stageWidth;
 			var sh:int = stage.stageHeight;
-			var w:Number = face.width;
+			var w:Number = Base2D.sizeToScreen(cw.validLength+500);//face.width;
 			var h:Number = face.height;
 			
-			//trace(sw,sh,w,h);
+			//trace("face.width,w:",face.width,w);
 			
 			if(sw/sh > w/h)//内容比较窄
 			{
@@ -92,7 +150,8 @@ package rightaway3d.house.editor2d
 			
 			face.scaleX = s;
 			face.scaleY = s;
-			w = face.width;
+			//w = face.width;
+			w *= s;
 			h = face.height;
 			
 			face.x = (sw-w)/2;
