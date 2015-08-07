@@ -96,6 +96,10 @@ package rightaway3d.house.editor2d
 				{
 					pos += wo.width;
 				}
+				else
+				{
+					return pos;//遇到非高柜，立即返回之前的位置值
+				}
 			}
 			return pos;
 		}
@@ -111,6 +115,10 @@ package rightaway3d.house.editor2d
 				if(wo.height>CrossWall.GROUND_OBJECT_HEIGHT)
 				{
 					pos += wo.width;
+				}
+				else
+				{
+					return pos;//遇到非高柜，立即返回之前的位置值
 				}
 			}
 			return pos;

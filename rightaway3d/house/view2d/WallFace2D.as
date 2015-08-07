@@ -99,11 +99,11 @@ package rightaway3d.house.view2d
 							//setLevelMark(ty,"right",tx+250,ty);
 							/*if(tx>cw.validLength*0.5)
 							{
-								setLevelMark(ty,"right",cw.validLength+80,ty);
+							setLevelMark(ty,"right",cw.validLength+80,ty);
 							}
 							else
 							{
-								setLevelMark(ty,"left",-80,ty);
+							setLevelMark(ty,"left",-80,ty);
 							}*/
 							setLevelMark(ty,"right",cw.validLength+80,ty);
 							drawWaterPipe(g,tx+60,-500);
@@ -112,6 +112,16 @@ package rightaway3d.house.view2d
 								Base2D.sizeToScreen(-280),
 								Base2D.sizeToScreen(60),
 								Base2D.sizeToScreen(200));
+							
+							break;
+						case CabinetType.ELECTRIC_HEIGHT:
+						case CabinetType.ELECTRIC_MIDDLE://电器高柜中高柜下方增加插座
+							tx = wox-wo.width*0.5;
+							gs.push(tx);
+							
+							setWallSocket(tx-55,ty);
+							setWallSocket(tx+55,ty);
+							setLevelMark(ty,"right",cw.validLength+80,ty);
 							
 							break;
 						case CabinetType.ELECTRIC_GROUND:
