@@ -22,9 +22,22 @@ package rightaway3d.house.view2d
 		{
 		}
 		
-		public function updateView(width:int,height:int,scale:Number):void
+		private var _width:int = 0;
+		private var _height:int = 0;
+		private var _scale:Number = 0;
+		
+		public function drawView(width:int,height:int,scale:Number):void
 		{
-			draw(this.graphics,width,height,scale);
+			_width = width;
+			_height = height;
+			_scale = scale;
+			
+			_draw(this.graphics,width,height,scale);
+		}
+		
+		public function updateView():void
+		{
+			_draw(this.graphics,_width,_height,_scale);
 		}
 		
 		//=========================================================================================================================
@@ -35,7 +48,7 @@ package rightaway3d.house.view2d
 		public var gridSize:int;
 		
 		//=========================================================================================================================
-		private function draw(gra:Graphics,width:int,height:int,scale:Number):void
+		private function _draw(gra:Graphics,width:int,height:int,scale:Number):void
 		{
 			var fillColor:uint = backgroundColor;
 			var border:int = 50;

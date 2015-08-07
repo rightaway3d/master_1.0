@@ -527,6 +527,12 @@ package rightaway3d.house.editor2d
 			}
 		}
 		
+		public function setFlagVisible(value:Boolean):void
+		{
+			if(_drainerFlag)_drainerFlag.visible = value;
+			if(_flueFlag)_flueFlag.visible = value;
+		}
+		
 		//private var cabinetDict:Dictionary = new Dictionary();
 		
 		public function createCabinet(infoID:int,fileURL:String,width:int,height:int,depth:int,dataFormat:String="text",cw:CrossWall=null,xPos:int=-1,yPos:uint=0,name:String="",isDrag:Boolean=true):Product2D

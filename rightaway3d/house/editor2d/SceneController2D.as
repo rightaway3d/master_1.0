@@ -80,7 +80,7 @@ package rightaway3d.house.editor2d
 		
 		public function updateBackGridView():void
 		{
-			scene.backGrid.updateView(Scene2D.sceneWidth,Scene2D.sceneHeight,scene.scaleX);
+			scene.backGrid.drawView(Scene2D.sceneWidth,Scene2D.sceneHeight,scene.scaleX);
 		}
 		
 		//=========================================================================================================================
@@ -254,7 +254,7 @@ package rightaway3d.house.editor2d
 		
 		private function onScaleComplete():void
 		{
-			scene.backGrid.updateView(Scene2D.sceneWidth,Scene2D.sceneHeight,scene.scaleX);
+			scene.backGrid.drawView(Scene2D.sceneWidth,Scene2D.sceneHeight,scene.scaleX);
 			ruler.updateView(scene.scaleX);
 			//SizeMarking2D.sceneScale = scene.scaleX;
 			//SizeMarking2D.updateAllMarks();
