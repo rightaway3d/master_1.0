@@ -19,7 +19,7 @@ package rightaway3d.house.view2d
 	{
 		static public var selectBorder:uint = 0x00ff00;
 		
-		public var border:uint = 0xCCCCCC;
+		public var border:uint = 0x999999;
 		public var fill:uint = 0xEEEEEE;
 		
 		public var vo:ProductObject;

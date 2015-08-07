@@ -20,6 +20,8 @@ package rightaway3d.house.view2d
 		static public var selectColor:uint = 0x008080;
 		static public var overColor:uint = 0x808000;
 		
+		public var fillColor:uint = normalColor;
+		
 		private var _vo:Wall;
 
 		public function get vo():Wall
@@ -40,8 +42,6 @@ package rightaway3d.house.view2d
 		}
 		
 		public var background:Sprite;
-		
-		public var fillColor:uint = normalColor;
 		
 		/**
 		 * 用于存储临时数据

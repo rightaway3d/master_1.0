@@ -513,6 +513,20 @@ package rightaway3d.house.editor2d
 			scene.house.currFloor.updateWallMark();
 		}
 		
+		public function setCabinet2dColor(border:uint):void
+		{
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
+			for each(var pi:ProductInfo in a)//遍历厨柜信息
+			{
+				var pos:Array = pi.getProductObjects();
+				for each(var po:ProductObject in pos)//遍历厨柜实例
+				{
+					po.view2d.border = border;
+					po.view2d.updateView();
+				}
+			}
+		}
+		
 		//private var cabinetDict:Dictionary = new Dictionary();
 		
 		public function createCabinet(infoID:int,fileURL:String,width:int,height:int,depth:int,dataFormat:String="text",cw:CrossWall=null,xPos:int=-1,yPos:uint=0,name:String="",isDrag:Boolean=true):Product2D
