@@ -13,6 +13,23 @@ package rightaway3d.house.view2d
 			init();
 		}
 		
+		private var name_txt:MyTextField;
+		
+		public function setMapName(s:String):void
+		{
+			if(!name_txt)
+			{
+				name_txt = addText(s);
+				name_txt.textSize = 20;
+				name_txt.x = 50;
+				name_txt.y = -name_txt.height*0.5;
+			}
+			else
+			{
+				name_txt.text = s;
+			}
+		}
+		
 		private function init():void
 		{
 			var r:int = 20;

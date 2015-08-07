@@ -601,12 +601,11 @@ package rightaway3d.house.editor2d
 					}
 				}
 			}
-			/*for(var po:ProductObject in cabinetDict)
+			
+			/*po = productManager.getProductByName(ProductObjectName.HOOD);
+			if(po && po.view2d)
 			{
-				if(po.position.y<100)
-				{
-					po.view2d.visible = value;
-				}
+				po.view2d.visible = value;
 			}*/
 		}
 		
@@ -624,13 +623,12 @@ package rightaway3d.house.editor2d
 					}
 				}
 			}
-			/*for(var po:ProductObject in cabinetDict)
+			
+			po = productManager.getProductByName(ProductObjectName.HOOD);
+			if(po && po.view2d)
 			{
-				if(po.position.y>1000)
-				{
-					po.view2d.visible = value;
-				}
-			}*/
+				po.view2d.visible = value;
+			}
 		}
 		
 		/**
