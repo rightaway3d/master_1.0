@@ -379,6 +379,15 @@ package rightaway3d.house.editor2d
 			}
 		}
 		
+		public function updateAllWindoor(borderColor:uint):void
+		{
+			for each(var wind:WinDoor2D in windoorDict)
+			{
+				wind.lineColor = borderColor;
+				wind.updateView();
+			}
+		}
+		
 		//==============================================================================================
 		private function _createWindoor(type:int,width:int,height:int,sillHeight:int,thickness:int):WinDoor2D
 		{

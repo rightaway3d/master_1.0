@@ -13,10 +13,12 @@ package rightaway3d.engine.core
 	import away3d.containers.View3D;
 	import away3d.core.pick.PickingType;
 	import away3d.entities.Mesh;
+	import away3d.errors.AbstractMethodError;
 	import away3d.lights.DirectionalLight;
 	import away3d.materials.ColorMaterial;
 	import away3d.materials.SkyBoxMaterial;
 	import away3d.materials.lightpickers.StaticLightPicker;
+	import away3d.materials.methods.FilteredShadowMapMethod;
 	import away3d.primitives.RegularPolygonGeometry;
 	import away3d.primitives.SkyBox;
 	import away3d.textures.ATFCubeTexture;
@@ -34,6 +36,7 @@ package rightaway3d.engine.core
 
 	public class Engine3D
 	{
+		static public var instance:Engine3D;
 		
 		private var container:DisplayObjectContainer;
 		
@@ -62,10 +65,26 @@ package rightaway3d.engine.core
 		
 		private var rm:RendingManager;
 		
+		private var shadowMapMethod:FilteredShadowMapMethod;
+		
+		public function get shadowMethod():FilteredShadowMapMethod
+		{
+			return shadowMapMethod ||= new FilteredShadowMapMethod(sunLight);
+		}
+		
 		public function Engine3D(container:DisplayObjectContainer)
 		{
 			this.container = container;
 			initStage3D();
+			
+			if(!instance)
+			{
+				instance = this;
+			}
+			else
+			{
+				throw new Error("Engine3D instance has exist!");
+			}
 		}
 		
 		private function initStage3D():void

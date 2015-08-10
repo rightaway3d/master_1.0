@@ -16,6 +16,7 @@ package rightaway3d.house.view3d
 	import away3d.materials.TextureMaterial;
 	import away3d.textures.BitmapTexture;
 	
+	import rightaway3d.engine.core.Engine3D;
 	import rightaway3d.engine.object.Text3D;
 	import rightaway3d.engine.utils.BMP;
 	import rightaway3d.engine.utils.GlobalEvent;
@@ -200,6 +201,8 @@ package rightaway3d.house.view3d
 		private function setFrontWallMaterial(materialName:String):void
 		{
 			RenderUtils.setMaterial(frontFace,materialName);//当前是墙体的正面和背面都设置为同一种材质了
+			//TextureMaterial(frontFace.material).shadowMethod = Engine3D.instance.shadowMethod;
+			
 			//RenderUtils.setMaterial(holeFace,materialName);//当前是墙体的正面和背面都设置为同一种材质了
 			TextureMaterial(holeFace.material).alpha = 1;
 			//TextureMaterial(backFace.material).alpha = 0.01;
