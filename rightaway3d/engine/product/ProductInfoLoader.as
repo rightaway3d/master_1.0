@@ -1,6 +1,7 @@
 package rightaway3d.engine.product
 {
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.URLLoader;
@@ -9,9 +10,12 @@ package rightaway3d.engine.product
 	
 	import rightaway3d.Urls;
 	import rightaway3d.engine.model.ModelInfoLoader;
+	
+	[Event(name="all_complete", type="flash.events.Event")]
 
-	public class ProductInfoLoader
+	public class ProductInfoLoader extends EventDispatcher
 	{
+		public static const ALL_COMPLETE:String = "all_complete";
 		/**
 		 * 是否加载中的指示标志
 		 */
@@ -46,6 +50,7 @@ package rightaway3d.engine.product
 			
 			var xml:XML = new XML(urlLoader.data);
 			ProductManager.own.parseProductInfo(xml);
+			
 			loadNext();
 			loadModelInfo();
 		}
@@ -81,6 +86,12 @@ package rightaway3d.engine.product
 			{
 				isLoading = false;
 				hasNotLoaded = false;
+				
+				trace("------------All ProductInfo Loaded!");
+				if(this.hasEventListener(ALL_COMPLETE))
+				{
+					this.dispatchEvent(new Event(ALL_COMPLETE));
+				}
 				
 				loadModelInfo();
 			}
