@@ -761,6 +761,9 @@ package rightaway3d.engine.product
 			o.rotation = new Vector3D();
 			o.scale = new Vector3D(1,1,1);
 			
+			o.objectInfo = new WallObject();
+			o.objectInfo.object = o;
+			
 			info.addProductObject(o);
 			
 			return o;
@@ -1075,7 +1078,7 @@ package rightaway3d.engine.product
 		 * @return Array:[ProductInfo...]
 		 * 
 		 */
-		public function getProductsByType(type:String):Array
+		public function getProductsByType2(type:String):Array
 		{
 			var a:Array = [];
 			for each(var info:ProductInfo in infoDict)
@@ -1112,6 +1115,29 @@ package rightaway3d.engine.product
 		public function deleteProductObjectsByType(type:String):void
 		{
 			var a:Array = getProductObjectsByType(type);
+			for each(var po:ProductObject in a)
+			{
+				po.dispose();
+			}
+		}
+		
+		public function getProductObjectsByEnName(enName:String):Array
+		{
+			var a:Array = [];
+			for each(var po:ProductObject in objectDict)
+			{
+				if(po.name_en==enName)
+				{
+					a.push(po);
+				}
+			}
+			
+			return a;
+		}
+		
+		public function deleteProductObjectsByEnName(enName:String):void
+		{
+			var a:Array = getProductObjectsByEnName(enName);
 			for each(var po:ProductObject in a)
 			{
 				po.dispose();

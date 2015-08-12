@@ -23,11 +23,15 @@ package rightaway3d.house.cabinet
 		 */
 		static public const BODY_PLANK:String = "cabinet_body_plank";
 		/**
+		 * 拐角柜封板
+		 */
+		static public const CORNER_PLANK:String = "corner_cabinet_plank";
+		/**
 		 * 柜门板件
 		 */
 		static public const DOOR_PLANK:String = "cabinet_door_plank";
 		/**
-		 * 动态创建的尺寸不固定的封板
+		 * 动态创建的封板
 		 */
 		static public const BAFFLE:String = "cabinet_baffle";
 		/**

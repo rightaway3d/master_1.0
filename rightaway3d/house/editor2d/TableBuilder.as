@@ -64,12 +64,16 @@ package rightaway3d.house.editor2d
 			return null;
 		}
 		
+		
+		//更新墙面集，用于显示及导出墙面立面图
 		private function updateCrossWallFace():void
 		{
 			var ccws:Vector.<CrossWall> = this.cabinetCreator.cabinetCrossWalls;
 			ccws.length = 0;
 			
 			var allArea:Array = sortCrossWall(allCabinetDict);
+			if(!allArea)return;
+			
 			var alen:int = allArea.length;
 			for(var i:int=0;i<alen;i++)
 			{
@@ -233,7 +237,7 @@ package rightaway3d.house.editor2d
 				//addGroundCabinetPlate(cw0,w0.width*0.5,w0.x,d-dz,"拐角地柜右侧封板");
 				if(cw0.localEnd.x - (w0.x-ww+maxWidth)>w1.z+w1.depth)
 				{
-					this.addGroundCabinetPlate(cw0,ww,w0.x,d-dz,"拐角地柜右侧封板");
+					this.addGroundCabinetPlate(cw0,ww-3,w0.x-1.5,d-dz,"拐角地柜右侧封板",717);
 				}
 				else
 				{
@@ -256,7 +260,7 @@ package rightaway3d.house.editor2d
 				//addGroundCabinetPlate(cw1,w,w1.x-w,d-dz,"拐角地柜左侧封板");
 				if(w1.x-ww-maxWidth-cw1.localHead.x>w0.z+w0.depth)
 				{
-					this.addGroundCabinetPlate(cw1,ww,w1.x-ww,d-dz,"拐角地柜左侧封板");
+					this.addGroundCabinetPlate(cw1,ww-3,w1.x-ww-1.5,d-dz,"拐角地柜左侧封板",717);
 				}
 				else
 				{
@@ -708,7 +712,7 @@ package rightaway3d.house.editor2d
 								//在拐角柜的右侧创建封板
 								if(cw0.localEnd.x - (w0.x-w0.width*0.5+maxWidth)>w1.z+w1.depth)
 								{
-									this.addWallCabinetPlate(cw0,400,w0.x,331,"拐角吊柜右侧封板");
+									this.addWallCabinetPlate(cw0,400-3,w0.x-1.5,331,"拐角吊柜右侧封板",717);
 								}
 								else
 								{
@@ -718,7 +722,7 @@ package rightaway3d.house.editor2d
 							}
 							else
 							{
-								this.addWallCabinetPlate(cw0,400,w0.x,331,"拐角吊柜右侧封板");
+								this.addWallCabinetPlate(cw0,400-3,w0.x-1.5,331,"拐角吊柜右侧封板",717);
 							}
 						}
 						else if(p1.name==ProductObjectName.CORNER_CABINET)
@@ -732,7 +736,7 @@ package rightaway3d.house.editor2d
 								
 								if(w1.x-w1.width*0.5-maxWidth-cw1.localHead.x>w0.z+w0.depth)
 								{
-									this.addWallCabinetPlate(cw1,400,w1.x-400,331,"拐角吊柜左侧封板");
+									this.addWallCabinetPlate(cw1,400-3,w1.x-400-1.5,331,"拐角吊柜左侧封板",717);
 								}
 								else
 								{
@@ -742,7 +746,7 @@ package rightaway3d.house.editor2d
 							}
 							else
 							{
-								this.addWallCabinetPlate(cw1,400,w1.x-400,331,"拐角吊柜左侧封板");
+								this.addWallCabinetPlate(cw1,400-3,w1.x-400-1.5,331,"拐角吊柜左侧封板",717);
 							}
 						}
 					}
@@ -750,70 +754,126 @@ package rightaway3d.house.editor2d
 			}
 		}
 		
-		private function addGroundCabinetPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
+		private function addGroundCabinetPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String,height:int=720):ProductObject
 		{
-			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,CabinetType.DOOR_PLANK,name);
+			var dy:Number = (720-height)*0.5;
+			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,height,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT+dy,zPos,CabinetType.DOOR_PLANK,name);
 			cabinetCreator.addGroundCabinet(po);
-			//productManager.updateProductModel(po);
+			addPlateProduct(po,width,height);
 			return po;
 		}
 		
 		private function addGroundCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
-			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
-			//cabinetCreator.addGroundCabinet(po);
-			//productManager.updateProductModel(po);
+			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,name);
+			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
+			//addPlateProduct(po,width);
 			return po;
 		}
 		
-		private function addWallCabinetPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
+		private function addWallCabinetPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String,height:int=720):ProductObject
 		{
-			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,CabinetType.DOOR_PLANK,name);
+			var dy:Number = (720-height)*0.5;
+			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,height,16,xPos,CrossWall.WALL_OBJECT_HEIGHT+dy,zPos,CabinetType.DOOR_PLANK,name);
 			cabinetCreator.addWallCabinet(po);
-			//productManager.updateProductModel(po);
+			addPlateProduct(po,width,height);
 			return po;
 		}
 		
 		private function addWallCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
-			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
-			//cabinetCreator.addWallCabinet(po);
-			//productManager.updateProductModel(po);
+			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,name);
+			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
 			return po;
 		}
 		
 		private function addCabinetLegPlate(cw:CrossWall,width:int,depth:int,xPos:Number,zPos:Number):ProductObject
 		{
 			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,80,depth,xPos,0,zPos,CabinetType.LEG_BAFFLE,"柜腿封板");
-			//productManager.updateProductModel(po);
 			addLegPlateConnection(po);
 			return po;
 		}
 		
 		private function addWallCabinetBottomPlate(cw:CrossWall,width:int,xPos:Number):ProductObject
 		{
-			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,10,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.BODY_PLANK,"吊柜拐角底缝挡板");
-			//productManager.updateProductModel(po);
+			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,10,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"吊柜拐角底缝挡板");
+			po.name_en = CabinetType.CORNER_PLANK;
+			po.specifications = width+"*330*18";
 			return po;
+		}
+		
+		private function addCornerPlate(cw:CrossWall,width:int,xpos:Number,ypos:Number,zpos:Number,name:String):ProductObject
+		{
+			if(width==300)
+			{
+				var id:int = 251;
+				var file:String = "plank_box_251_300x720x16.pdt";
+			}
+			else
+			{
+				id = 252;
+				file = "plank_box_252_350x720x16.pdt";
+			}
+			
+			var oid:int = ProductObject.getNextIndex();
+			var po:ProductObject = productManager.addProductObject(oid,name,id,file);
+			
+			po.customMaterialName = this.cabinetCreator.cabinetBodyDefaultMaterial;
+			po.name_en = CabinetType.CORNER_PLANK;
+			
+			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
+			
+			cabinetCtrl.setProductPos(po,cw,xpos,ypos,zpos);
+			
+			return po;
+		}
+		
+		private var subData:XML =
+			<item>
+				<infoID></infoID>
+				<objectID>0</objectID>
+				<name></name>
+				<name_en/>
+				<file></file>
+				<dataFormat>text</dataFormat>
+				<position>0,0,0</position>
+				<rotation>0,0,0</rotation>
+				<scale>1,1,1</scale>
+				<active>false</active>
+			</item>;
+		
+		private function addPlateProduct(parent:ProductObject,width:int,height:int=720,depth:int=18):void
+		{
+			if(depth==18)
+			{
+				if(width<=100)
+				{
+					if(width<=50)
+					{
+						subData.infoID = "275";
+						subData.file = "plank_box_275_50x720x16.pdt";
+					}
+					else 
+					{
+						subData.infoID = "274";
+						subData.file = "plank_box_274_100x720x16.pdt";
+					}
+					var po:ProductObject = productManager.addDynamicSubProduct(parent,subData);
+					po.customMaterialName = parent.customMaterialName;
+				}
+				else
+				{
+					parent.specifications = width + "*" + height + "*" + depth;//产品规格
+					parent.productCode = "---";//物料编码
+					parent.unit = "平米";//单位
+					parent.type = parent.name_en = CabinetType.CORNER_PLANK;
+				}
+			}
 		}
 		
 		//添加踢脚线及连接件产品
 		private function addLegPlateConnection(po:ProductObject):void
 		{
-			var subData:XML =
-				<item>
-					<infoID></infoID>
-					<objectID>0</objectID>
-					<name></name>
-					<name_en/>
-					<file></file>
-					<dataFormat>text</dataFormat>
-					<position>0,0,0</position>
-					<rotation>0,0,0</rotation>
-					<scale>1,1,1</scale>
-					<active>false</active>
-				</item>;
-
 			var w:int = po.objectInfo.width;
 			var d:int = po.objectInfo.depth;
 			var length:Number;
@@ -959,8 +1019,12 @@ package rightaway3d.house.editor2d
 		private function countCabinetWithWall():String
 		{
 			var cabs:Array = productManager.getProductObjectsByType(CabinetType.BODY);
-			//var len:int = cabs.length;
+			var len:int = cabs.length;
 			//trace("getCabinetProduct:"+len);
+			if(len==0)
+			{
+				return "场景中没有厨柜！";
+			}
 			
 			for each(var po:ProductObject in cabs)
 			{

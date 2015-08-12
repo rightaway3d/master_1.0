@@ -106,7 +106,18 @@ package rightaway3d.engine.product
 		public var id:int;
 		public var objectID:String;
 		
-		public var name:String;
+		private var _name:String = "";
+
+		public function get name():String
+		{
+			return _name?_name:productInfo.name;
+		}
+
+		public function set name(value:String):void
+		{
+			_name = value;
+		}
+
 		public var name_en:String;
 		//public var type2:String;
 		
