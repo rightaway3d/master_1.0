@@ -484,11 +484,13 @@ package rightaway3d.house.editor2d
 		public function getCabinetList():String
 		{
 			var subtotal:Object = {};
+			var cps:String = getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal);
+			
 			var s:String = "{";
 			s += "\"gttm\":{";
 			s += "\"list\":["+getProductsData(CabinetType.BODY,subtotal);
 			s += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal) + ",";
-			s += getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal) + ",";
+			if(cps)s += cps + ",";
 			s += getTableData(subtotal)+"],";
 			s += "\"body\":"+getNum(subtotal,CabinetType.BODY)+",";
 			s += "\"door\":"+getNum(subtotal,CabinetType.DOOR_PLANK)+",";
@@ -3703,6 +3705,7 @@ package rightaway3d.house.editor2d
 			return vo;
 		}
 		
+		//type:hood,drainer,flue
 		public function setCookerProduct(cw:CrossWall,flagProduct:ProductObject,po:ProductObject,isHood:Boolean=false):void
 		{
 			var flagObject:WallObject = flagProduct.objectInfo;
@@ -3715,9 +3718,16 @@ package rightaway3d.house.editor2d
 			}
 			
 			var x:Number = flagObject.x-flagObject.width*0.5;//定位放置产品的中心x位置
-			var x2:Number = isHood?x+wo.width*0.5:x;
+			//var x2:Number = isHood?x+wo.width*0.5:x;
+			var x2:Number = x+wo.width*0.5;
 			
-			var n:int = cw.wall.width*0.5+(isHood?0:300);//定位放置产品的中心y位置
+			//var n:int = cw.wall.width*0.5+(isHood?0:300);//定位放置产品的中心y位置
+			var n:int = isHood?0:(600-wo.depth)*0.5;//定位放置产品的y位置
+			
+			wo.x = x2;//x + wo.width*0.5;
+			wo.z = n;
+			
+			n += cw.wall.width*0.5;//从墙体的轴心开始计算
 			var y:Number = cw.isHead?-n:n;
 			
 			var p:Point = new Point(x2,y);
@@ -3727,12 +3737,10 @@ package rightaway3d.house.editor2d
 			po.position.y = isHood?CrossWall.WALL_OBJECT_HEIGHT:CrossWall.GROUND_OBJECT_HEIGHT+40;//840:柜台高度加上台面厚度;
 			po.position.z = p.y;
 			
+			wo.y = po.position.y;
+			
 			var a:Number = 360 - cw.wall.angles;
 			po.rotation.y = po.container3d.rotationY = cw.isHead ? a+180 : a;
-			
-			wo.x = x + wo.width*0.5;
-			wo.y = po.position.y;
-			wo.z = n;
 			//wo.x = x;
 			
 			if(wo.crossWall)
