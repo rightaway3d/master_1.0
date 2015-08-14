@@ -720,9 +720,15 @@ package rightaway3d.house.editor2d
 			var price:Number = matLib.getMaterialPrice(name);
 			
 			var d:Vector3D = info.dimensions;
-			//trace(info.name+":"+d+" num:"+plen);
+			trace(info.name+":"+d+" num:"+plen);
 			
-			var n:Number = d.x * d.y * plen;
+			var n:Number;
+			if(d.x == 18)n = d.y * d.z;
+			else if(d.y == 18)n = d.x * d.z;
+			else
+				n = d.x * d.y;
+			
+			n *= plen;
 			var t:int = Math.ceil(n / 1000);
 			
 			n = t/1000; //单位转换为平米,精确到小数点后3位数
@@ -787,7 +793,7 @@ package rightaway3d.house.editor2d
 		private function getProductsData(type:String,subtotal:Object):String
 		{
 			var s:String = "";
-			var infos:Array = productManager.getProductsByType2(type);
+			var infos:Array = productManager.getProductsByType(type);
 			var len:int = infos.length;
 			//trace("getProductsData type1:"+type+" num:"+len);
 			
@@ -902,6 +908,8 @@ package rightaway3d.house.editor2d
 		private function getOrderProductNum(info:ProductInfo):int
 		{
 			var n:int = 0;
+			if(info.type==CabinetType.BODY && info.subProductInstances.length==1)return n;//只有一个子产品的厨柜为装饰板，不加入产品清单
+			
 			var pos:Array = info.getProductObjects();
 			//trace("getOrderProductNum:"+pos.length);
 			for each(var po:ProductObject in pos)
@@ -1060,7 +1068,7 @@ package rightaway3d.house.editor2d
 		 */
 		public function clearAllSingleDoor():void
 		{
-			var a:Array = productManager.getProductsByType2(CabinetType.BODY);
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
 			for each(var pi:ProductInfo in a)//遍历厨柜信息
 			{
 				var pos:Array = pi.getProductObjects();

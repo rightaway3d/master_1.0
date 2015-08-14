@@ -1078,7 +1078,7 @@ package rightaway3d.engine.product
 		 * @return Array:[ProductInfo...]
 		 * 
 		 */
-		public function getProductsByType2(type:String):Array
+		public function getProductsByType(type:String):Array
 		{
 			var a:Array = [];
 			for each(var info:ProductInfo in infoDict)

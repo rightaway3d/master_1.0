@@ -796,7 +796,7 @@ package rightaway3d.house.editor2d
 		
 		private function addWallCabinetBottomPlate(cw:CrossWall,width:int,xPos:Number):ProductObject
 		{
-			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,10,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"吊柜拐角底缝挡板");
+			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,18,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"吊柜拐角底缝挡板");
 			po.name_en = CabinetType.CORNER_PLANK;
 			po.specifications = width+"*330*18";
 			return po;

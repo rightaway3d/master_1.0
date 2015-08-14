@@ -458,7 +458,7 @@ package rightaway3d.house.editor2d
 		 */
 		public function lockCabinetObject(value:Boolean):void
 		{
-			var a:Array = productManager.getProductsByType2(CabinetType.BODY);
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
 			for each(var pi:ProductInfo in a)//遍历厨柜信息
 			{
 				var pos:Array = pi.getProductObjects();
@@ -487,7 +487,7 @@ package rightaway3d.house.editor2d
 				vo.dispose();
 			}*/
 			
-			var a:Array = productManager.getProductsByType2(CabinetType.BODY);
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
 			for each(var pi:ProductInfo in a)//遍历厨柜信息
 			{
 				var pos:Array = pi.getProductObjects();
@@ -515,7 +515,7 @@ package rightaway3d.house.editor2d
 		
 		public function setCabinet2dColor(border:uint):void
 		{
-			var a:Array = productManager.getProductsByType2(CabinetType.BODY);
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
 			for each(var pi:ProductInfo in a)//遍历厨柜信息
 			{
 				var pos:Array = pi.getProductObjects();
@@ -589,7 +589,7 @@ package rightaway3d.house.editor2d
 		
 		public function setGroundCabinetView2D(value:Boolean):void
 		{
-			var a:Array = productManager.getProductsByType2(CabinetType.BODY);
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
 			for each(var pi:ProductInfo in a)//遍历厨柜信息
 			{
 				var pos:Array = pi.getProductObjects();
@@ -611,7 +611,7 @@ package rightaway3d.house.editor2d
 		
 		public function setWallCabinetView2D(value:Boolean):void
 		{
-			var a:Array = productManager.getProductsByType2(CabinetType.BODY);
+			var a:Array = productManager.getProductsByType(CabinetType.BODY);
 			for each(var pi:ProductInfo in a)//遍历厨柜信息
 			{
 				var pos:Array = pi.getProductObjects();
