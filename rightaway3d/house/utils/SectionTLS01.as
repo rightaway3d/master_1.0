@@ -47,11 +47,11 @@ package rightaway3d.house.utils
 		
 		private function setPoints(a:Array):void
 		{
-			var len:int = a.length*0.5;
+			var len:int = a.length/2;
 			points = new Vector.<Point>(len);
 			for(var i:int=0;i<len;i++)
 			{
-				points[i] = new Point(a[i],a[i+1]);
+				points[i] = new Point(a[i*2+1],a[i*2]);
 			}
 		}
 	}
