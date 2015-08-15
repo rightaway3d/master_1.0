@@ -189,7 +189,7 @@ package rightaway3d.heter.utils
 				vertices.push(v3d.y);
 				vertices.push(v3d.z);
 			}
-			if(twoSided)indices.reverse();
+			if(flipFaces)indices.reverse();
 			var len:uint = indices.length;
 			if(twoSided)
 			{
