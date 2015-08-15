@@ -73,37 +73,45 @@ package rightaway3d.house.editor2d
 		public function set cabinetBodyDefaultMaterial(value:String):void
 		{
 			_cabinetBodyDefaultMaterial = value;
-			ProductInfo.customMaterialDict[CabinetType.BODY_PLANK] = value;
+			ProductInfo.defaultMaterialDict[CabinetType.BODY_PLANK] = value;
 			productManager.setProductMaterial(CabinetType.BODY_PLANK,value);
 		}
 		
 		
-		private var _cabinetDoorDefaultMaterial:String;
+		/*private var _cabinetDoorDefaultMaterial:String;
 		
 		public function get cabinetDoorDefaultMaterial():String
 		{
 			return _cabinetDoorDefaultMaterial;
-		}
+		}*/
 		
 		//设置默认材质时，要重新设置当前已经创建的柜门
-		public function set cabinetDoorDefaultMaterial(value:String):void
+		public function setCabinetDoorDefaultMaterial(value:String):void
 		{
-			_cabinetDoorDefaultMaterial = value;
-			ProductInfo.customMaterialDict[CabinetType.DOOR_PLANK] = value;
+			//_cabinetDoorDefaultMaterial = value;
+			//ProductInfo.customMaterialDict[CabinetType.DOOR_PLANK] = value;
 			//productManager.setProductMaterial(CabinetType.DOOR_PLANK,value);
-			this.setGroundCabinetDoorMaterial(value);
-			this.setWallCabinetDoorMaterial(value);
+			groundCabinetDoorMaterial = value;
+			wallCabinetDoorMaterial = value;
 		}
 		
+		private var groundCabinetDoorMat:String;
+		
 		//设置所有地柜门及封板材质
-		public function setGroundCabinetDoorMaterial(matName:String):void
+		public function set groundCabinetDoorMaterial(matName:String):void
 		{
+			groundCabinetDoorMat = matName;
+			ProductInfo.defaultMaterialDict[CabinetType.DOOR_PLANK+CrossWall.IGNORE_OBJECT_HEIGHT] = matName;
 			setCabinetsDoorMaterial(sceneGroundCabinets,matName);
 		}
 		
+		private var wallCabinetDoorMat:String;
+		
 		//设置所有吊柜门及封板材质
-		public function setWallCabinetDoorMaterial(matName:String):void
+		public function set wallCabinetDoorMaterial(matName:String):void
 		{
+			wallCabinetDoorMat = matName;
+			ProductInfo.defaultMaterialDict[CabinetType.DOOR_PLANK+CrossWall.WALL_OBJECT_HEIGHT] = matName;
 			setCabinetsDoorMaterial(sceneWallCabinets,matName);
 		}
 		
@@ -118,7 +126,8 @@ package rightaway3d.house.editor2d
 		//设置一个厨柜中所有门的材质
 		public function setCabinetDoorsMaterial(po:ProductObject,matName:String):void
 		{
-			if(po.modelObject)
+			trace("--name:"+po.name);
+			/*if(po.modelObject)
 			{
 				setDoorMaterial(po,matName);
 			}
@@ -126,13 +135,18 @@ package rightaway3d.house.editor2d
 			{
 				if(po.subProductObjects)setDoorsMaterial(po.subProductObjects,matName);
 				if(po.dynamicSubProductObjects)setDoorsMaterial(po.dynamicSubProductObjects,matName);
-			}
+			}*/
+			//有模型，或者没有模型也没有子产品
+			if(po.modelObject || (!po.subProductObjects && !po.dynamicSubProductObjects))setDoorMaterial(po,matName);
+			if(po.subProductObjects)setDoorsMaterial(po.subProductObjects,matName);
+			if(po.dynamicSubProductObjects)setDoorsMaterial(po.dynamicSubProductObjects,matName);
 		}
 		
 		private function setDoorsMaterial(pos:Vector.<ProductObject>,matName:String):void
 		{
 			for each(var po:ProductObject in pos)
 			{
+				//trace("------setDoorsMaterial name,name_en,mat:"+po.name,po.name_en,matName);
 				setCabinetDoorsMaterial(po,matName);
 			}
 		}
@@ -140,7 +154,8 @@ package rightaway3d.house.editor2d
 		//设置当前门的材质
 		public function setDoorMaterial(po:ProductObject,matName:String):void
 		{
-			if(po.productInfo.type==CabinetType.DOOR_PLANK)
+			trace("------name,type:",po.name,po.type);
+			if(po.type==CabinetType.DOOR_PLANK)
 			{
 				po.customMaterialName = matName;
 			}
@@ -2072,7 +2087,7 @@ package rightaway3d.house.editor2d
 			po.type = ctype;
 			
 			if(ctype==CabinetType.DOOR_PLANK)
-				po.customMaterialName = _cabinetDoorDefaultMaterial;
+				po.customMaterialName = yPos>CrossWall.GROUND_OBJECT_HEIGHT?wallCabinetDoorMat:groundCabinetDoorMat;//_cabinetDoorDefaultMaterial;
 			else if(ctype==CabinetType.BODY_PLANK || ctype==CabinetType.CORNER_PLANK)
 				po.customMaterialName = _cabinetBodyDefaultMaterial;
 			else

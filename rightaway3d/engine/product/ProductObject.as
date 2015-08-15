@@ -2,6 +2,7 @@ package rightaway3d.engine.product
 {
 	import flash.events.Event;
 	import flash.geom.Vector3D;
+	import flash.utils.setTimeout;
 	
 	import away3d.containers.ObjectContainer3D;
 	import away3d.entities.Mesh;
@@ -337,6 +338,14 @@ package rightaway3d.engine.product
 			ProductManager.own.updateProductModel(subpo);
 			
 			//trace("----addSubProduct objectID:",subpo.objectID);
+			
+			flash.utils.setTimeout(cloneObject,100,subpo);
+		}
+		
+		private function cloneObject(pObj:ProductObject):void
+		{
+			//pObj.productInfo.cloneToProductObject(pObj);
+			ProductInfo.setDefaultMaterial(pObj);
 		}
 		
 		/**

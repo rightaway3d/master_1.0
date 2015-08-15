@@ -766,6 +766,7 @@ package rightaway3d.house.editor2d
 		private function addGroundCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
 			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,name);
+			cabinetCreator.addGroundCabinet(po);
 			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
 			//addPlateProduct(po,width);
 			return po;
@@ -783,6 +784,7 @@ package rightaway3d.house.editor2d
 		private function addWallCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
 			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,name);
+			cabinetCreator.addWallCabinet(po);
 			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
 			return po;
 		}
@@ -842,32 +844,30 @@ package rightaway3d.house.editor2d
 				<active>false</active>
 			</item>;
 		
-		private function addPlateProduct(parent:ProductObject,width:int,height:int=720,depth:int=18):void
+		private function addPlateProduct(parent:ProductObject,width:int,height:int=720):void
 		{
-			if(depth==18)
+			if(width<=100)
 			{
-				if(width<=100)
+				if(width<=50)
 				{
-					if(width<=50)
-					{
-						subData.infoID = "275";
-						subData.file = "plank_box_275_50x720x16.pdt";
-					}
-					else 
-					{
-						subData.infoID = "274";
-						subData.file = "plank_box_274_100x720x16.pdt";
-					}
-					var po:ProductObject = productManager.addDynamicSubProduct(parent,subData);
-					po.customMaterialName = parent.customMaterialName;
+					subData.infoID = "275";
+					subData.file = "plank_box_275_50x720x16.pdt";
 				}
-				else
+				else 
 				{
-					parent.specifications = width + "*" + height + "*" + depth;//产品规格
-					parent.productCode = "---";//物料编码
-					parent.unit = "平米";//单位
-					parent.type = parent.name_en = CabinetType.CORNER_PLANK;
+					subData.infoID = "274";
+					subData.file = "plank_box_274_100x720x16.pdt";
 				}
+				var po:ProductObject = productManager.addDynamicSubProduct(parent,subData);
+				po.customMaterialName = parent.customMaterialName;
+			}
+			else
+			{
+				parent.specifications = width + "*" + height + "*18";//产品规格
+				parent.productCode = "---";//物料编码
+				//parent.unit = "平米";//单位
+				//parent.type = 
+				parent.name_en = CabinetType.CORNER_PLANK;
 			}
 		}
 		

@@ -669,6 +669,7 @@ package rightaway3d.engine.product
 		private function cloneObject(pObj:ProductObject):void
 		{
 			pObj.productInfo.cloneToProductObject(pObj);
+			ProductInfo.setDefaultMaterial(pObj);
 		}
 		
 		/**

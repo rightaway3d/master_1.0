@@ -330,20 +330,40 @@ package rightaway3d.engine.product
 		}
 		
 		/**
-		 * 自定义材质字典，以模型类型为键，以材质名称为值
+		 * 自定义材质字典，以模型类型为键，或以模型类型加模型Y轴位置为键，以材质名称为值
 		 */
-		static public var customMaterialDict:Dictionary = new Dictionary();
+		static public var defaultMaterialDict:Dictionary = new Dictionary();
 		
-		private function setCustomMaterial(po:ProductObject):void
+		static public function setDefaultMaterial(po:ProductObject):void
 		{
 			var type:String = po.productInfo.type;
-			//trace("---------modelType:"+type);
-			if(customMaterialDict[type])
+			if(defaultMaterialDict[type])
 			{
-				var name:String = customMaterialDict[type];
+				var name:String = defaultMaterialDict[type];
 				//trace("matName:"+name);
 				po.customMaterialName = name;
 			}
+			else
+			{
+				type += String(getRootParent(po).objectInfo.y);
+				
+				if(defaultMaterialDict[type])
+				{
+					name = defaultMaterialDict[type];
+					//trace("matName:"+name);
+					po.customMaterialName = name;
+				}
+			}
+			trace("---------modelType:"+type);
+		}
+		
+		static private function getRootParent(po:ProductObject):ProductObject
+		{
+			while(po.parentProductObject)
+			{
+				po = po.parentProductObject;
+			}
+			return po;
 		}
 		
 		/**
@@ -366,7 +386,7 @@ package rightaway3d.engine.product
 					modelObject.cloneFromInfo();
 					
 					//设置产品实例的材质（仅当此产品未设置过材质时）
-					if(!productObjectInstance.customMaterialName)setCustomMaterial(productObjectInstance);
+					if(!productObjectInstance.customMaterialName)setDefaultMaterial(productObjectInstance);
 					
 					if(modelObject.meshs)
 					{
