@@ -105,6 +105,11 @@ package rightaway3d.house.editor2d
 			setCabinetsDoorMaterial(sceneGroundCabinets,matName);
 		}
 		
+		public function get groundCabinetDoorMaterial():String
+		{
+			return groundCabinetDoorMat;
+		}
+		
 		private var wallCabinetDoorMat:String;
 		
 		//设置所有吊柜门及封板材质
@@ -113,6 +118,11 @@ package rightaway3d.house.editor2d
 			wallCabinetDoorMat = matName;
 			ProductInfo.defaultMaterialDict[CabinetType.DOOR_PLANK+CrossWall.WALL_OBJECT_HEIGHT] = matName;
 			setCabinetsDoorMaterial(sceneWallCabinets,matName);
+		}
+		
+		public function get wallCabinetDoorMaterial():String
+		{
+			return wallCabinetDoorMat;
 		}
 		
 		private function setCabinetsDoorMaterial(cabs:Array,matName:String):void
