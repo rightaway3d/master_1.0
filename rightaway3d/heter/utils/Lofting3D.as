@@ -95,7 +95,8 @@ package rightaway3d.heter.utils
 		private function createLoftingScetion(sectionData:SectionData,loftingPath3D:Vector.<Vector3D>):Vector.<SectionData>
 		{
 			var startAngle:Number = SectionUtil.getRotationAngle(new Point(loftingPath3D[0].x,loftingPath3D[0].z),new Point(loftingPath3D[1].x,loftingPath3D[1].z))
-			var startSection:SectionData = SectionUtil.rotationSectionData(sectionData,-startAngle);
+			var _startSection:SectionData = SectionUtil.rotationSectionData(sectionData,-startAngle);
+			var startSection:SectionData = SectionUtil.getSectionDataByTranslation(_startSection,loftingPath3D[0]);
 			var len:uint = loftingPath3D.length;
 			var endAngle:Number = SectionUtil.getRotationAngle(new Point(loftingPath3D[len-2].x,loftingPath3D[len-2].z),new Point(loftingPath3D[len-1].x,loftingPath3D[len-1].z));
 			var _endSection:SectionData = SectionUtil.rotationSectionData(sectionData,-endAngle);
