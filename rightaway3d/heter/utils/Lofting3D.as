@@ -39,6 +39,12 @@ package rightaway3d.heter.utils
 		{
 			
 			var sectionPath3D:Vector.<Vector3D> = SectionUtil.transfromPath2DToPaht3D(sectionPath,"X");
+			if(loftingPath.length<3)
+			{
+				var endPath:Point = loftingPath[1];
+				var _angle:Number = SectionUtil.getRotationAngle360(loftingPath[0],loftingPath[1]);
+				loftingPath.push(SectionUtil.distanceAndAngleToPoint(0.01,-_angle,endPath));
+			}
 			var loftingPath3D:Vector.<Vector3D> = SectionUtil.transfromPath2DToPaht3D(loftingPath,"Y");
 			//创建基础截面
 			var sectionData:SectionData = createScetion(sectionPath3D);
