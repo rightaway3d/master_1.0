@@ -102,7 +102,18 @@ package rightaway3d.house.editor2d
 		{
 			groundCabinetDoorMat = matName;
 			ProductInfo.defaultMaterialDict[CabinetType.DOOR_PLANK+CrossWall.IGNORE_OBJECT_HEIGHT] = matName;
-			setCabinetsDoorMaterial(sceneGroundCabinets,matName);
+			//setCabinetsDoorMaterial(sceneGroundCabinets,matName);
+			
+			var a:Array = this.productManager.getProductObjectsByType(CabinetType.DOOR_PLANK);
+			
+			for each(var po:ProductObject in a)
+			{
+				var rpo:ProductObject = ProductManager.own.getRootParent(po);
+				if(rpo.objectInfo.y<CrossWall.GROUND_OBJECT_HEIGHT)
+				{
+					setCabinetDoorsMaterial(po,matName);
+				}
+			}
 		}
 		
 		public function get groundCabinetDoorMaterial():String
@@ -117,7 +128,18 @@ package rightaway3d.house.editor2d
 		{
 			wallCabinetDoorMat = matName;
 			ProductInfo.defaultMaterialDict[CabinetType.DOOR_PLANK+CrossWall.WALL_OBJECT_HEIGHT] = matName;
-			setCabinetsDoorMaterial(sceneWallCabinets,matName);
+			//setCabinetsDoorMaterial(sceneWallCabinets,matName);
+			
+			var a:Array = this.productManager.getProductObjectsByType(CabinetType.DOOR_PLANK);
+			
+			for each(var po:ProductObject in a)
+			{
+				var rpo:ProductObject = ProductManager.own.getRootParent(po);
+				if(rpo.objectInfo.y>CrossWall.GROUND_OBJECT_HEIGHT)
+				{
+					setCabinetDoorsMaterial(po,matName);
+				}
+			}
 		}
 		
 		public function get wallCabinetDoorMaterial():String
@@ -933,7 +955,7 @@ package rightaway3d.house.editor2d
 		private function getOrderProductNum(info:ProductInfo):int
 		{
 			var n:int = 0;
-			if(info.type==CabinetType.BODY && info.subProductInstances.length==1)return n;//只有一个子产品的厨柜为装饰板，不加入产品清单
+			if(info.type==CabinetType.BODY && info.subProductInstances.length==0)return n;//只有一个子产品的厨柜为装饰板，不加入产品清单
 			
 			var pos:Array = info.getProductObjects();
 			//trace("getOrderProductNum:"+pos.length);

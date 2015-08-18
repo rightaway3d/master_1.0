@@ -890,6 +890,7 @@ package rightaway3d.house.editor2d
 			{
 				length = w*0.001;//长度单位转化为米
 			}
+			length += 0.05;//踢脚板增加50mm的余量
 			
 			do{
 				var n:Number;

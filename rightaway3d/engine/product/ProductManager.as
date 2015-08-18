@@ -1234,6 +1234,15 @@ package rightaway3d.engine.product
 			return s;
 		}
 		
+		public function getRootParent(po:ProductObject):ProductObject
+		{
+			while(po.parentProductObject)
+			{
+				po = po.parentProductObject;
+			}
+			return po;
+		}
+		
 		//==================================================
 		private var loader:ProductInfoLoader = ProductInfoLoader.own;
 		public function loadProduct():void

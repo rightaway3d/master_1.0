@@ -345,7 +345,7 @@ package rightaway3d.engine.product
 			}
 			else
 			{
-				type += String(getRootParent(po).objectInfo.y);
+				type += String(ProductManager.own.getRootParent(po).objectInfo.y);
 				
 				if(defaultMaterialDict[type])
 				{
@@ -355,15 +355,6 @@ package rightaway3d.engine.product
 				}
 			}
 			trace("---------modelType:"+type);
-		}
-		
-		static private function getRootParent(po:ProductObject):ProductObject
-		{
-			while(po.parentProductObject)
-			{
-				po = po.parentProductObject;
-			}
-			return po;
 		}
 		
 		/**
