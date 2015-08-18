@@ -864,7 +864,18 @@ package rightaway3d.house.editor2d
 			else
 			{
 				parent.specifications = width + "*" + height + "*18";//产品规格
-				parent.productCode = "---";//物料编码
+				if(width==397 && height==717)
+				{
+					parent.productCode = "009";
+				}
+				else if(width==447 && height==717)
+				{
+					parent.productCode = "026";
+				}
+				else
+				{
+					parent.productCode = "---";//物料编码
+				}
 				//parent.unit = "平米";//单位
 				//parent.type = 
 				parent.name_en = CabinetType.CORNER_PLANK;

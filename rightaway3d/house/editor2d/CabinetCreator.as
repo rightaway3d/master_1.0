@@ -837,7 +837,7 @@ package rightaway3d.house.editor2d
 		"subtotal":10,
 		"other":"备注"
 */		
-		private function getProductsData(type:String,subtotal:Object):String
+		private function getProductsData3(type:String,subtotal:Object):String
 		{
 			var s:String = "";
 			var infos:Array = productManager.getProductsByType(type);
@@ -871,6 +871,56 @@ package rightaway3d.house.editor2d
 					//trace("部件名称："+info.name+" 规格："+info.specifications+" 单价："+info.price+" 数量："+plen+" 金额："+info.price*plen+" 备注："+info.memo);
 				}
 			}
+			return s;
+		}
+		
+		private function getProductsData(type:String,subtotal:Object):String
+		{
+			var pos:Array = productManager.getProductObjectsByType(type);
+			var len:int = pos.length;
+			
+			var o:Object = {};
+			var s:String = "";
+			
+			for(var i:int=0;i<len;i++)
+			{
+				var po:ProductObject = pos[i];
+				var key:String = po.productInfo.infoID + po.memo;
+				trace(key);
+				if(o[key])
+				{
+					var a:Array = o[key];
+				}
+				else
+				{
+					a = [];
+					o[key] = a;
+				}
+				a.push(po);
+			}
+			
+			for each(a in o)
+			{
+				po = a[0];
+				var plen:int = a.length;
+				var info:ProductInfo = po.productInfo;
+				var total:Number = info.price*plen;
+				var c:int = Math.ceil(total*100);
+				total = c/100;//保留两位小数
+				
+				if(subtotal[type])
+				{
+					subtotal[type] += total;
+				}
+				else
+				{
+					subtotal[type] = total;
+				}
+				
+				s += toOrderJson3(info.infoID,info.name,info.type,info.productModel,info.specifications,info.productCode,"","",
+					info.unit,info.price,plen,total,po.memo,info.image3dURL) + ",";
+			}
+			
 			return s;
 		}
 		
