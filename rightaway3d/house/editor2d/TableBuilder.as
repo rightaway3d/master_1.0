@@ -30,8 +30,14 @@ package rightaway3d.house.editor2d
 		private var wallCabinetDict:Dictionary;
 		private var allCabinetDict:Dictionary;
 		
+		/*private function get maxAlongWidth():uint//台面两端最大出沿宽度
+		{
+			return GlobalConfig.instance.wallPlateWidth;
+		}*/
 		public function builderTable():String
 		{
+			maxAlongWidth = GlobalConfig.instance.wallPlateWidth;
+			
 			groundCabinetDict = new Dictionary();
 			wallCabinetDict = new Dictionary();
 			allCabinetDict = new Dictionary();
@@ -98,11 +104,7 @@ package rightaway3d.house.editor2d
 		}
 		
 		private var alongWidth:int = 20;//台面两端出沿宽度
-		//private var maxAlongWidth:int = 100;
-		private function get maxAlongWidth():uint//台面两端最大出沿宽度
-		{
-			return GlobalConfig.instance.wallPlateWidth;
-		}
+		private var maxAlongWidth:int = 100;
 		
 		//创建台面前检查，同一面墙不出现连续门洞，同一面墙上的柜子之间不能有间隙，有障碍物（烟道、方柱）除外
 		//同一墙同一区域的柜子深度须一致，拐角柜只能出现在拐角处
@@ -326,11 +328,11 @@ package rightaway3d.house.editor2d
 				var w11:WallObject = p11.objectInfo;
 				
 				var isHeadPlate:Boolean = isNeedHeadPlate(cw1,w10);//柜子左侧是否需要封板
-				var td:Number = this.getGroundPlateDepth(w10);
 				var tx0:Number = isHeadPlate ? w10.x - w10.width + 15 : cw1.localHead.x;
 				
 				if(isHeadPlate)
 				{
+					var td:Number = this.getGroundPlateDepth(w10);
 					var legPlate:ProductObject = this.addCabinetLegPlate(cw1,5,td,tx0+5,0);
 				}
 				
@@ -383,7 +385,7 @@ package rightaway3d.house.editor2d
 			if(wo.height > CrossWall.GROUND_OBJECT_HEIGHT && dw > 1)return true;
 			
 			//普通柜子距墙端超过100的，要加侧封板
-			if(dw > 100)return true;
+			if(dw > maxAlongWidth)return true;
 			
 			return false;
 		}
@@ -397,7 +399,7 @@ package rightaway3d.house.editor2d
 			if(wo.height > CrossWall.GROUND_OBJECT_HEIGHT && dw > 1)return true;
 			
 			//普通柜子距墙端超过100的，要加侧封板
-			if(dw > 100)return true;
+			if(dw > maxAlongWidth)return true;
 			
 			return false;
 		}
