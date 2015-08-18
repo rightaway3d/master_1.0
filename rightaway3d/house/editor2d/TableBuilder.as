@@ -98,8 +98,8 @@ package rightaway3d.house.editor2d
 		}
 		
 		private var alongWidth:int = 20;//台面两端出沿宽度
-		//private var maxAlongWidth:int = 100;//台面两端出沿宽度
-		private function get maxAlongWidth():uint
+		//private var maxAlongWidth:int = 100;
+		private function get maxAlongWidth():uint//台面两端最大出沿宽度
 		{
 			return GlobalConfig.instance.wallPlateWidth;
 		}
@@ -968,7 +968,7 @@ package rightaway3d.house.editor2d
 				//trace("3");
 			}
 			
-			var dz:int = 19;//地柜封板缩进距离
+			var dz:int = 19;//地柜封板缩进距离(570-550+1)
 			if(tableData.x0 == cw.localHead.x)
 			{
 				var w:Number = tx0-tableData.x0;
@@ -998,7 +998,7 @@ package rightaway3d.house.editor2d
 				tableData.x1 = tx1;
 			}
 			
-			var dz:int = 19;//地柜封板缩进距离
+			var dz:int = 19;//地柜封板缩进距离(570-550+1)
 			if(tableData.x1 == cw.localEnd.x)
 			{
 				var w:Number = tableData.x1 - tx1;
