@@ -6,6 +6,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.house.cabinet.CabinetType;
+	import rightaway3d.house.utils.GlobalConfig;
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.House;
 	import rightaway3d.house.vo.WallHole;
@@ -96,8 +97,12 @@ package rightaway3d.house.editor2d
 			}			
 		}
 		
-		public var alongWidth:int = 20;//台面两端出沿宽度
-		public var maxAlongWidth:int = 100;//台面两端出沿宽度
+		private var alongWidth:int = 20;//台面两端出沿宽度
+		//private var maxAlongWidth:int = 100;//台面两端出沿宽度
+		private function get maxAlongWidth():uint
+		{
+			return GlobalConfig.instance.wallPlateWidth;
+		}
 		
 		//创建台面前检查，同一面墙不出现连续门洞，同一面墙上的柜子之间不能有间隙，有障碍物（烟道、方柱）除外
 		//同一墙同一区域的柜子深度须一致，拐角柜只能出现在拐角处
