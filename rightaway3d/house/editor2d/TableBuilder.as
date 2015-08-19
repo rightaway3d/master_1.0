@@ -6,6 +6,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.house.cabinet.CabinetType;
+	import rightaway3d.house.lib.CabinetLib;
 	import rightaway3d.house.utils.GlobalConfig;
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.House;
@@ -886,6 +887,21 @@ package rightaway3d.house.editor2d
 				//parent.unit = "平米";//单位
 				//parent.type = 
 				parent.name_en = CabinetType.CORNER_PLANK;
+				
+				if(height==720 && width>=300)//大于300宽的封板加拉手
+				{
+					var dynamicProductData:XML = CabinetLib.lib.getDynamicProductData("handle");
+					if(dynamicProductData)//更新动态子产品数据
+					{
+						var id:String = dynamicProductData.infoID;
+						var file:String = dynamicProductData.file;
+						subData.infoID = id;
+						subData.file = file;
+						var n:Number = width * 0.5;
+						subData.position = n+",657,8";
+						po = productManager.addDynamicSubProduct(parent,subData);
+					}
+				}
 			}
 		}
 		
