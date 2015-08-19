@@ -931,14 +931,19 @@ package rightaway3d.engine.core
 			//trace("productMouseUpEvent2:"+lastTime);
 			if(lastTime>0)//执行单击
 			{
-				doAction(mousedownObject);//只在单击时，执行相关动作
+				__doAction(mousedownObject);//只在单击时，执行相关动作
 				lastTime = 0;
 			}
 		}
 		
-		private function doAction(mObj:ModelObject):void
+		private function __doAction(mObj:ModelObject):void
 		{
 			var pObj:ProductObject = mObj.parentProductObject;
+			doAction(pObj);
+		}
+		
+		public function doAction(pObj:ProductObject):void
+		{
 			while(pObj)
 			{
 				//trace("pObj:"+pObj.id+" isActive:"+pObj.isActive+" actions:"+pObj.actions);
