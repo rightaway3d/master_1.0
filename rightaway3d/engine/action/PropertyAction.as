@@ -62,31 +62,32 @@ package rightaway3d.engine.action
 		
 		public function run():void
 		{
+			trace("run:"+target);
+			trace(target[propertyName],termValue,value);
 			if(target && target.hasOwnProperty(propertyName))
 			{
-				//trace("run:"+target[propertyName],termValue,value);
 				if(MyMath.isEqual(target[propertyName],termValue))
 				{
 					if(delay==0 && duration>0)
 					{
 						tween();
-						//trace("-----tween run!");
+						trace("-----tween run!");
 					}
 					else
 					{
 						timer.delay = delay<1?1:delay;
 						timer.start();
-						//trace("-----timer run!");
+						trace("-----timer run!");
 					}
 				}
 				else
 				{
-					//trace("-----not run!");
+					trace("-----not run!");
 				}
 			}
 			else
 			{
-				//trace("-----run error!");
+				trace("-----run error!");
 			}
 		}
 		

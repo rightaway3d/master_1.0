@@ -2,6 +2,7 @@ package rightaway3d.house.editor2d
 {
 	import flash.utils.Dictionary;
 	
+	import rightaway3d.engine.model.ModelType;
 	import rightaway3d.engine.product.ProductManager;
 	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.engine.product.ProductObjectName;
@@ -214,7 +215,8 @@ package rightaway3d.house.editor2d
 								var dw:Number = dx1 - w0.x;
 								if(dw>10)
 								{
-									this.addGroundCabinetPlate(cw,dw,dx1,w0.z+w0.depth-dz,"地柜间隙封板");
+									var po:ProductObject = this.addGroundCabinetPlate(cw,dw,dx1,w0.z+w0.depth-dz,"地柜间隙封板");
+									addAssistPlate(po,dw);
 								}
 							}
 						}
@@ -257,7 +259,8 @@ package rightaway3d.house.editor2d
 				w = tx - cw1.localHead.x - d;
 				if(w>1)// && w<=100)
 				{
-					addGroundCabinetPlate(cw1,w,tx,w1.z+w1.depth-dz,"地柜拐角侧缝挡板");
+					var po:ProductObject = addGroundCabinetPlate(cw1,w,tx,w1.z+w1.depth-dz,"地柜拐角侧缝挡板");
+					addAssistPlate(po,w);
 				}
 			}
 			else if(cab1.name==ProductObjectName.CORNER_CABINET)//子区域头部是拐角柜
@@ -280,7 +283,8 @@ package rightaway3d.house.editor2d
 				w = tx - w0.x;
 				if(w>1)// && w<=100)
 				{
-					addGroundCabinetPlate(cw0,w,tx,w0.z+w0.depth-dz,"地柜拐角侧缝挡板");
+					po = addGroundCabinetPlate(cw0,w,tx,w0.z+w0.depth-dz,"地柜拐角侧缝挡板");
+					addAssistPlate(po,w);
 				}
 			}
 		}
@@ -715,7 +719,9 @@ package rightaway3d.house.editor2d
 							var tw1:Number = tx11 - cw1.localHead.x - 350;
 							if(tw1>1 && tw1<=100 && cw0.localEnd.x-w0.x < 350)//侧缝宽度不超过100，且拐角柜侧面距墙不超过柜子深度
 							{
-								this.addWallCabinetPlate(cw1,tw1,tx11,331,"吊柜拐角侧缝挡板");
+								var po:ProductObject = this.addWallCabinetPlate(cw1,tw1,tx11,331,"吊柜拐角侧缝挡板");
+								addAssistPlate(po,tw1);
+								
 								this.addWallCabinetBottomPlate(cw1,tw1,tx11);
 								//在拐角柜的右侧创建封板
 								if(cw0.localEnd.x - (w0.x-w0.width*0.5+maxWidth)>w1.z+w1.depth)
@@ -739,7 +745,9 @@ package rightaway3d.house.editor2d
 							if(tw0>1 && tw0<100 && w1.x-w1.width-cw1.localHead.x < 350)//侧缝宽度不超过100，且拐角柜侧面距墙不超过柜子深度
 							{
 								var tx01:Number = w0.x+tw0;
-								this.addWallCabinetPlate(cw0,tw0,tx01,331,"吊柜拐角侧缝挡板");
+								po = this.addWallCabinetPlate(cw0,tw0,tx01,331,"吊柜拐角侧缝挡板");
+								addAssistPlate(po,tw0);
+								
 								this.addWallCabinetBottomPlate(cw0,tw0,tx01);
 								
 								if(w1.x-w1.width*0.5-maxWidth-cw1.localHead.x>w0.z+w0.depth)
@@ -777,6 +785,8 @@ package rightaway3d.house.editor2d
 			cabinetCreator.addGroundCabinet(po);
 			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
 			//addPlateProduct(po,width);
+			setCornerCode(po,width);
+			
 			return po;
 		}
 		
@@ -794,6 +804,8 @@ package rightaway3d.house.editor2d
 			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,name);
 			cabinetCreator.addWallCabinet(po);
 			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
+			setCornerCode(po,width);
+
 			return po;
 		}
 		
@@ -806,10 +818,33 @@ package rightaway3d.house.editor2d
 		
 		private function addWallCabinetBottomPlate(cw:CrossWall,width:int,xPos:Number):ProductObject
 		{
-			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,18,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"吊柜拐角底缝挡板");
+			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,18,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"封板B-330");
 			po.name_en = CabinetType.CORNER_PLANK;
-			po.specifications = width+"*330*18";
+			po.specifications = "330*"+width+"*18";
+			po.memo = "吊柜拐角底缝挡板";
+			if(width==50)
+			{
+				po.productCode = "MCX006004";
+			}
 			return po;
+		}
+		
+		private function setCornerCode(po:ProductObject,width:int):void
+		{
+			po.memo = po.name;
+			
+			if(width==300)
+			{
+				po.name = "装饰板J-300";
+				//po.productCode = "MCX006001";
+				//po.specifications = "720*297*18";
+			}
+			else if(width==350)
+			{
+				po.name = "装饰板J-350";
+				//po.productCode = "MCX006002";
+				//po.specifications = "720*347*18";
+			}
 		}
 		
 		private function addCornerPlate(cw:CrossWall,width:int,xpos:Number,ypos:Number,zpos:Number,name:String):ProductObject
@@ -882,7 +917,7 @@ package rightaway3d.house.editor2d
 				}
 				else
 				{
-					parent.productCode = "---";//物料编码
+					parent.productCode = "000000000";//物料编码
 				}
 				//parent.unit = "平米";//单位
 				//parent.type = 
@@ -903,6 +938,30 @@ package rightaway3d.house.editor2d
 					}
 				}
 			}
+		}
+		
+		private function addAssistPlate(parent:ProductObject,width:int):void
+		{
+			_addAssistPlate(parent);
+			
+			if(width>200)
+			{
+				_addAssistPlate(parent);
+			}
+		}
+		
+		private function _addAssistPlate(parent:ProductObject):void
+		{
+			var po:ProductObject = productManager.createCustomizeProduct(ModelType.BOX_C,"辅助板-50","",50,684,18,0,false);//创建辅助板
+			//productManager.createCustomizeProduct("","","",0,0,0,0,false);//创建辅助板
+			po.type = CabinetType.CORNER_PLANK;
+			po.specifications = "684*50*18";
+			po.memo = "";
+			po.productCode = "MCX006005";
+			parent.addDynamicSubProduct(po);
+			po.container3d.visible = false;
+			
+			//productManager.addDynamicSubProduct(parent,po);
 		}
 		
 		//添加踢脚线及连接件产品
@@ -992,7 +1051,8 @@ package rightaway3d.house.editor2d
 				var w:Number = tx0-tableData.x0;
 				if(w>1)
 				{
-					addGroundCabinetPlate(cw,w,tx0,wo.z+wo.depth-dz,"地柜侧缝挡板");
+					var po:ProductObject = addGroundCabinetPlate(cw,w,tx0,wo.z+wo.depth-dz,"地柜侧缝挡板");
+					addAssistPlate(po,w);
 				}
 			}
 		}
@@ -1023,7 +1083,8 @@ package rightaway3d.house.editor2d
 				//trace("w:"+w);
 				if(w>1)
 				{
-					addGroundCabinetPlate(cw,w,tableData.x1,wo.depth-dz,"地柜侧缝挡板");
+					var po:ProductObject = addGroundCabinetPlate(cw,w,tableData.x1,wo.depth-dz,"地柜侧缝挡板");
+					addAssistPlate(po,w);
 				}
 			}
 		}

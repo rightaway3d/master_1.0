@@ -128,10 +128,25 @@ package rightaway3d.engine.product
 		
 		public var memo:String = "";
 		
+		private var _isActive:Boolean;
+
 		/**
 		 * 此产品模型是否允许交互
 		 */
-		public var isActive:Boolean;
+		public function get isActive():Boolean
+		{
+			return _isActive;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set isActive(value:Boolean):void
+		{
+			_isActive = value;
+			container3d.mouseEnabled = container3d.mouseChildren = value;
+		}
+
 		
 		/**
 		 * 是否锁定此产品，锁定的产品不允许被拖动
@@ -292,11 +307,11 @@ package rightaway3d.engine.product
 		 */
 		public var modelObject:ModelObject;
 		
-		public function createContainer3D():void
+		/*public function createContainer3D():void
 		{
-			container3d = new ObjectContainer3D();
+			if(!container3d)container3d = new ObjectContainer3D();
 			container3d.mouseEnabled = container3d.mouseChildren = isActive;
-		}
+		}*/
 		
 		/**
 		 * 固定子产品实例集合(作为组合产品时)，固定子产品为在产品信息配置好的子产品列表，这些子产品不允许随意删除或移动
@@ -323,7 +338,7 @@ package rightaway3d.engine.product
 			
 			subpo.parentProductObject = this;
 			
-			subpo.createContainer3D();
+			//subpo.createContainer3D();
 			
 			this.container3d.addChild(subpo.container3d);
 			
@@ -558,6 +573,7 @@ package rightaway3d.engine.product
 		
 		public function ProductObject()
 		{
+			container3d = new ObjectContainer3D();
 		}
 		
 		override public function dispose():void
@@ -668,7 +684,7 @@ package rightaway3d.engine.product
 			s += "\"objectID\":\"" + id + "\",";
 			s += "\"name\":\"" + name + "\",";
 			s += "\"name_en\":\"" + name_en + "\",";
-			s += "\"active\":\"" + isActive + "\",";
+			s += "\"active\":\"" + _isActive + "\",";
 			s += "\"isLock\":\"" + isLock + "\",";
 			s += "\"isOrder\":\"" + isOrder + "\",";
 			s += "\"view3d\":\"" + this.container3d.visible + "\",";
@@ -702,6 +718,7 @@ package rightaway3d.engine.product
 				s += ",\"modelColor\":" + mi.color;
 				s += ",\"modelRotation\":{\"x\":"+r.x+",\"y\":"+r.y+",\"z\":"+r.z+"}";
 			}
+			
 			if(objectInfo)s += ",\"objectInfo\":" + objectInfo.toJsonString();
 			
 			if(dynamicSubProductObjects && dynamicSubProductObjects.length>0)

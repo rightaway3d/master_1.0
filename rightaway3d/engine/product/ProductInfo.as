@@ -5,6 +5,8 @@ package rightaway3d.engine.product
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
 	
+	import away3d.containers.ObjectContainer3D;
+	
 	import rightaway3d.engine.action.PropertyAction;
 	import rightaway3d.engine.model.ModelInfo;
 	import rightaway3d.engine.model.ModelObject;
@@ -214,6 +216,38 @@ package rightaway3d.engine.product
 			productObjects = null;
 		}
 		
+		public function updateAction():void
+		{
+			for each(var po:ProductObject in productObjects)
+			{
+				this._updateAction(po);
+			}
+		}
+		
+		private function _updateAction(productObj:ProductObject):void
+		{
+			if(productObj.productInfo!=this)return;
+			if(!this.actions)return;
+			if(productObj.actions)return;
+			
+			var len:int = this.actions.length;
+			//trace(pInfo.infoID,"--------pInfo.actions:"+len,pInfo.actions);
+			
+			var actions:Vector.<PropertyAction> = new Vector.<PropertyAction>(len);
+			productObj.actions = actions;
+			
+			for(var i:int=0;i<len;i++)
+			{
+				var action:PropertyAction = this.actions[i].clone();
+				actions[i] = action;
+				if(action.targetName=="__own__")
+				{
+					//if(!productObj.container3d)throw new Error("ProductObject.container3d is null!");
+					action.target = productObj.container3d;
+				}
+			}
+		}
+		
 		//===================================================================
 		/*public function addChildProductInfo(child:ProductInfo):void
 		{
@@ -244,7 +278,11 @@ package rightaway3d.engine.product
 			
 			productObject.productInfo = this;
 			//trace("----------addProductObject:"+id+" infoID:"+this.infoID);
+			
+			this._updateAction(productObject);
 		}
+		
+		
 		
 		//删除产品实例
 		public function removeProductObject(pObj:ProductObject):void
@@ -309,7 +347,7 @@ package rightaway3d.engine.product
 			}
 		}
 		
-		private function cloneObject(source:ProductObject):ProductObject
+		private function cloneObject2(source:ProductObject):ProductObject
 		{
 			var clone:ProductObject = new ProductObject();
 			
@@ -354,7 +392,7 @@ package rightaway3d.engine.product
 					po.customMaterialName = name;
 				}
 			}
-			trace("---------modelType:"+type);
+			//trace("---------modelType:"+type);
 		}
 		
 		/**
@@ -386,7 +424,8 @@ package rightaway3d.engine.product
 					}
 				}
 			}
-			else if(subProductInstances)//当前存在子产品列表信息
+			
+			if(subProductInstances)//当前存在子产品列表信息
 			{
 				if(!productObjectInstance.subProductObjects)//子产品信息还未复制到产品实例中
 				{
@@ -399,7 +438,7 @@ package rightaway3d.engine.product
 						var srcObject:ProductObject = subProductInstances[i];
 						var subProductInfo:ProductInfo = srcObject.productInfo;
 						
-						var newObject:ProductObject = subProductInfo.cloneObject(srcObject);
+						var newObject:ProductObject = subProductInfo.cloneObject2(srcObject);
 						
 						productObjectInstance.addSubProduct(newObject);
 						

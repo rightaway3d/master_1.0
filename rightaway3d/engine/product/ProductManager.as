@@ -466,6 +466,7 @@ package rightaway3d.engine.product
 							actions[i] = action;
 						}
 						pInfo.actions = actions;
+						pInfo.updateAction();
 						//trace(pInfo.infoID+":"+pInfo.actions.length);
 					}
 				}
@@ -652,7 +653,7 @@ package rightaway3d.engine.product
 		
 		public function addProductToScene(pObj:ProductObject):void
 		{
-			pObj.createContainer3D();
+			//pObj.createContainer3D();
 			
 			engineManager.addRootChild(pObj.container3d);
 			engineManager.addCollisionObject(pObj.container3d);
@@ -690,7 +691,9 @@ package rightaway3d.engine.product
 			if(objID==0)objID = ProductObject.getNextIndex();
 			
 			var aligns:Array = [ModelAlign.BOTTOM,ModelAlign.LEFT,ModelAlign.FRONT];
+			
 			var po:ProductObject = createCustomizeProductObject(modelType,infoID,objID,pName,enName,width,height,depth,color,aligns,isActive);
+			
 			var mi:ModelInfo = po.productInfo.modelInfo;
 			
 			if(rotation)
@@ -784,11 +787,11 @@ package rightaway3d.engine.product
 			
 			if(type==ModelType.BOX_C || type==ModelType.CYLINDER_C)//用户动态创建的物体
 			{
-				var modelColor:uint = data.modelColor;
+				var modelColor:uint = data.modelColor?data.modelColor:0;
 				var isActive:Boolean = data.active=="true"?true:false;
 				
 				var objData:Object = data.objectInfo;
-				var rot:Vector3D = parseVectorStr(data.modelRotation);
+				var rot:Vector3D = data.modelRotation?parseVectorStr(data.modelRotation):null;
 				var rot2:Vector3D = parseVectorStr(data.rotation);
 
 				//createCustomizeProduct(type,pName,radius*2,height,radius*2,color,isActive);

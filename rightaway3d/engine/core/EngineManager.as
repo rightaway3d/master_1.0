@@ -352,11 +352,11 @@ package rightaway3d.engine.core
 			}
 			
 			//set actions
-			while(po)
+			/*while(po)
 			{
-				_updateAction(po,po.productInfo,po.container3d);
+				updateAction(po,po.productInfo,po.container3d);
 				po = po.parentProductObject;
-			}
+			}*/
 		}
 		
 		private function dispathchModelDownEvent(mesh:Mesh):void
@@ -376,7 +376,7 @@ package rightaway3d.engine.core
 			}
 		}
 		
-		private function _updateAction(productObj:ProductObject,pInfo:ProductInfo,obj3d:ObjectContainer3D):void
+		/*public function updateAction(productObj:ProductObject,pInfo:ProductInfo,obj3d:ObjectContainer3D):void
 		{
 			if(productObj.isActive && !productObj.actions && pInfo.actions)
 			{
@@ -396,7 +396,7 @@ package rightaway3d.engine.core
 					}
 				}
 			}
-		}
+		}*/
 		
 		public function addCollisionObject(container:ObjectContainer3D):void
 		{
@@ -928,7 +928,7 @@ package rightaway3d.engine.core
 		
 		private function _doAction():void
 		{
-			//trace("productMouseUpEvent2:"+lastTime);
+			trace("productMouseUpEvent2:"+lastTime);
 			if(lastTime>0)//执行单击
 			{
 				__doAction(mousedownObject);//只在单击时，执行相关动作
@@ -946,13 +946,13 @@ package rightaway3d.engine.core
 		{
 			while(pObj)
 			{
-				//trace("pObj:"+pObj.id+" isActive:"+pObj.isActive+" actions:"+pObj.actions);
+				trace("pObj:"+pObj.name,pObj.productInfo.fileURL+" isActive:"+pObj.isActive+" actions:"+pObj.actions);
 				if(pObj.isActive && pObj.actions)
 				{
-					//trace("id:"+pObj.id);
+					trace("id:"+pObj.name);
 					for each(var action:PropertyAction in pObj.actions)
 					{
-						//trace("action:"+action);
+						trace("action:"+action);
 						action.run();
 					}
 				}

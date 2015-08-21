@@ -5,7 +5,7 @@ package rightaway3d.utils
 	public class MyMath
 	{
 		static public const PI:Number = Math.PI;
-		static public var ZERO:Number = 0.0000001;
+		static public var ZERO:Number = 0.000001;
 		
 		/**
 		 * 角度转弧度

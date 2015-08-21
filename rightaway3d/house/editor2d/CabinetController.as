@@ -1757,14 +1757,14 @@ package rightaway3d.house.editor2d
 				</data>;
 		}*/
 		
-		public function replaceCurrCabinet():void
+		/*public function replaceCurrCabinet():void
 		{
 			if(!gvar.currProduct)return;
 			//productManager.replaceProductObject(gvar.currProduct,506,"cabinet_506_800x720x570.pdt","");
 			productManager.replaceProductObject(gvar.currProduct,513,"cabinet_513_450x720x570.pdt","",0,0,0);
 			//productManager.replaceProductObject1_2(gvar.currCabinet.vo,515,"cabinet_515_600x720x570.pdt",0,"");
 			gvar.currProduct2 = null;
-		}
+		}*/
 		
 		//==============================================================================================
 		public function CabinetController(value:InstanceClass)

@@ -760,6 +760,7 @@ package rightaway3d.house.editor2d
 			var plen:int = pos.length;
 			var po:ProductObject = pos[0];
 			var info:ProductInfo = po.productInfo;
+			var other:String = po.memo;
 			
 			var name:String = po.customMaterialName;//this._cabinetDoorDefaultMaterial;
 			
@@ -767,7 +768,7 @@ package rightaway3d.house.editor2d
 			var price:Number = matLib.getMaterialPrice(name);
 			
 			var d:Vector3D = info.dimensions;
-			trace(info.name+":"+d+" num:"+plen);
+			trace(info.name+":"+d+" num:"+plen,info.memo,po.memo,po.name);
 			
 			var n:Number;
 			if(d.x == 18)n = d.y * d.z;
@@ -793,12 +794,19 @@ package rightaway3d.house.editor2d
 			if(po.parentProductObject && po.parentProductObject.memo)specifications += "("+po.parentProductObject.memo+")";//标注地柜吊柜左右开门
 			
 			var productCode:String = matLib.getMaterialAttribute(name,"productCode");
-			if(productCode)
+			
+			if(po.productCode.length==9)
+			{
+				productCode = po.productCode;
+			}
+			else if(productCode)
 			{
 				var c1:String = productCode.substr(0,4);
 				var c2:String = po.productCode && po.productCode.length==3?po.productCode:"0XX";
 				var c3:String = productCode.substr(5,2);
 				productCode = c1 + c2 + c3;
+				
+				other = name;
 			}
 			else
 			{
@@ -808,7 +816,6 @@ package rightaway3d.house.editor2d
 			var materialName:String = matLib.getMaterialAttribute(name,"materialName");
 			var materialDscp:String = matLib.getMaterialAttribute(name,"materialDscp");
 			var unit:String = matLib.getMaterialAttribute(name,"unit");
-			var other:String = info.memo;//matLib.getMaterialAttribute(name,"other");
 			var image:String = matLib.baseUrl + matLib.getMaterialAttribute(name,"diffuseMap");
 			
 			if(total>maxDoorArea)
@@ -818,7 +825,7 @@ package rightaway3d.house.editor2d
 				doorURL = image;
 			}
 			
-			return toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,name,image);
+			return toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,other,image);
 
 			//return toOrderJson1("门板","平方米",price,n,total,name);
 		}
