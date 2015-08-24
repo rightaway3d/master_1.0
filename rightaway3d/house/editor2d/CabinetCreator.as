@@ -844,7 +844,7 @@ package rightaway3d.house.editor2d
 		"subtotal":10,
 		"other":"备注"
 */		
-		private function getProductsData3(type:String,subtotal:Object):String
+		/*private function getProductsData3(type:String,subtotal:Object):String
 		{
 			var s:String = "";
 			var infos:Array = productManager.getProductsByType(type);
@@ -879,7 +879,7 @@ package rightaway3d.house.editor2d
 				}
 			}
 			return s;
-		}
+		}*/
 		
 		private function getProductsData(type:String,subtotal:Object):String
 		{
@@ -892,18 +892,21 @@ package rightaway3d.house.editor2d
 			for(var i:int=0;i<len;i++)
 			{
 				var po:ProductObject = pos[i];
-				var key:String = po.productInfo.infoID + po.memo;
-				trace(key);
-				if(o[key])
+				if(po.isOrder)
 				{
-					var a:Array = o[key];
+					var key:String = po.productInfo.infoID + po.memo;
+					trace(key);
+					if(o[key])
+					{
+						var a:Array = o[key];
+					}
+					else
+					{
+						a = [];
+						o[key] = a;
+					}
+					a.push(po);
 				}
-				else
-				{
-					a = [];
-					o[key] = a;
-				}
-				a.push(po);
 			}
 			
 			for each(a in o)
@@ -1009,7 +1012,7 @@ package rightaway3d.house.editor2d
 		}
 		
 		//获取添加到订单的产品数量
-		private function getOrderProductNum(info:ProductInfo):int
+		/*private function getOrderProductNum(info:ProductInfo):int
 		{
 			var n:int = 0;
 			if(info.type==CabinetType.BODY && info.subProductInstances.length==0)return n;//只有一个子产品的厨柜为装饰板，不加入产品清单
@@ -1022,7 +1025,7 @@ package rightaway3d.house.editor2d
 				if(po.isOrder)n++;
 			}
 			return n;
-		}
+		}*/
 		
 		public function getTableData(subtotal:Object):String
 		{
