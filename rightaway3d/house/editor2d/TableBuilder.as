@@ -1,5 +1,6 @@
 package rightaway3d.house.editor2d
 {
+	import flash.geom.Point;
 	import flash.utils.Dictionary;
 	
 	import rightaway3d.engine.model.ModelType;
@@ -11,6 +12,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.house.utils.GlobalConfig;
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.House;
+	import rightaway3d.house.vo.Wall;
 	import rightaway3d.house.vo.WallHole;
 	import rightaway3d.house.vo.WallObject;
 	import rightaway3d.house.vo.WallSubArea;
@@ -68,6 +70,8 @@ package rightaway3d.house.editor2d
 			if(wallArea)
 			{
 				resetWallCabinetPlate(wallArea,wallCabinetDict);
+				var lines:Array = getWallCabinetTopLine(wallArea,wallCabinetDict);
+				this.cabinetCreator.createTopLine(lines);
 			}
 			
 			return null;
@@ -687,7 +691,7 @@ package rightaway3d.house.editor2d
 			return tabless;
 		}*/
 		
-		private const maxWidth:int = 90;//使用窄封板时，最大露出宽度
+		private const maxWidth:int = 90;//转角柜使用窄封板时，最大露出宽度
 		
 		private function resetWallCabinetPlate(wallArea:Array,wallDict:Dictionary):void
 		{
@@ -768,6 +772,215 @@ package rightaway3d.house.editor2d
 					}
 				}
 			}
+		}
+		
+		//设置吊柜顶线
+		private function getWallCabinetTopLine(wallArea:Array,wallDict:Dictionary):Array
+		{
+			var areaLen:int = wallArea.length;
+			trace("------getWallCabinetTopLine areaLen:",areaLen);
+			
+			var group:Array = [];
+			var points:Vector.<Point>;
+			var cw0:CrossWall,cw1:CrossWall;
+			var wos0:Array,wos1:Array;
+			var p0:ProductObject,p1:ProductObject;
+			var w0:WallObject,w1:WallObject;
+			var minTopLineDist:int = 200;//顶线之间的最小距离
+			var p:Point;
+			
+			for(var i:int=0;i<areaLen;i++)
+			{
+				cw0 = null;
+				p0 = null;
+				w0 = null;
+				
+				points = new Vector.<Point>();
+				group.push(points);
+				
+				var cws:Array = wallArea[i];
+				var cwLen:int = cws.length;
+				trace(i,"cwLen:",cwLen);
+				
+				for(var j:int=0;j<cwLen;j++)
+				{
+					cw1 = cws[j];
+					wos1 = wallDict[cw1];//当前墙上的所有柜子
+					var woLen:int = wos1.length;
+					trace("--",j,"woLen:",woLen);
+					
+					for(var k:int=0;k<woLen;k++)
+					{
+						p1 = wos1[k];//当前墙上的第一个柜子
+						w1 = p1.objectInfo;//拐角处的后一个柜子
+						var tx:Number = w1.x - w1.width;
+						trace("----",k,"tx:",tx);
+						
+						if(k==0)
+						{
+							if(p0)//处理拐角
+							{
+								if(p0.name==ProductObjectName.CORNER_CABINET)
+								{
+									if(tx-w0.depth-cw1.localHead.x>minTopLineDist)//拐角柜与相邻柜间距过大
+									{
+										trace("----00")
+										p = getTopLinePoint(cw0,w0.x,w0.depth-3);//结尾点
+										points.push(p);
+										
+										if(cw0.localEnd.x-w0.x>minTopLineDist)
+										{
+											p = getTopLinePoint(cw0,w0.x,0);//结尾拐弯顶背墙
+											points.push(p);
+										}
+										
+										points = new Vector.<Point>();
+										group.push(points);
+										
+										p = getTopLinePoint(cw1,tx,0);//开始拐弯顶背墙
+										points.push(p);
+										
+										p = getTopLinePoint(cw1,tx,w1.depth-3);//开始点
+										points.push(p);
+									}
+									else
+									{
+										trace("----01")
+										p = getTopLinePoint(cw1,cw1.localHead.x+w0.depth-3,w1.depth-3);//拐角点
+										points.push(p);
+									}
+								}
+								else if(p1.name==ProductObjectName.CORNER_CABINET)
+								{
+									if(cw0.localEnd.x-w1.depth-w0.x>minTopLineDist)//拐角柜与相邻柜间距过大
+									{
+										trace("----02")
+										p = getTopLinePoint(cw0,w0.x,w0.depth-3);//结尾点
+										points.push(p);
+										
+										p = getTopLinePoint(cw0,w0.x,0);//结尾拐弯顶背墙
+										points.push(p);
+										
+										points = new Vector.<Point>();
+										group.push(points);//新的一组顶线
+										
+										if(tx-cw1.localHead.x>minTopLineDist)//第一个柜子离侧墙超过一定距离，顶线要拐弯顶背墙
+										{
+											p = getTopLinePoint(cw1,tx,0);
+											points.push(p);
+										}
+										
+										p = getTopLinePoint(cw1,tx,w1.depth-3);//起始点
+										points.push(p);
+									}
+									else
+									{
+										trace("----03")
+										p = getTopLinePoint(cw1,cw1.localHead.x+w0.depth-3,w1.depth-3);//拐角点
+										points.push(p);
+									}
+								}
+								else//拐角处没有拐角柜连接
+								{
+									trace("----04")
+									p = getTopLinePoint(cw0,w0.x,w0.depth-3);//结尾点
+									points.push(p);
+									
+									if(cw0.localEnd.x-w0.x>minTopLineDist)
+									{
+										p = getTopLinePoint(cw0,w0.x,0);//结尾拐弯顶背墙
+										points.push(p);
+									}
+									
+									points = new Vector.<Point>();
+									group.push(points);
+									
+									if(tx-cw1.localHead.x>minTopLineDist)//第一个柜子离侧墙超过一定距离，顶线要拐弯顶背墙
+									{
+										p = getTopLinePoint(cw1,tx,0);
+										points.push(p);
+									}
+									
+									p = getTopLinePoint(cw1,tx,w1.depth-3);//起始点
+									points.push(p);
+								}
+							}
+							else//顶线起始位置
+							{
+								trace("----05")
+								if(tx-cw1.localHead.x>minTopLineDist)//第一个柜子离侧墙超过一定距离，顶线要拐弯顶背墙
+								{
+									p = getTopLinePoint(cw1,tx,0);
+									points.push(p);
+								}
+								p = getTopLinePoint(cw1,tx,w1.depth-3);//起始点
+								points.push(p);
+							}
+						}
+						else//除了第一个柜子后的其它柜子
+						{
+							if(tx-w0.x>minTopLineDist)//吊柜之间距离过大
+							{
+								trace("----10")
+								p = getTopLinePoint(cw1,w0.x,w0.depth-3);//结尾点
+								points.push(p);
+								
+								p = getTopLinePoint(cw1,w0.x,0);//结尾拐弯顶背墙
+								points.push(p);
+								
+								points = new Vector.<Point>();
+								group.push(points);//新的一组顶线
+								
+								p = getTopLinePoint(cw1,tx,0);//开始拐弯顶背墙
+								points.push(p);
+								
+								p = getTopLinePoint(cw1,tx,w1.depth-3);//开始点
+								points.push(p);
+							}
+							else if(w0.depth!=w1.depth)//处理两个柜子进深不一致的情况
+							{
+								trace("----11")
+								var n:Number = (w0.depth>w1.depth) ? w0.x:tx;
+								
+								p = getTopLinePoint(cw1,n,w0.depth-3);//拐点1
+								points.push(p);
+								
+								p = getTopLinePoint(cw1,n,w1.depth-3);//拐点2
+								points.push(p);
+							}
+						}
+						
+						if(k==woLen-1 && j==cwLen-1)//当前组最后一个柜子
+						{
+							trace("----20")
+							p = getTopLinePoint(cw1,w1.x,w1.depth-3);//结尾点
+							points.push(p);
+							
+							if(cw1.localEnd.x-w1.x>minTopLineDist)
+							{
+								p = getTopLinePoint(cw1,w1.x,0);//结尾拐弯顶背墙
+								points.push(p);
+							}
+						}
+						else
+						{
+							p0 = p1;//前一面墙的最后一个柜子
+							w0 = w1;//拐角处的前一个柜子
+						}
+					}
+					
+					cw0 = cw1;//前一面墙
+				}
+			}
+			
+			return group;
+		}
+		
+		private function getTopLinePoint(cw:CrossWall,x:Number,z:Number):Point
+		{
+			var wall:Wall = cw.wall;
+			var y:Number = cw.isHead?-(wall.width*0.5+z) : wall.width*0.5+z;
+			return wall.localToGlobal2(new Point(x,y));
 		}
 		
 		private function addGroundCabinetPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String,height:int=720):ProductObject
@@ -1147,7 +1360,9 @@ package rightaway3d.house.editor2d
 					}
 					a.push(po);
 				}
-				else if(wo.y>CrossWall.GROUND_OBJECT_HEIGHT)//吊柜
+				
+				//else if(wo.y>CrossWall.GROUND_OBJECT_HEIGHT)//吊柜
+				if(wo.y+wo.height>CrossWall.WALL_OBJECT_HEIGHT+100)//吊柜
 				{
 					if(wallCabinetDict[cw])
 					{

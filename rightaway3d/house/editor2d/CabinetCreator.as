@@ -9,6 +9,7 @@ package rightaway3d.house.editor2d
 	import flash.utils.setTimeout;
 	
 	import away3d.core.pick.PickingColliderType;
+	import away3d.entities.Mesh;
 	import away3d.events.MouseEvent3D;
 	
 	import rightaway3d.engine.action.PropertyAction;
@@ -19,11 +20,13 @@ package rightaway3d.house.editor2d
 	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.engine.utils.GlobalEvent;
+	import rightaway3d.heter.utils.Lofting3D;
 	import rightaway3d.house.cabinet.CabinetType;
 	import rightaway3d.house.lib.CabinetLib;
 	import rightaway3d.house.lib.CabinetTool;
 	import rightaway3d.house.utils.Geom;
 	import rightaway3d.house.utils.Point3D;
+	import rightaway3d.house.utils.SectionTLS01;
 	import rightaway3d.house.view2d.Product2D;
 	import rightaway3d.house.view2d.Wall2D;
 	import rightaway3d.house.vo.CrossWall;
@@ -38,6 +41,7 @@ package rightaway3d.house.editor2d
 	import ztc.meshbuilder.room.CabinetTable3D;
 	import ztc.meshbuilder.room.CabinetTableTool;
 	import ztc.meshbuilder.room.MaterialLibrary;
+	import ztc.meshbuilder.room.RenderUtils;
 
 	public class CabinetCreator
 	{
@@ -114,6 +118,8 @@ package rightaway3d.house.editor2d
 					setCabinetDoorsMaterial(po,matName);
 				}
 			}
+			
+			createTopLine(topLinesData);
 		}
 		
 		public function get groundCabinetDoorMaterial():String
@@ -140,6 +146,8 @@ package rightaway3d.house.editor2d
 					setCabinetDoorsMaterial(po,matName);
 				}
 			}
+			
+			createTopLine(topLinesData);
 		}
 		
 		public function get wallCabinetDoorMaterial():String
@@ -463,6 +471,69 @@ package rightaway3d.house.editor2d
 		private var houseDX:Number = 0;
 		private var houseDZ:Number = 0;
 		
+		private var lofting:Lofting3D;
+		private var section:SectionTLS01;
+		private var toplineMeshs:Array = [];
+		private var topLinesData:Array;
+		
+		public function createTopLine(lines:Array):void
+		{
+			removeTopLineMeshs();
+			
+			if(!lines)return;
+			topLinesData = lines;
+			
+			//如果地柜与吊柜的材质不一致，不能加顶线
+			if(wallCabinetDoorMat!=groundCabinetDoorMat)return;
+			//只有指定的两种材质需要加顶线
+			if(wallCabinetDoorMat!="MCMS002"/*米黄珍珠-古典*/ && wallCabinetDoorMat!="MCMS006"/*牛津樱桃木-古典*/)return;
+			
+			if(!lofting)lofting = new Lofting3D();
+			if(!section)section = new SectionTLS01();
+			
+			for each(var points:Vector.<Point> in lines)
+			{
+				trace("----createTopLine:",points);
+				var mesh:Mesh = lofting.createLofting3D(section.points,points);
+				
+				mesh.y = CrossWall.WALL_OBJECT_HEIGHT + 720;
+				mesh.mouseEnabled = mesh.mouseChildren = false;
+				
+				cabinetCtr.engineManager.addRootChild(mesh);
+				toplineMeshs.push(mesh);
+			}
+			
+			setTopLineMaterial(wallCabinetDoorMat);
+			
+			updateTopLinePos();
+		}
+		
+		public function removeTopLineMeshs():void
+		{
+			while(toplineMeshs.length>0)
+			{
+				var mesh:Mesh = toplineMeshs.pop();
+				mesh.disposeWithAnimatorAndChildren();
+			}
+		}
+		
+		public function setTopLineMaterial(matName:String):void
+		{
+			for each(var m:Mesh in toplineMeshs)
+			{
+				RenderUtils.setMaterial(m,matName);
+			}
+		}
+		
+		public function updateTopLinePos():void
+		{
+			for each(var m:Mesh in toplineMeshs)
+			{
+				m.x = -houseDX;
+				m.z = -houseDZ;
+			}
+		}
+		
 		//更新台面位置
 		public function updateTableMeshsPos(dx:Number,dz:Number):void
 		{
@@ -475,6 +546,8 @@ package rightaway3d.house.editor2d
 				ct.z = -dz;
 				//trace("updateTableMeshsPos:"+ct.x,ct.z);
 			}
+			
+			updateTopLinePos();
 			
 			flueProduct = getProduct(ProductObjectName.FLUE);
 			if(flueProduct)
@@ -3575,6 +3648,8 @@ package rightaway3d.house.editor2d
 			cabinetTabless = tabless;
 			tableDepthss = depthss;
 			
+			var resetFirstPoint:Boolean = false;//是否需要重新设置第一点
+			
 			//var depth:int=600;
 			var tlen:int = tabless.length;
 			for(var i:int=0;i<tlen;i++)
@@ -3609,12 +3684,16 @@ package rightaway3d.house.editor2d
 				
 				var p:Point = cw.isHead?head:end;
 				points.push(p);
-				//var headType:String = tableData.headType;
-				/*if(headType!=ObstacleType.HOLE && headType!=ObstacleType.NULL)
+				
+				if(tableData.headCabinet || x0-cw.localHead.x<1)
 				{
 					dangshui.push(p);//挡水的第一个点坐标（为台面外沿，挡水终点坐标）
-				}*/
-				//dangshui.unshift(p);
+					resetFirstPoint = true;
+				}
+				else
+				{
+					resetFirstPoint = false;
+				}
 				
 				var tlen2:int = tables.length;
 				for(var j:int=1;j<tlen2;j++)//组成台面的每个墙面
@@ -3649,12 +3728,11 @@ package rightaway3d.house.editor2d
 				
 				p = cw.isHead?end:head;
 				points.push(p);
-				//var endType:String = tableData.endType;
-				/*if(endType!=ObstacleType.HOLE && endType!=ObstacleType.NULL)
+				
+				if(tableData.endCabinet || cw.localEnd.x-x1<1)
 				{
 					dangshui.push(p);//台面外沿，挡水起始坐标
-				}*/
-				//dangshui.unshift(p);
+				}
 				
 				p = turnPoint3d(cw.isHead?cw.wall.localToGlobal(e):cw.wall.localToGlobal(h));
 				points.push(p);
@@ -3688,11 +3766,10 @@ package rightaway3d.house.editor2d
 				dangshui.push(p);//台面内沿最后一个点，挡水坐标点
 				//dangshui.unshift(p);
 				
-				/*if(headType!=ObstacleType.HOLE && headType!=ObstacleType.NULL)
+				if(resetFirstPoint)
 				{
 					dangshui.push(dangshui.shift());//将一开始取到点放到最后的位置，形成一个沿墙的逆时针挡水起止点
-				}*/
-				//dangshui.unshift(dangshui.pop());
+				}
 				trace("points:"+points);
 				trace("dangshui:"+dangshui);
 				
