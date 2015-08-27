@@ -22,6 +22,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.engine.utils.GlobalEvent;
 	import rightaway3d.heter.utils.Lofting3D;
 	import rightaway3d.house.cabinet.CabinetType;
+	import rightaway3d.house.cabinet.ListType;
 	import rightaway3d.house.lib.CabinetLib;
 	import rightaway3d.house.lib.CabinetTool;
 	import rightaway3d.house.utils.Geom;
@@ -1228,8 +1229,8 @@ package rightaway3d.house.editor2d
 				delete plateDict[po];
 			}
 			
-			this.sceneGroundCabinets.length = 0;
-			this.sceneWallCabinets.length = 0;
+			/*this.sceneGroundCabinets.length = 0;
+			this.sceneWallCabinets.length = 0;*/
 		}
 		
 		/**
@@ -2452,7 +2453,7 @@ package rightaway3d.house.editor2d
 				
 				xml = CabinetLib.lib.getCabinetData(id);
 				var p:Product2D = this.createWallCabinet(xml,cw,start,door);
-				addWallCabinet(p.vo);
+				//addWallCabinet(p.vo);
 				
 				if(isCornerCabinet)
 				{
@@ -2495,7 +2496,8 @@ package rightaway3d.house.editor2d
 					//trace("---------drainer:"+xml);
 					setProductPos(drainerFlag_,cw,start);
 					
-					o = drainerData?drainerData:getCabinetData(cookerProducts,2);
+					//o = drainerData?drainerData:getCabinetData(cookerProducts2,2);
+					o = drainerData?drainerData:getDefaultCookerData(ListType.DRAINER);
 					drainerProduct = addCookerProduct(o,cw,drainerFlag_.vo,ProductObjectName.DRAINER);
 					drainerProduct.isLock = true;
 				}
@@ -2505,11 +2507,13 @@ package rightaway3d.house.editor2d
 				{
 					setProductPos(flueFlag_,cw,start);
 					
-					var o:Object = cookerHoodData?cookerHoodData:getCabinetData(cookerProducts,1);//抽油烟机
+					//var o:Object = cookerHoodData?cookerHoodData:getCabinetData(cookerProducts,1);//抽油烟机
+					var o:Object = cookerHoodData?cookerHoodData:getDefaultCookerData(ListType.HOOD);//抽油烟机
 					hoodProduct = createWallCabinet(o,cw,start+o.width*0.5,null,ProductObjectName.HOOD);
 					hoodProduct.vo.isLock = true;
 					
-					o = flueData?flueData:getCabinetData(cookerProducts,3);
+					//o = flueData?flueData:getCabinetData(cookerProducts,3);
+					o = flueData?flueData:getDefaultCookerData(ListType.FLUE);
 					flueProduct = addCookerProduct(o,cw,flueFlag_.vo,ProductObjectName.FLUE);
 					flueProduct.isLock = true;
 				}
@@ -2542,7 +2546,7 @@ package rightaway3d.house.editor2d
 				
 				var door:XML = null;
 				var p:Product2D = this.createGroundCabinet(xml,cw,start,door,elec);
-				addGroundCabinet(p.vo);
+				//addGroundCabinet(p.vo);
 				
 				if(drainerFlag_ && type=="drainer")
 				{
@@ -2719,7 +2723,7 @@ package rightaway3d.house.editor2d
 			wo.x = x;
 		}
 		
-		public function addCabinet(po:ProductObject):void
+		/*public function addCabinet(po:ProductObject):void
 		{
 			if(po.position.y<1000)//地柜
 			{
@@ -2729,26 +2733,26 @@ package rightaway3d.house.editor2d
 			{
 				addWallCabinet(po);
 			}
-		}
+		}*/
 		
-		public function addGroundCabinet(po:ProductObject):void
+		/*public function addGroundCabinet(po:ProductObject):void
 		{
 			sceneGroundCabinets.push(po);
 			po.addEventListener("dispose",onProductDispose);
-		}
+		}*/
 		
-		public function addWallCabinet(po:ProductObject):void
+		/*public function addWallCabinet(po:ProductObject):void
 		{
 			sceneWallCabinets.push(po);
 			po.addEventListener("dispose",onProductDispose);
-		}
+		}*/
 		
-		private function onProductDispose(e:Event):void
+		/*private function onProductDispose(e:Event):void
 		{
 			var po:ProductObject = e.currentTarget as ProductObject;
 			removeProduct(sceneGroundCabinets,po);
 			removeProduct(sceneWallCabinets,po);
-		}
+		}*/
 		
 		private function removeProduct(cabs:Array,po:ProductObject):void
 		{
@@ -4138,23 +4142,30 @@ package rightaway3d.house.editor2d
 		}
 		
 		//场景中的地柜（包括封板）
-		private var sceneGroundCabinets:Array = [];
+		//private var sceneGroundCabinets:Array = [];
 		//场景中的吊柜（包括封板）
-		private var sceneWallCabinets:Array = [];
+		//private var sceneWallCabinets:Array = [];
 		
-		private var groundCabinets:Array;
+		//private var groundCabinets2:Array;
 		
-		private var wallCabinets:Array;
+		//private var wallCabinets:Array;
 		
-		private var cookerProducts:Array;
+		//private var cookerProducts2:Array;
 		
-		private var groundWidthDict:Dictionary = new Dictionary();
+		//private var groundWidthDict:Dictionary = new Dictionary();
 		
-		private var wallWidthDict:Dictionary = new Dictionary();
+		//private var wallWidthDict:Dictionary = new Dictionary();
+		
+		public function getDefaultCookerData(type:String):XML
+		{
+			var list:XMLList = CabinetLib.lib.getProductList(type,"");
+			if(list.length()>0)return list[0];
+			return null;
+		}
 		
 		private function initCabinetData():void
 		{
-			groundCabinets = [
+			/*groundCabinets2 = [
 				{id:"501",file:"cabinet_501_300x720x570.pdt" ,width:"300",height:"720" ,name:"单门地柜"},//0
 				{id:"502",file:"cabinet_502_400x720x570.pdt" ,width:"400",height:"720" ,name:"单门地柜"},//1
 				{id:"503",file:"cabinet_503_450x720x570.pdt" ,width:"450",height:"720" ,name:"单门地柜"},//2
@@ -4181,17 +4192,17 @@ package rightaway3d.house.editor2d
 				{id:"715",file:"cabinet_715_600x1390x570.pdt",width:"600",height:"1390",name:"烤箱、微波炉功能柜"},//23
 				{id:"815",file:"cabinet_815_600x2110x570.pdt",width:"600",height:"2110",name:"烤箱、微波炉功能柜"},//24
 				{id:"557",file:"cabinet_557_900x720x570.pdt" ,width:"900",height:"720" ,name:"单门转角地柜"}//25
-			];
+			];*/
 			
-			groundWidthDict[300] = 0;
+			/*groundWidthDict[300] = 0;
 			groundWidthDict[400] = 1;
 			groundWidthDict[450] = 2;
 			//groundWidthDict[500] = 3;
 			groundWidthDict[600] = 10;
 			groundWidthDict[800] = 4;
-			groundWidthDict[900] = 5;
+			groundWidthDict[900] = 5;*/
 			
-			wallCabinets = [
+			/*wallCabinets = [
 				{id:"601",file:"cabinet_601_300x720x330.pdt",width:"300",height:"720",name:"单门吊柜"},//0
 				{id:"602",file:"cabinet_602_400x720x330.pdt",width:"400",height:"720",name:"单门吊柜"},//1
 				{id:"603",file:"cabinet_603_450x720x330.pdt",width:"450",height:"720",name:"单门吊柜"},//2
@@ -4204,22 +4215,22 @@ package rightaway3d.house.editor2d
 				{id:"626",file:"cabinet_626_800x720x330.pdt",width:"800",height:"720",name:"单门转角吊柜"}//9
 				//{id:"1101",file:"cooker_hood_1101.pdt",width:"800",height:"700",name:"抽油烟机"},//10
 				//{id:"1102",file:"cooker_hood_1102_CXW-268-L1.pdt",width:"896",height:"860",name:"抽油烟机"}//11
-			];
+			];*/
 			
-			wallWidthDict[300] = 0;
+			/*wallWidthDict[300] = 0;
 			wallWidthDict[400] = 1;
 			wallWidthDict[450] = 2;
 			//wallWidthDict[600] = 3;
 			wallWidthDict[800] = 4;
-			wallWidthDict[900] = 5;
+			wallWidthDict[900] = 5;*/
 			
-			cookerProducts = [
+			/*cookerProducts2 = [
 				{id:"1101",file:"cooker_hood_1101_CXW-200-TD-5.pdt",width:"800",height:"700",name:"抽油烟机"},//0
 				{id:"1102",file:"cooker_hood_1102_CXW-268-P.pdt",width:"896",height:"860",name:"抽油烟机"},//1
 				{id:"1203",file:"drainer_1203_JBS2T_OLCE309.pdt",width:"792",height:"526",depth:"455",name:"水盆"},//2
 				{id:"1301",file:"flue_1301_GP1310Z1.pdt",width:"713",height:"50",depth:"435",name:"灶台"},//3
 				{id:"1305",file:"flue_1305_GP090.pdt",width:"778",height:"49",depth:"445",name:"灶台"}//4
-			];
+			];*/
 		}
 		
 		//==============================================================================================

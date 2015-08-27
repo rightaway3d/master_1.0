@@ -30,7 +30,7 @@ package rightaway3d.house.view2d
 		 * @param offset：标高文本是尾巴方向上的偏移量
 		 * 
 		 */
-		public function updateView(level:int,direct:String,xPos:int,yPos:int,offSetSize:int=0):void
+		public function updateView(level:int,direct:String,xPos:int,yPos:int,offSetSize:int=0,memo:String=""):void
 		{
 			this.x = Base2D.sizeToScreen(xPos);
 			this.y = -Base2D.sizeToScreen(yPos);
@@ -40,7 +40,7 @@ package rightaway3d.house.view2d
 			var ax:Number = mw*0.5;
 			var ox:Number = Base2D.sizeToScreen(offSetSize);
 			
-			setSizeText(level);
+			setSizeText(level,memo);
 			var tw:Number = level_txt.width + ox//尾巴长度
 			var th:Number = level_txt.height;
 			level_txt.y = -th-mh+2;
@@ -85,9 +85,9 @@ package rightaway3d.house.view2d
 			//g.endFill();
 		}
 		
-		private function setSizeText(level:int):void
+		private function setSizeText(level:int,memo:String):void
 		{
-			level_txt.text = String(level);
+			level_txt.text = String(level)+memo;
 			var tmp:Number = level_txt.textWidth;
 			tmp = level_txt.textHeight;
 			tmp = level_txt.width;

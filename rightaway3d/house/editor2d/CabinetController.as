@@ -716,13 +716,13 @@ package rightaway3d.house.editor2d
 		 * @param color：颜色
 		 * @param zPos：柱子吸附到墙体时，与墙体的间距
 		 */
-		public function createRoomSquarePillar(width:uint,depth:uint,color:uint,zPos:uint=0,isDrag:Boolean=true):void
+		public function createRoomSquarePillar(width:uint,depth:uint,color:uint,zPos:uint=0,isDrag:Boolean=true,isIgnoreObject:Boolean=false):void
 		{
 			var pName:String = ProductObjectName.ROOM_SQUARE_PILLAR;//"RoomSquarePillar";
 			var height:int = scene.currFloor.vo.ceilingHeight;
 			var yPos:uint = 0;
 			var p:Product2D = createSquareObject(pName,width,height,depth,color,yPos,zPos,true,isDrag);
-			p.vo.objectInfo.isIgnoreObject = false;
+			p.vo.objectInfo.isIgnoreObject = isIgnoreObject;
 			
 			roomPillarDict[p.vo] = p;
 			//RenderUtils.setMaterial(p.vo.modelObject.meshs[0],currRoomPillarMaterial);

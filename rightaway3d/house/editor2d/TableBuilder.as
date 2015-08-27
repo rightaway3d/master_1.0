@@ -987,7 +987,7 @@ package rightaway3d.house.editor2d
 		{
 			var dy:Number = (720-height)*0.5;
 			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,height,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT+dy,zPos,CabinetType.DOOR_PLANK,name);
-			cabinetCreator.addGroundCabinet(po);
+			//cabinetCreator.addGroundCabinet(po);
 			addPlateProduct(po,width,height);
 			return po;
 		}
@@ -995,7 +995,7 @@ package rightaway3d.house.editor2d
 		private function addGroundCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
 			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,name);
-			cabinetCreator.addGroundCabinet(po);
+			//cabinetCreator.addGroundCabinet(po);
 			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
 			//addPlateProduct(po,width);
 			setCornerCode(po,width);
@@ -1007,7 +1007,7 @@ package rightaway3d.house.editor2d
 		{
 			var dy:Number = (720-height)*0.5;
 			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,height,16,xPos,CrossWall.WALL_OBJECT_HEIGHT+dy,zPos,CabinetType.DOOR_PLANK,name);
-			cabinetCreator.addWallCabinet(po);
+			//cabinetCreator.addWallCabinet(po);
 			addPlateProduct(po,width,height);
 			return po;
 		}
@@ -1015,7 +1015,7 @@ package rightaway3d.house.editor2d
 		private function addWallCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
 			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,name);
-			cabinetCreator.addWallCabinet(po);
+			//cabinetCreator.addWallCabinet(po);
 			//var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,720,16,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,CabinetType.BODY_PLANK,name);
 			setCornerCode(po,width);
 

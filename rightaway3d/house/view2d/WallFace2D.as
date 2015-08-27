@@ -91,11 +91,15 @@ package rightaway3d.house.view2d
 					switch(style)
 					{
 						case CabinetType.DRAINER_CABINET:
+							var tx2:Number = wox-wo.width+30;
+							gs.push(tx2);
+							
 							var tx:Number = wox-wo.width*0.5;
 							gs.push(tx);
 							
-							setWallSocket(tx-55,ty);
-							setWallSocket(tx-165,ty);
+							var n:int = 600;
+							setWallSocket(tx2+50,n);
+							setWallSocket(tx2+160,n);
 							//setLevelMark(ty,"right",tx+250,ty);
 							/*if(tx>cw.validLength*0.5)
 							{
@@ -105,13 +109,18 @@ package rightaway3d.house.view2d
 							{
 							setLevelMark(ty,"left",-80,ty);
 							}*/
-							setLevelMark(ty,"right",cw.validLength+80,ty);
-							drawWaterPipe(g,tx+60,-500);
-							drawWaterPipe(g,tx+210,-500);
-							g.drawRect(Base2D.sizeToScreen(tx+135-30),
+							setLevelMark(n,"right",cw.validLength+80,n,0,"-插座");//ty);
+							
+							n = 500;
+							drawWaterPipe(g,tx-75,-n);
+							drawWaterPipe(g,tx+75,-n);
+							setLevelMark(n,"left",-80,n,0,"-冷热水");
+							
+							g.drawRect(Base2D.sizeToScreen(tx-30),
 								Base2D.sizeToScreen(-280),
 								Base2D.sizeToScreen(60),
-								Base2D.sizeToScreen(200));
+								Base2D.sizeToScreen(200)
+							);
 							
 							break;
 						case CabinetType.ELECTRIC_HEIGHT:
@@ -121,7 +130,7 @@ package rightaway3d.house.view2d
 							
 							setWallSocket(tx-55,ty);
 							setWallSocket(tx+55,ty);
-							setLevelMark(ty,"right",cw.validLength+80,ty);
+							setLevelMark(ty,"right",cw.validLength+80,ty,0,"-插座");
 							
 							break;
 						case CabinetType.ELECTRIC_GROUND:
@@ -146,7 +155,7 @@ package rightaway3d.house.view2d
 								//setLevelMark(ty,"left",tx-350,ty);
 								//setLevelMark(ty,"left",-80,ty);
 							}
-							setLevelMark(ty,"right",cw.validLength+80,ty);
+							setLevelMark(ty,"right",cw.validLength+80,ty,0,"-插座");
 							break;
 					}
 				}
@@ -178,7 +187,7 @@ package rightaway3d.house.view2d
 							ty = wo.y+wo.height-oy+100;
 							setWallSocket(tx-55,ty);
 							setWallSocket(tx+55,ty);
-							setLevelMark(ty,"right",tx+250,ty);
+							setLevelMark(ty,"right",cw.validLength+80,ty,0,"-插座");
 							break;
 					}
 				}
@@ -234,7 +243,7 @@ package rightaway3d.house.view2d
 			setWallSocket(tx+220,ty);
 			//setLevelMark(ty,"left",tx-200,ty);
 			//setLevelMark(ty,"left",-80,ty);
-			setLevelMark(ty,"right",cw.validLength+80,ty);
+			setLevelMark(ty,"right",cw.validLength+80,ty,0,"-插座");
 			
 			return tx;
 		}
@@ -244,7 +253,7 @@ package rightaway3d.house.view2d
 			var tx:Number = cw.localEnd.x - cw.localHead.x - dx - 400;
 			var ty:Number = 1100;
 			//setLevelMark(ty,"right",tx+100,ty);
-			setLevelMark(ty,"right",cw.validLength+80,ty);
+			setLevelMark(ty,"right",cw.validLength+80,ty,0,"-插座");
 			
 			setWallSocket(tx,ty);
 			setWallSocket(tx-110,ty);
@@ -266,7 +275,7 @@ package rightaway3d.house.view2d
 			}
 		}
 		
-		private function setLevelMark(level:int,direct:String,xPos:int,yPos:int,offSetSize:int=0):void
+		private function setLevelMark(level:int,direct:String,xPos:int,yPos:int,offSetSize:int=0,memo:String=""):void
 		{
 			if(outLevelMarks.length>0)
 			{
@@ -278,7 +287,7 @@ package rightaway3d.house.view2d
 			}
 			inLevelMarks.push(levelMark);
 			
-			levelMark.updateView(level,direct,xPos,yPos);
+			levelMark.updateView(level,direct,xPos,yPos,offSetSize,memo);
 			
 			this.addChild(levelMark);
 		}
