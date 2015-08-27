@@ -4091,7 +4091,7 @@ package rightaway3d.house.editor2d
 		private var directionDict:Dictionary = new Dictionary();
 		
 		/**
-		 * 为单开门地柜添加门
+		 * 为单开门柜添加门
 		 * 
 		 */
 		public function addSingleDoor(po:ProductObject,direction:String):void
@@ -4130,15 +4130,53 @@ package rightaway3d.house.editor2d
 				|| s=="C45" || s=="C60" || s=="CK/"//中高柜
 				|| s=="D60" || s=="DK/" || s=="DZ6")//高柜
 			{
+				if(hasDoor(po))return;//如果已经有门则返回
+				
 				var doorList:XMLList = CabinetTool.tool.getDoorData(po,direction);
 				var len:int = doorList.length();
 				for(var i:int=0;i<len;i++)
 				{
 					var doorData:XML = doorList[i];
 					var spo:ProductObject = ProductManager.own.addDynamicSubProduct(po,doorData);
-					//doAction(spo);
+					if(spo.productInfo.isReady)
+					{
+						doAction(spo);
+					}
+					else
+					{
+						doorDict[spo.productInfo] = spo;
+						spo.productInfo.addEventListener("ready",onProductReady);
+					}
 				}
 			}
+		}
+		
+		//检查厨柜是否已经有门
+		private function hasDoor(cabinet:ProductObject):Boolean
+		{
+			if(cabinet.dynamicSubProductObjects)
+			{
+				for each(var spo:ProductObject in cabinet.dynamicSubProductObjects)
+				{
+					if(spo.productInfo.type==CabinetType.DOOR)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		private var doorDict:Dictionary = new Dictionary();
+		private function onProductReady(e:Event):void
+		{
+			var info:ProductInfo = e.currentTarget as ProductInfo;
+			info.removeEventListener("ready",onProductReady);
+			
+			var spo:ProductObject = doorDict[info];
+			delete doorDict[info];
+			
+			doAction(spo);
 		}
 		
 		private function doAction(po:ProductObject):void
