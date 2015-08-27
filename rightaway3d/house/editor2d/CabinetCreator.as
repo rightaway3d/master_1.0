@@ -486,6 +486,7 @@ package rightaway3d.house.editor2d
 			
 			//如果地柜与吊柜的材质不一致，不能加顶线
 			if(wallCabinetDoorMat!=groundCabinetDoorMat)return;
+			
 			//只有指定的两种材质需要加顶线
 			if(wallCabinetDoorMat!="MCMS002"/*米黄珍珠-古典*/ && wallCabinetDoorMat!="MCMS006"/*牛津樱桃木-古典*/)return;
 			
@@ -1381,6 +1382,14 @@ package rightaway3d.house.editor2d
 			}
 			s += "]";
 			
+			s += ",\"groundMat\":\"" + this.groundCabinetDoorMat + "\"";//地柜门板材质
+			s += ",\"wallMat\":\"" + this.wallCabinetDoorMat + "\"";//吊柜门板材质
+			
+			if(this.toplineMeshs.length>0)
+			{
+				s += getTopLineData();
+			}
+			
 			/*drainerProduct = getProduct(ProductObjectName.DRAINER);
 			if(drainerProduct)s += getCookerProductData("drainerProduct",drainerProduct);*/
 			
@@ -1390,11 +1399,62 @@ package rightaway3d.house.editor2d
 			return s;
 		}
 		
-		private function getCookerProductData(name:String,po:ProductObject):String
+		private function getTopLineData():String
+		{
+			if(!topLinesData)return "";
+			
+			var s:String = ",\"topLine\":[";
+			
+			var len:int = topLinesData.length;
+			for(var i:int=0;i<len;i++)
+			{
+				s += i==0?"[":",[";
+				var points:Vector.<Point> = topLinesData[i];
+				var len2:int = points.length;
+				for(var j:int=0;j<len2;j++)
+				{
+					var p:Point = points[j];
+					s += j==0?"[":",[";
+					s += p.x+","+p.y+"]";
+				}
+				s += "]";
+			}
+			
+			s += "]";
+			return s;
+		}
+		
+		private function resetTopLine(o:Object):void
+		{
+			if(o.topLine!=undefined)
+			{
+				var groups:Array = [];
+				var a:Array = o.topLine;
+				var len:int = a.length;
+				for(var i:int=0;i<len;i++)
+				{
+					var points:Vector.<Point> = new Vector.<Point>();
+					groups.push(points);
+					
+					var b:Array = a[i];
+					var len2:int = b.length;
+					for(var j:int=0;j<len2;j++)
+					{
+						var c:Array = b[j];
+						var p:Point = new Point(c[0],c[1]);
+						points.push(p);
+					}
+				}
+				
+				this.createTopLine(groups);
+			}
+		}
+		
+		/*private function getCookerProductData(name:String,po:ProductObject):String
 		{
 			var s:String = ",\""+name+"\":" + po.toJsonString();
 			return s;
-		}
+		}*/
 		
 		/**
 		 * 还原台面
@@ -1422,6 +1482,11 @@ package rightaway3d.house.editor2d
 			}
 			
 			addTableMeshs();
+			
+			if(cabinetTable.groundMat!=undefined)groundCabinetDoorMat = cabinetTable.groundMat;
+			if(cabinetTable.wallMat!=undefined)wallCabinetDoorMat = cabinetTable.wallMat;
+			
+			resetTopLine(cabinetTable);
 			
 			//drainerProduct = getProduct(ProductObjectName.DRAINER);
 			//flueProduct = getProduct(ProductObjectName.FLUE);
