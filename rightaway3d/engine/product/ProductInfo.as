@@ -374,6 +374,8 @@ package rightaway3d.engine.product
 		
 		static public function setDefaultMaterial(po:ProductObject):void
 		{
+			if(po.customMaterialName)return;//如果物体已经存在自定义材质，则不再设置默认材质
+			
 			var type:String = po.productInfo.type;
 			if(defaultMaterialDict[type])
 			{
@@ -415,7 +417,8 @@ package rightaway3d.engine.product
 					modelObject.cloneFromInfo();
 					
 					//设置产品实例的材质（仅当此产品未设置过材质时）
-					if(!productObjectInstance.customMaterialName)setDefaultMaterial(productObjectInstance);
+					//if(!productObjectInstance.customMaterialName)
+					setDefaultMaterial(productObjectInstance);
 					
 					if(modelObject.meshs)
 					{

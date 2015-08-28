@@ -1116,6 +1116,35 @@ package rightaway3d.engine.product
 			return a;
 		}
 		
+		/**
+		 * 获取指定产品的指定类型的子产品
+		 * @param parent：指定产品
+		 * @param type：指定类型
+		 * @param subs：找到的子产品将在此集合中返回
+		 * 
+		 */
+		public function getSubProductObjectsByType(parent:ProductObject,type:String,result:Array):void
+		{
+			if(parent.subProductObjects)findProductObjectsByType(parent.subProductObjects,type,result);
+			if(parent.dynamicSubProductObjects)findProductObjectsByType(parent.dynamicSubProductObjects,type,result);
+		}
+		
+		private function findProductObjectsByType(pos:Vector.<ProductObject>,type:String,result:Array):void
+		{
+			for each(var po:ProductObject in pos)
+			{
+				if(po.type==type)
+				{
+					result.push(po);
+				}
+				else
+				{
+					getSubProductObjectsByType(po,type,result);
+				}
+			}
+			
+		}
+		
 		public function deleteProductObjectsByType(type:String):void
 		{
 			var a:Array = getProductObjectsByType(type);
