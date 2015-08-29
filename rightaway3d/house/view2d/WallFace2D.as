@@ -10,6 +10,7 @@ package rightaway3d.house.view2d
 	import rightaway3d.house.cabinet.CabinetType;
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.WallObject;
+	import rightaway3d.utils.BrokenLineDrawer;
 
 	public class WallFace2D extends Base2D
 	{
@@ -352,6 +353,9 @@ package rightaway3d.house.view2d
 			updateCabinetShape(s,wo,x0,wallHeight);
 		}
 		
+		private var p0:Point = new Point();
+		private var p1:Point = new Point();
+		
 		private function updateCabinetShape(s:Shape,wo:WallObject,x0:Number,wallHeight:Number):void
 		{
 			//var lineColor:uint =0xffffff;
@@ -399,18 +403,40 @@ package rightaway3d.house.view2d
 								
 								//g.lineStyle(0,0xff0000);
 								g.drawRect(x,y,tw,th);
+								var n1:Number = 1;
+								var n2:Number = 3;
 								
 								if(file.indexOf("left")>-1)//左开门
 								{
-									g.moveTo(x+tw,y);
+									/*g.moveTo(x+tw,y);
 									g.lineTo(x,y+th*0.5);
-									g.lineTo(x+tw,y+th);
+									g.lineTo(x+tw,y+th);*/
+									
+									p1.x = x+tw;
+									p1.y = y;
+									p0.x = x;
+									p0.y = y+th*0.5;
+									BrokenLineDrawer.draw2(g,p1,p0,n1,n2);
+									
+									p1.x = x+tw;
+									p1.y = y+th;
+									BrokenLineDrawer.draw2(g,p0,p1,n1,n2);
 								}
 								else if(file.indexOf("right")>-1)
 								{
-									g.moveTo(x,y);
+									/*g.moveTo(x,y);
 									g.lineTo(x+tw,y+th*0.5);
-									g.lineTo(x,y+th);
+									g.lineTo(x,y+th);*/
+									
+									p1.x = x;
+									p1.y = y;
+									p0.x = x+tw;
+									p0.y = y+th*0.5;
+									BrokenLineDrawer.draw2(g,p1,p0,n1,n2);
+									
+									p1.x = x;
+									p1.y = y+th;
+									BrokenLineDrawer.draw2(g,p0,p1,n1,n2);
 								}
 							}
 							
