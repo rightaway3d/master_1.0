@@ -606,13 +606,17 @@ package rightaway3d.house.editor2d
 		public function getCabinetList():String
 		{
 			var subtotal:Object = {};
-			var cps:String = getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal);
 			
 			var s:String = "{";
 			s += "\"gttm\":{";
 			s += "\"list\":["+getProductsData(CabinetType.BODY,subtotal);
-			s += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal) + ",";
+			
+			var dps:String = getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal);
+			if(dps)s += dps + ",";
+			
+			var cps:String = getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal);
 			if(cps)s += cps + ",";
+			
 			s += getTableData(subtotal)+"],";
 			s += "\"body\":"+getNum(subtotal,CabinetType.BODY)+",";
 			s += "\"door\":"+getNum(subtotal,CabinetType.DOOR_PLANK)+",";
@@ -1111,6 +1115,8 @@ package rightaway3d.house.editor2d
 				n += ct.getArea();
 			}
 			
+			if(n<1)return "";
+			
 			var lib:MaterialLibrary = MaterialLibrary.instance;
 			var price:Number = lib.getMaterialPrice(name);
 			n /= 0.6;//将面积转换为长度（延米)
@@ -1210,25 +1216,25 @@ package rightaway3d.house.editor2d
 		{
 			removeTableMeshs();
 			
-			flueProduct = getProduct(ProductObjectName.FLUE);
+			/*flueProduct = getProduct(ProductObjectName.FLUE);
 			if(flueProduct)
 			{
 				flueProduct.dispose();
 				flueProduct = null;
-			}
+			}*/
 			
-			drainerProduct = getProduct(ProductObjectName.DRAINER);
+			/*drainerProduct = getProduct(ProductObjectName.DRAINER);
 			if(drainerProduct)
 			{
 				drainerProduct.dispose();
 				drainerProduct = null;
-			}
+			}*/
 			
-			for each(var po:ProductObject in plateDict)
+			/*for each(var po:ProductObject in plateDict)
 			{
 				po.dispose();
 				delete plateDict[po];
-			}
+			}*/
 			
 			/*this.sceneGroundCabinets.length = 0;
 			this.sceneWallCabinets.length = 0;*/

@@ -501,16 +501,18 @@ package rightaway3d.house.editor2d
 			deleteProductByName(ProductObjectName.FLUE);
 			deleteProductByName(ProductObjectName.HOOD);
 			
-			gvar.currProduct2 = null;
+			this.clearLocationFlag();
+			
+			//gvar.currProduct2 = null;
 			currCrossWall = null;
 			
-			_drainerFlag = null;
-			_flueFlag = null;
+			//_drainerFlag = null;
+			//_flueFlag = null;
 			
-			actionHistory.clear();
+			//actionHistory.clear();
 			ProductObject.resetIndex();
 			
-			scene.house.currFloor.updateWallMark();
+			//scene.house.currFloor.updateWallMark();
 		}
 		
 		public function setCabinet2dColor(border:uint):void
