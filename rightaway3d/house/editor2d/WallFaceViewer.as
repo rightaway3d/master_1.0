@@ -24,9 +24,10 @@ package rightaway3d.house.editor2d
 			this.addChild(wallFace);
 		}
 		
-		public function reset():void
+		private function reset():void
 		{
 			index = 0;
+			wallFace.resetMatData();
 		}
 		
 		private var index:int = 0;
@@ -65,7 +66,8 @@ package rightaway3d.house.editor2d
 					return true;
 				}
 				
-				index = 0;//当索引超出范围时，归零并返回false，待下一次调用时，重新循环显示立面图
+				//index = 0;//当索引超出范围时，归零并返回false，待下一次调用时，重新循环显示立面图
+				reset();
 			}
 			
 			return false;
@@ -134,7 +136,7 @@ package rightaway3d.house.editor2d
 		
 		private function updateFace(face:WallFace2D):void
 		{			*/
-			var n:Number = 0.9;
+			var n:Number = 0.8;
 			var s:Number = 1;
 			
 			face.scaleX = s;
@@ -162,7 +164,7 @@ package rightaway3d.house.editor2d
 			w *= s;
 			h = face.height;
 			
-			face.x = (sw-w)/2;
+			face.x = 250;//(sw-w)/2;
 			face.y = h+(sh-h)/2 - sh*0.16;
 		}
 		

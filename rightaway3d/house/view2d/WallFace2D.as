@@ -14,6 +14,8 @@ package rightaway3d.house.view2d
 	import rightaway3d.house.vo.WallObject;
 	import rightaway3d.utils.BrokenLineDrawer;
 	import rightaway3d.utils.MyTextField;
+	
+	import ztc.meshbuilder.room.MaterialLibrary;
 
 	public class WallFace2D extends Base2D
 	{
@@ -43,8 +45,60 @@ package rightaway3d.house.view2d
 			hoodMark.visible = false;
 		}
 		
+		private var matIndex:int = 0;
+		private var matObject:Object = {};
+		private var currFaceMats:Object;
+		
+		public function resetMatData():void
+		{
+			matIndex = 0;
+			matObject = {};
+		}
+		
+		private function getMatFlag(mat:String):String
+		{
+			var s:String;
+			if(matObject[mat]==undefined)
+			{
+				trace("getMatFlag:",mat,matIndex);
+				
+				matObject[mat] = matIndex++;
+			}
+			
+			var n:String = matObject[mat];
+			if(currFaceMats[n]==undefined)
+			{
+				currFaceMats[n] = mat;
+			}
+			
+			return "C" + n;
+		}
+		
+		private var matTips:Sprite;
+		private function drawMatTips():void
+		{
+			matTips.removeChildren();
+			
+			this.setText2("门板材质说明",matTips,0,0);
+			
+			var lib:MaterialLibrary = MaterialLibrary.instance;
+			
+			var i:int = 1;
+			for(var s:String in currFaceMats)
+			{
+				var matName:String = currFaceMats[s];
+				
+				var materialDscp:String = lib.getMaterialAttribute(matName,"materialDscp");
+				if(materialDscp)materialDscp = "(" + materialDscp + ")";
+				
+				this.setText2("C"+s+":"+matName+materialDscp,matTips,0,i++ * 10);
+			}
+		}
+		
 		public function updateView(cw:CrossWall):void
 		{
+			currFaceMats = {};
+			
 			sizeMark.updateView(cw);
 			
 			//trace("WallFace2D updateView");
@@ -73,6 +127,14 @@ package rightaway3d.house.view2d
 			g.drawRect(0,-h,w,h);
 			//g.endFill();
 			g.lineStyle(0,lineColor);
+			
+			if(!matTips)
+			{
+				matTips = new Sprite();
+				this.addChild(matTips);
+			}
+			matTips.x = w + 40;
+			matTips.y = -h;
 			
 			var gos:Array = cw.groundObjects;
 			var len:int = gos.length;
@@ -203,6 +265,8 @@ package rightaway3d.house.view2d
 			
 			updateSizeMark(ws,hoodMark,x1);
 			hoodMark.y = -125;//-56;
+			
+			drawMatTips();
 		}
 		
 		public function updateSizeMark(points:Array,mark:BaseMarking,x1:Number):void
@@ -408,7 +472,7 @@ package rightaway3d.house.view2d
 								var x:Number = -tx-p.x;
 								var y:Number = -(ty+th+p.y);
 								//trace("p3:",x,y);
-								
+								//trace("----customMaterialName:"+doorPlank.customMaterialName);
 								//g.lineStyle(0,0xff0000);
 								g.drawRect(x,y,tw,th);
 								var n1:Number = 1;
@@ -460,12 +524,14 @@ package rightaway3d.house.view2d
 								}
 								else if(file.indexOf("basket")>-1)//拉篮
 								{
-									setText("拉篮",s,x+tw*0.5,y+th);
+									setText1("拉篮",s,x+tw*0.5,y+th);
 								}
 								else if(file.indexOf("drawer")>-1)//抽屉
 								{
-									setText("抽屉",s,x+tw*0.5,y+th);
+									setText1("抽屉",s,x+tw*0.5,y+th);
 								}
+								
+								setText1(getMatFlag(doorPlank.customMaterialName),s,x+tw*0.5,y+5+5,true);
 							}
 							
 							var handle:ProductObject = getSubProductByType(spo,CabinetType.HANDLE);
@@ -558,11 +624,25 @@ package rightaway3d.house.view2d
 			return null;
 		}
 		
-		private function setText(str:String,parent:Sprite,cx:Number,cy:Number):void
+		private function setText1(str:String,parent:Sprite,cx:Number,cy:Number,force:Boolean=false):void
 		{
 			//trace("----------cy:",cy);
-			if(cy<-1)return;//控制每个柜子里只显示一个名称
+			if(cy<-1 && !force)return;//控制每个柜子里只显示一个名称
 			
+			var txt:MyTextField = setText(str,parent);
+			txt.x = cx - txt.width * 0.5;
+			txt.y = cy - txt.height;
+		}
+		
+		private function setText2(str:String,parent:Sprite,tx:Number,ty:Number):void
+		{
+			var txt:MyTextField = setText(str,parent);
+			txt.x = tx;
+			txt.y = ty;
+		}
+		
+		private function setText(str:String,parent:Sprite):MyTextField
+		{
 			var txt:MyTextField = new MyTextField();
 			txt.align = TextFormatAlign.CENTER;
 			txt.textSize = 6;
@@ -577,10 +657,9 @@ package rightaway3d.house.view2d
 			txt.width = txt.textWidth + 5;
 			txt.height = txt.textHeight + 4;
 			
-			txt.x = cx - txt.width * 0.5;
-			txt.y = cy - txt.height;
-			
 			parent.addChild(txt);
+			
+			return txt;
 		}
 	}
 }
