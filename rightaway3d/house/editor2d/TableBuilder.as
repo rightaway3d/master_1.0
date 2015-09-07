@@ -105,7 +105,7 @@ package rightaway3d.house.editor2d
 			var cabs:Array = productManager.getProductObjectsByType(CabinetType.BODY);
 			for each(var po:ProductObject in cabs)
 			{
-				cabinetCreator.addSingleDoor(po,null);
+				cabinetCreator.addSingleDoor(po,null,false);
 			}			
 		}
 		

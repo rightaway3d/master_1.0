@@ -4100,8 +4100,9 @@ package rightaway3d.house.editor2d
 		 * 为单开门柜添加门
 		 * 
 		 */
-		public function addSingleDoor(po:ProductObject,direction:String):void
+		public function addSingleDoor(po:ProductObject,direction:String,openDoor:Boolean):void
 		{
+			isOpenDoor = openDoor;//添加门后是否打开门
 			if(po.productInfo.isReady)
 			{
 				_addSingleDoor(po,direction);
@@ -4128,6 +4129,8 @@ package rightaway3d.house.editor2d
 			}
 		}
 		
+		private var isOpenDoor:Boolean;
+		
 		private function _addSingleDoor(po:ProductObject,direction:String):void
 		{
 			var s:String = po.productInfo.productModel.slice(0,3);
@@ -4144,14 +4147,17 @@ package rightaway3d.house.editor2d
 				{
 					var doorData:XML = doorList[i];
 					var spo:ProductObject = ProductManager.own.addDynamicSubProduct(po,doorData);
-					if(spo.productInfo.isReady)
+					if(isOpenDoor)
 					{
-						doAction(spo);
-					}
-					else
-					{
-						doorDict[spo.productInfo] = spo;
-						spo.productInfo.addEventListener("ready",onProductReady);
+						if(spo.productInfo.isReady)
+						{
+							doAction(spo);
+						}
+						else
+						{
+							doorDict[spo.productInfo] = spo;
+							spo.productInfo.addEventListener("ready",onProductReady);
+						}
 					}
 				}
 			}

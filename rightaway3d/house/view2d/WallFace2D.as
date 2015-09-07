@@ -79,7 +79,7 @@ package rightaway3d.house.view2d
 		{
 			matTips.removeChildren();
 			
-			this.setText2("门板材质说明",matTips,0,0);
+			this.setText2("材质说明",matTips,0,0);
 			
 			var lib:MaterialLibrary = MaterialLibrary.instance;
 			
