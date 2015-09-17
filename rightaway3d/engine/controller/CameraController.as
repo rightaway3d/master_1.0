@@ -42,7 +42,7 @@ package rightaway3d.engine.controller
 		
 		public function CameraController(stage2d:DisplayObjectContainer,camera:Camera3D)
 		{
-			trace("CameraController");
+			//trace("CameraController");
 			this.stage2d = stage2d;
 			
 			cc = new HoverController();

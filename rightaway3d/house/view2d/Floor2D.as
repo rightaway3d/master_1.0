@@ -19,6 +19,8 @@ package rightaway3d.house.view2d
 		
 		public var rooms:Vector.<Room2D>;
 		
+		public var currRoom:Room2D;
+		
 		private var wallCtr:WallController;
 		
 		public var wallAreaSelector:WallAreaSelector;
@@ -115,10 +117,20 @@ package rightaway3d.house.view2d
 			}
 		}
 		
+		public function getWallByName(name:String):Wall2D
+		{
+			for each(var w:Wall2D in walls)
+			{
+				if(w.vo.name==name)return w;
+			}
+			return null;
+		}
+		
 		public function addRoom(room:Room2D):void
 		{
 			roomContainer.addChild(room);
 			rooms.push(room);
+			currRoom = room;
 		}
 		
 		public function removeRoom(room:Room2D):void
@@ -134,6 +146,11 @@ package rightaway3d.house.view2d
 				else
 				{
 					rooms.pop();
+				}
+				
+				if(currRoom==room)
+				{
+					currRoom = null;
 				}
 			}
 		}

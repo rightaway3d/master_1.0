@@ -13,6 +13,7 @@ package rightaway3d.house.view3d
 	import rightaway3d.engine.skybox.SkyBoxLoader;
 	import rightaway3d.house.editor2d.CabinetController;
 	import rightaway3d.house.editor2d.CabinetCreator;
+	import rightaway3d.house.utils.GlobalConfig;
 	import rightaway3d.house.vo.House;
 
 	public class Scene3D extends Sprite
@@ -173,6 +174,7 @@ package rightaway3d.house.view3d
 			var s:String = "{";
 			s += "\"engine\":" + engine3d.toJsonString() + ",";
 			s += "\"house\":" + house.toJsonString() + ",";
+			s += "\"config\":" + GlobalConfig.instance.toJsonString() + ",";
 			s += "\"cabinetTable\":" + cabinetCreator.getCabinetTableData() + ",";
 			s += "\"products\":" + productManager.getRootProductJsonString();
 			s += "}";
@@ -181,7 +183,6 @@ package rightaway3d.house.view3d
 		
 		private function getEngineJsonString():void
 		{
-			
 		}
 		
 		/*private function getProductList():XMLList

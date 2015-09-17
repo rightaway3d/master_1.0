@@ -68,7 +68,7 @@ package rightaway3d.engine.skybox
 		private function _load():void
 		{
 			var url:String = Urls.skyboxBaseURL + queue[index];
-			trace("SkyBoxLoader load:"+url);
+			//trace("SkyBoxLoader load:"+url);
 			loader.load(new URLRequest(url));
 		}
 	}

@@ -132,7 +132,7 @@ package rightaway3d.engine.core
 		
 		public function updateCubeReflection():void
 		{
-			trace("-----------updateCubeReflection");
+			//trace("-----------updateCubeReflection");
 //			var center:Vector3D = rm.lightManager.center.add(new Vector3D(0,0,0));
 			//trace(rm.lightManager.center);
 			if (rm.lightManager.center) {

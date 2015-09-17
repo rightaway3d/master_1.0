@@ -888,6 +888,8 @@ package rightaway3d.house.vo
 			
 			update1();
 			update2();
+			
+			//this.updateCrossWall();
 		}
 		
 		private function updateRadians():void

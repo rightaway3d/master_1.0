@@ -1,6 +1,9 @@
 package rightaway3d.house.utils
 {
 	import jell3d.utils.SO;
+	
+	import rightaway3d.house.vo.Floor;
+	import rightaway3d.utils.Log;
 
 	/**
 	 * 全局配置参数
@@ -9,7 +12,7 @@ package rightaway3d.house.utils
 	 */
 	public class GlobalConfig
 	{
-		private var _wallPlateWidth:uint = 100;
+		private const _wallPlateWidth:uint = 100;
 		
 		/**
 		 * 临接墙的封板最大宽度，默认100
@@ -18,13 +21,32 @@ package rightaway3d.house.utils
 		 */
 		public function get wallPlateWidth():uint
 		{
+			//return _wallPlateWidth;
 			var s:String = SO.getSO("wallPlateWidth");
 			return s?uint(s):_wallPlateWidth;
 		}
 
 		public function set wallPlateWidth(value:uint):void
 		{
+			Log.log("set wallPlateWidth:"+value);
 			SO.setSO("wallPlateWidth",String(value));
+		}
+		
+		public function toJsonString():String
+		{
+			var s:String = "{" +
+					"\"wallPlateWidth\":" + wallPlateWidth
+				+ "}";
+			return s;
+		}
+		
+		public function setConfigData(data:Object):void
+		{
+			Log.log("config1:"+data.wallPlateWidth);
+			if(data.wallPlateWidth!=undefined)
+			{
+				wallPlateWidth = data.wallPlateWidth;
+			}
 		}
 		
 		//==============================================================================================

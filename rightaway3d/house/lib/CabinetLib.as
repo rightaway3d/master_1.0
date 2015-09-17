@@ -206,7 +206,7 @@ package rightaway3d.house.lib
 		
 		private function onLoaded(data:String):void
 		{
-			trace("onCabinetLibLoaded");
+			//trace("onCabinetLibLoaded");
 			XML.ignoreComments = false;
 			libXML = new XML(data);
 			groupList = libXML.groups.kind.item;
@@ -221,7 +221,7 @@ package rightaway3d.house.lib
 			dynamicSubProduct = libXML.dynamicSubProduct[0];
 			var s:String = dynamicSubProduct.list;
 			dynamicProductList = s.split(",");
-			trace("dynamicProductList:"+dynamicProductList);
+			//trace("dynamicProductList:"+dynamicProductList);
 			
 			libReady = true;
 			

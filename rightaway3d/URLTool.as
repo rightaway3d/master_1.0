@@ -41,13 +41,13 @@ package rightaway3d
 		
 		static public function LoadURL(url:String,onResult:Function,onFail:Function=null,data:ByteArray=null,resultDataFormat:String="text"):void
 		{
-			trace("callRemote:"+url);
+			//trace("callRemote:"+url);
 			var loader:URLLoader = new URLLoader();
 			
 			var r:URLRequest = new URLRequest(url);
 			if(data)
 			{
-				trace("data.length:"+data.length);
+				//trace("data.length:"+data.length);
 				r.data = data;
 				r.method = URLRequestMethod.POST;
 				//r.contentType = "application/octet-stream";

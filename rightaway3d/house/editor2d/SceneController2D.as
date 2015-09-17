@@ -10,7 +10,11 @@ package rightaway3d.house.editor2d
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
 	
+	import rightaway3d.engine.product.ProductManager;
+	import rightaway3d.engine.product.ProductObject;
+	import rightaway3d.house.utils.Point3D;
 	import rightaway3d.house.view2d.Base2D;
+	import rightaway3d.house.view2d.Floor2D;
 	import rightaway3d.house.view2d.Room2D;
 	import rightaway3d.house.view2d.ScaleRuler2D;
 	import rightaway3d.house.view2d.Wall2D;
@@ -453,6 +457,97 @@ package rightaway3d.house.editor2d
 			//room2d.loadGroundImage("assets/map/12034.png");
 			
 			scene.render();
+		}
+		
+		public function setRoomSize(width:int,height:int,wallWidth:int):void
+		{
+			var floor:Floor2D = scene.currFloor;
+			var wa:Wall = floor.getWallByName("A").vo;
+			var wb:Wall = floor.getWallByName("B").vo;
+			var wc:Wall = floor.getWallByName("C").vo;
+			var wd:Wall = floor.getWallByName("D").vo;
+			
+			var pa0:Point3D = wa.groundHeadPoint.point;
+			var pa1:Point3D = wa.groundEndPoint.point;
+			
+			var pc0:Point3D = wc.groundHeadPoint.point;
+			var pc1:Point3D = wc.groundEndPoint.point;
+			
+			trace(pa0,pa1,pc0,pc1);
+			
+			var w:Number = pa1.x - pa0.x;
+			var h:Number = pc1.z - pa0.z;
+			if(h<0)h=-h;
+			
+			var dx:Number = (width+wallWidth-w)*0.5;
+			var dz:Number = (height+wallWidth-h)*0.5;
+			
+			wa.width = wallWidth;
+			wb.width = wallWidth;
+			wc.width = wallWidth;
+			wd.width = wallWidth;
+			
+			pa0.x -= dx;
+			pa0.z += dz;
+			
+			pa1.x += dx;
+			pa1.z += dz;
+			
+			pc0.x += dx;
+			pc0.z -= dz;
+			
+			pc1.x -= dx;
+			pc1.z -= dz;
+			
+			wa.updateLength();
+			wa.countCrossWall();
+			wa.updateRooms();
+			
+			wb.updateLength();
+			wb.countCrossWall();
+			wb.updateRooms();
+			
+			wc.updateLength();
+			wc.countCrossWall();
+			wc.updateRooms();
+			
+			wd.updateLength();
+			wd.countCrossWall();
+			wd.updateRooms();
+			
+			scene.render();
+		}
+		
+		/**
+		 * 获取当前房间的尺寸
+		 * @return [roomWidth,roomDepth,wallWidth]
+		 * 
+		 */
+		public function getRoomSize():Array
+		{
+			var floor:Floor2D = scene.currFloor;
+			var wa:Wall = floor.getWallByName("A").vo;
+			var wc:Wall = floor.getWallByName("C").vo;
+			
+			var pa0:Point3D = wa.groundHeadPoint.point;
+			var pa1:Point3D = wa.groundEndPoint.point;
+			
+			var pc0:Point3D = wc.groundHeadPoint.point;
+			var pc1:Point3D = wc.groundEndPoint.point;
+			
+			trace(pa0,pa1,pc0,pc1);
+			var n:int = wa.width;
+			var w:Number = pa1.x - pa0.x - n;
+			var h:Number = pc1.z - pa0.z;
+			if(h<0)h=-h;
+			h -= n;
+			
+			var a:Array = [];
+			a.push(w);
+			a.push(h);
+			a.push(n);
+			
+			return a;
 		}
 		
 		public function createRoom(x:Number,y:Number,w:Number,h:Number):void

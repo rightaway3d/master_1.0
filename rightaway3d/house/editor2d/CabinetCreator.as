@@ -1528,8 +1528,29 @@ package rightaway3d.house.editor2d
 			return ps;
 		}
 		
-		private var cabinetTabless:Array;
-		private var tableDepthss:Array;
+		private var _cabinetTabless:Array;
+		/**
+		 * 当前构建台面时台面的长度数据
+		 * @return 
+		 * 
+		 */
+		public function get cabinetTabless():Array
+		{
+			return _cabinetTabless;
+		}
+		
+		private var _tableDepthss:Array;
+		
+		/**
+		 * 当前构建台面时的台面宽度数据
+		 * @return 
+		 * 
+		 */
+		public function get tableDepthss():Array
+		{
+			return _tableDepthss;
+		}
+		
 		
 		/**
 		 * 计算台面数据
@@ -1584,10 +1605,10 @@ package rightaway3d.house.editor2d
 		{
 			trace("updateCabinetTable");
 			
-			if(!cabinetTabless)return;
+			if(!_cabinetTabless)return;
 			
 			this.removeTableMeshs();
-			createCabinetTable3(cabinetTabless,tableDepthss);
+			createCabinetTable3(_cabinetTabless,_tableDepthss);
 			updateTableMeshsPos(houseDX,houseDZ);
 		}
 		
@@ -3720,8 +3741,8 @@ package rightaway3d.house.editor2d
 		public function createCabinetTable3(tabless:Array,depthss:Array):void
 		{
 			trace("createCabinetTable3");
-			cabinetTabless = tabless;
-			tableDepthss = depthss;
+			_cabinetTabless = tabless;
+			_tableDepthss = depthss;
 			
 			var resetFirstPoint:Boolean = false;//是否需要重新设置第一点
 			
@@ -3742,6 +3763,7 @@ package rightaway3d.house.editor2d
 				var x0:Number = tableData.x0;
 				var x1:Number = tableData.x1;
 				trace("0:",x0,x1);
+				
 				if(tableData.headCabinet)x0+=tableData.headCabinet.objectInfo.width;
 				if(tableData.endCabinet)x1-=tableData.endCabinet.objectInfo.width;
 				
@@ -3762,6 +3784,13 @@ package rightaway3d.house.editor2d
 				
 				if(tableData.headCabinet || x0-cw.localHead.x<1)
 				{
+					if(tableData.headCabinet)
+					{
+						var tp:Point = cw.wall.globalToLocal2(p);
+						tp.y += 50;
+						cw.wall.localToGlobal2(tp,tp);
+						p = tp;
+					}
 					dangshui.push(p);//挡水的第一个点坐标（为台面外沿，挡水终点坐标）
 					resetFirstPoint = true;
 				}
@@ -3806,6 +3835,13 @@ package rightaway3d.house.editor2d
 				
 				if(tableData.endCabinet || cw.localEnd.x-x1<1)
 				{
+					if(tableData.endCabinet)
+					{
+						tp = cw.wall.globalToLocal2(p);
+						tp.y += 50;
+						cw.wall.localToGlobal2(tp,tp);
+						p = tp;
+					}
 					dangshui.push(p);//台面外沿，挡水起始坐标
 				}
 				

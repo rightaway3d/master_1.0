@@ -1,5 +1,6 @@
 ﻿package rightaway3d.utils
 {
+	import flash.external.ExternalInterface;
 	import flash.text.TextField;
 
 	public final class Log
@@ -29,6 +30,14 @@
 			
 			var s:String = args.toString();
 			
+			if (ExternalInterface.available) { 
+				ExternalInterface.call("log",s); 
+			}
+			else
+			{
+				trace(s);
+			}
+			
 			if(socket && socket.connected)
 			{
 				s = msgPrefix + s;
@@ -43,11 +52,6 @@
 			{
 				logFun(s);
 			}
-			else
-			{
-				//trace(s);
-			}
-			trace(s);
 		}
 		
 		static private var socket:MySocket;

@@ -111,7 +111,7 @@ package rightaway3d.engine.core
 		
 		public function updateCubeReflection(delay:uint=1000):void
 		{
-			trace("updateCubeReflection");
+			//trace("updateCubeReflection");
 			setTimeout(function():void {
 				engine3d.updateCubeReflection();
 			},delay);

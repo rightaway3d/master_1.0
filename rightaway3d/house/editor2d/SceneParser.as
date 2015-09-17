@@ -5,6 +5,7 @@ package rightaway3d.house.editor2d
 	
 	import rightaway3d.engine.product.ProductManager;
 	import rightaway3d.engine.product.ProductObject;
+	import rightaway3d.house.utils.GlobalConfig;
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.Floor;
 	import rightaway3d.house.vo.House;
@@ -13,6 +14,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.house.vo.Wall;
 	import rightaway3d.house.vo.WallHole;
 	import rightaway3d.utils.Base64;
+	import rightaway3d.utils.Log;
 
 	public class SceneParser
 	{
@@ -77,6 +79,13 @@ package rightaway3d.house.editor2d
 			var houseData:Object = data.house;
 			var products:Array = data.products;
 			var cabinetTable:Object = data.cabinetTable;
+			
+			Log.log("config1:"+data.config);
+			if(data.config!=undefined)
+			{
+				Log.log("config2:"+data.config);
+				GlobalConfig.instance.setConfigData(data.config);
+			}
 			
 			var wallDict:Dictionary = new Dictionary();
 			

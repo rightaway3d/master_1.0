@@ -40,6 +40,8 @@ package rightaway3d.house.editor2d
 		}*/
 		public function builderTable():String
 		{
+			cabinetCreator.clearCabinetTalbes();
+			
 			maxAlongWidth = GlobalConfig.instance.wallPlateWidth;
 			
 			groundCabinetDict = new Dictionary();
@@ -326,14 +328,14 @@ package rightaway3d.house.editor2d
 				var subs:Array = tabless[i];
 				var subLen:int = subs.length;
 				
-				var subArea:WallSubArea = subs[0];
-				var cw1:CrossWall = subArea.cw;
-				var areas:Array = subArea.groundObjects;
+				var sa:WallSubArea = subs[0];
+				var cw1:CrossWall = sa.cw;
+				var cabinets:Array = sa.groundObjects;
 				
-				var p10:ProductObject = areas[0];
+				var p10:ProductObject = cabinets[0];
 				var w10:WallObject = p10.objectInfo;
 				
-				var p11:ProductObject = areas[areas.length-1];
+				var p11:ProductObject = cabinets[cabinets.length-1];
 				var w11:WallObject = p11.objectInfo;
 				
 				var isHeadPlate:Boolean = isNeedHeadPlate(cw1,w10);//柜子左侧是否需要封板
@@ -351,14 +353,14 @@ package rightaway3d.house.editor2d
 					var w00:WallObject = w10;
 					var w01:WallObject = w11;
 					
-					subArea = subs[j];
-					cw1 = subArea.cw;
-					areas = subArea.groundObjects;
+					sa = subs[j];
+					cw1 = sa.cw;
+					cabinets = sa.groundObjects;
 					
-					p10 = areas[0];
+					p10 = cabinets[0];
 					w10 = p10.objectInfo;
 					
-					p11 = areas[areas.length-1];
+					p11 = cabinets[cabinets.length-1];
 					w11 = p11.objectInfo;
 					
 					tx1 = cw0.localEnd.x - this.getGroundPlateDepth(w10);
@@ -385,8 +387,8 @@ package rightaway3d.house.editor2d
 			}
 		}
 		
-		//计算柜子左侧是否需要加侧封板
-		private function isNeedHeadPlate(cw:CrossWall,wo:WallObject):Boolean
+		/**计算柜子左侧是否需要加侧封板*/
+		public function isNeedHeadPlate(cw:CrossWall,wo:WallObject):Boolean
 		{
 			var dw:Number = wo.x - wo.width - cw.localHead.x;
 			
@@ -399,8 +401,8 @@ package rightaway3d.house.editor2d
 			return false;
 		}
 		
-		//计算柜子右侧是否需要加侧封板
-		private function isNeedEndPlate(cw:CrossWall,wo:WallObject):Boolean
+		/**计算柜子右侧是否需要加侧封板*/
+		public function isNeedEndPlate(cw:CrossWall,wo:WallObject):Boolean
 		{
 			var dw:Number = cw.localEnd.x - wo.x;
 			
@@ -1102,7 +1104,7 @@ package rightaway3d.house.editor2d
 		
 		private function addPlateProduct(parent:ProductObject,width:int,height:int=720):void
 		{
-			if(width<=100)
+			/*if(width<=100)
 			{
 				if(width<=50)
 				{
@@ -1116,17 +1118,31 @@ package rightaway3d.house.editor2d
 				}
 				var po:ProductObject = productManager.addDynamicSubProduct(parent,subData);
 				po.customMaterialName = parent.customMaterialName;
+			}*/
+			if(width>48 && width<52)
+			{
+				subData.infoID = "275";
+				subData.file = "plank_box_275_50x720x16.pdt";
+				var po:ProductObject = productManager.addDynamicSubProduct(parent,subData);
+				po.customMaterialName = parent.customMaterialName;
+			}
+			else if(width>98 && width<102)
+			{
+				subData.infoID = "274";
+				subData.file = "plank_box_274_100x720x16.pdt";
+				po = productManager.addDynamicSubProduct(parent,subData);
+				po.customMaterialName = parent.customMaterialName;
 			}
 			else
 			{
-				parent.specifications = width + "*" + height + "*18";//产品规格
+				parent.specifications = height + "*" + width + "*18";//产品规格
 				if(width==397 && height==717)
 				{
-					parent.productCode = "009";
+					parent.productCode = "009";//板件物料编号
 				}
 				else if(width==447 && height==717)
 				{
-					parent.productCode = "026";
+					parent.productCode = "026";//板件物料编号
 				}
 				else
 				{
@@ -1221,15 +1237,15 @@ package rightaway3d.house.editor2d
 			}while(length>0)
 		}
 		
-		//计算厨柜所在台面的宽度
+		/**计算厨柜所在台面的宽度*/
 		private function getTableWidth(wo:WallObject):Number
 		{
 			var z:Number = wo.z + wo.depth + 30;
 			//trace("getTableWidth:"+z,wo.z,wo.depth);
 			return z;
 		}
-		
-		private function getGroundPlateDepth(wo:WallObject):Number
+		/**计算踢脚线到墙面的距离*/
+		public function getGroundPlateDepth(wo:WallObject):Number
 		{
 			var z:Number = wo.z + wo.depth - 50;
 			//trace("getGroundPlateDepth:"+z,wo.z,wo.depth);

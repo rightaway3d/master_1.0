@@ -1,7 +1,6 @@
 package rightaway3d.house.view2d
 {
 	import flash.display.Graphics;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.text.TextFormatAlign;
@@ -10,8 +9,11 @@ package rightaway3d.house.view2d
 	import rightaway3d.engine.product.ProductInfo;
 	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.house.cabinet.CabinetType;
+	import rightaway3d.house.editor2d.CabinetCreator;
+	import rightaway3d.house.editor2d.TableBuilder;
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.WallObject;
+	import rightaway3d.house.vo.WallSubArea;
 	import rightaway3d.utils.BrokenLineDrawer;
 	import rightaway3d.utils.MyTextField;
 	
@@ -95,6 +97,90 @@ package rightaway3d.house.view2d
 			}
 		}
 		
+		//绘制台面及踢脚线
+		private function drawTable(cw:CrossWall,g:Graphics):void
+		{
+			var cabCreator:CabinetCreator = CabinetCreator.getInstance();
+			var tabless:Array = cabCreator.cabinetTabless;
+			var depthss:Array = cabCreator.tableDepthss;
+			
+			if(!tabless || !depthss)return;
+			
+			var tb:TableBuilder = TableBuilder.own;
+			var isCabinetHead:Boolean,isCabinetEnd:Boolean;//定义厨柜分区的头部标志，尾部标志
+			var ty:Number = -Base2D.sizeToScreen(840);
+			var th:Number = Base2D.sizeToScreen(40);
+			var th2:Number = Base2D.sizeToScreen(80);
+			
+			var len:int = tabless.length;
+			for(var i:int=0;i<len;i++)
+			{
+				var tables:Array = tabless[i];//每个独立台面分区
+				var depths:Array = depthss[i];
+				
+				var tlen:int = tables.length;
+				for(var j:int=0;j<tlen;j++)
+				{
+					var sa:WallSubArea = tables[j];
+					if(cw==sa.cw)
+					{
+						isCabinetHead = j==0?true:false;
+						isCabinetEnd = j==tlen-1?true:false;
+						
+						var x0:Number = sa.x0;
+						var x1:Number = sa.x1;
+						
+						if(sa.headCabinet)x0+=sa.headCabinet.objectInfo.width;
+						if(sa.endCabinet)x1-=sa.endCabinet.objectInfo.width;
+						
+						var tx:Number = Base2D.sizeToScreen(x0-cw.localHead.x);
+						var tw:Number = Base2D.sizeToScreen(x1-x0);
+						
+						g.drawRect(tx,ty,tw,th);//绘制台面
+						
+						/*计算踢脚线数据*/
+						var cabinets:Array = sa.groundObjects;
+						var p10:ProductObject = cabinets[0];
+						var p11:ProductObject = cabinets[cabinets.length-1];
+						
+						var w10:WallObject = p10.objectInfo;
+						var w11:WallObject = p11.objectInfo;
+						
+						if(isCabinetHead)
+						{
+							var isHeadPlate:Boolean = tb.isNeedHeadPlate(cw,w10);//柜子左侧是否需要封板
+							var tx0:Number = isHeadPlate ? w10.x - w10.width + 30 : cw.localHead.x;
+							tx0 -= cw.localHead.x;
+						}
+						else
+						{
+							var tsa:WallSubArea = tables[j-1];
+							var w00:WallObject = tsa.groundObjects[0].objectInfo;
+							tx0 = tb.getGroundPlateDepth(w00);
+						}
+						
+						if(isCabinetEnd)
+						{
+							var isEndPlate:Boolean = tb.isNeedEndPlate(cw,w11);
+							var tx1:Number = isEndPlate ? w11.x - 30 : cw.localEnd.x;
+							tx1 -= cw.localHead.x;
+						}
+						else
+						{
+							tsa = tables[j+1];
+							w00 = tsa.groundObjects[0].objectInfo;
+							tx1 = cw.localEnd.x - tb.getGroundPlateDepth(w00);
+						}
+						
+						tx = Base2D.sizeToScreen(tx0);
+						tw = Base2D.sizeToScreen(tx1-tx0);
+						
+						g.drawRect(tx,-th2,tw,th2);//绘制踢脚线
+					}
+				}
+			}
+		}
+		
 		public function updateView(cw:CrossWall):void
 		{
 			currFaceMats = {};
@@ -127,6 +213,8 @@ package rightaway3d.house.view2d
 			g.drawRect(0,-h,w,h);
 			//g.endFill();
 			g.lineStyle(0,lineColor);
+			
+			drawTable(cw,g);
 			
 			if(!matTips)
 			{
@@ -261,7 +349,7 @@ package rightaway3d.house.view2d
 			}
 			
 			updateSizeMark(gs,groundMark,x1);
-			groundMark.y = -42;
+			groundMark.y = -43;
 			
 			updateSizeMark(ws,hoodMark,x1);
 			hoodMark.y = -125;//-56;
@@ -531,7 +619,7 @@ package rightaway3d.house.view2d
 									setText1("抽屉",s,x+tw*0.5,y+th);
 								}
 								
-								setText1(getMatFlag(doorPlank.customMaterialName),s,x+tw*0.5,y+5+5,true);
+								setText1(getMatFlag(doorPlank.customMaterialName),s,x+tw*0.5,y+10,true);
 							}
 							
 							var handle:ProductObject = getSubProductByType(spo,CabinetType.HANDLE);
