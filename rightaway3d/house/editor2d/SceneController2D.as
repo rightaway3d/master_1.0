@@ -535,7 +535,7 @@ package rightaway3d.house.editor2d
 			var pc0:Point3D = wc.groundHeadPoint.point;
 			var pc1:Point3D = wc.groundEndPoint.point;
 			
-			trace(pa0,pa1,pc0,pc1);
+			//trace(pa0,pa1,pc0,pc1);
 			var n:int = wa.width;
 			var w:Number = pa1.x - pa0.x - n;
 			var h:Number = pc1.z - pa0.z;

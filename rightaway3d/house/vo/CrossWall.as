@@ -620,7 +620,7 @@ package rightaway3d.house.vo
 			return o.depth>1?o:null;//排除深度为0的物体
 		}
 		
-		public function testAutoAddToHead(object:WallObject,xPos:Number):Boolean
+		/*public function testAutoAddToHead(object:WallObject,xPos:Number):Boolean
 		{
 			//trace("testAutoAddToHead groundObjects:"+_groundObjects);
 			
@@ -680,9 +680,9 @@ package rightaway3d.house.vo
 			}
 			
 			return true;
-		}
+		}*/
 		
-		public function testAutoAddToEnd(object:WallObject,xPos:Number):Boolean
+		/*public function testAutoAddToEnd(object:WallObject,xPos:Number):Boolean
 		{
 			//trace("testAutoAddToEnd groundObjects:"+_groundObjects);
 
@@ -740,7 +740,7 @@ package rightaway3d.house.vo
 				trace("功能末实现");
 			}
 			return true;
-		}
+		}*/
 		
 		public function testAddObject(object:WallObject):Boolean
 		{

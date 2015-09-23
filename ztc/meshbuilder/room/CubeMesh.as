@@ -2,8 +2,10 @@ package ztc.meshbuilder.room
 {
 	import flash.geom.Vector3D;
 	
+	import away3d.containers.ObjectContainer3D;
 	import away3d.core.base.CompactSubGeometry;
-	import away3d.core.base.Geometry;
+	import away3d.core.base.Object3D;
+	import away3d.core.base.SubMesh;
 	import away3d.entities.Mesh;
 	import away3d.materials.ColorMaterial;
 	import away3d.primitives.CubeGeometry;
@@ -13,9 +15,37 @@ package ztc.meshbuilder.room
 	 */
 	public class CubeMesh extends Mesh
 	{
-		private var _width:Number;
-		public var _height:Number;
-		public var _depth:Number;
+		private var cube:CubeGeometry;
+		
+		//private var _width:Number;
+
+		public function get width():Number
+		{
+			return cube.width;
+		}
+
+		//private var _height:Number;
+
+		public function get height():Number
+		{
+			return cube.height;
+		}
+
+		//private var _depth:Number;
+
+		public function get depth():Number
+		{
+			return cube.depth;
+		}
+
+		public function resize(width:Number,height:Number,depth:Number):void
+		{
+			cube.width = width;
+			cube.height = height;
+			cube.depth = depth;
+			
+			updateUV();
+		}
 		
 		// 场景中的一个单位代表的实际长度,如1000 = 1米
 		// 此值用来设置UV坐标
@@ -23,22 +53,54 @@ package ztc.meshbuilder.room
 		
 		public function CubeMesh(width:Number = 100, height:Number = 100, depth:Number = 100, baseLength = 1000)
 		{
-			this._width = width;
-			this._height = height;
-			this._depth = depth;
+			//this._width = width;
+			//this._height = height;
+			//this._depth = depth;
 			this._baseLength = baseLength;
 			
-			var geo:Geometry = new CubeGeometry(width,height,depth,1,1,1,false);
+			cube = new CubeGeometry(width,height,depth,1,1,1,false);
 			
 			material = new ColorMaterial(0xdddddd);
 			
-			super(geo, material);
+			super(cube, material);
 			
-			geometry = geo;
+			geometry = cube;
 			
 			// 更新UV
 			updateUV();
 		}
+		
+		/*override public function clone():Object3D
+		{
+			var clone:Mesh = new Mesh(_geometry, material);
+			clone.transform = transform;
+			clone.pivotPoint = pivotPoint;
+			clone.partition = partition;
+			clone.bounds = _bounds.clone();
+			clone.name = name;
+			clone.castsShadows = castsShadows;
+			clone.shareAnimationGeometry = shareAnimationGeometry;
+			clone.mouseEnabled = this.mouseEnabled;
+			clone.mouseChildren = this.mouseChildren;
+			//this is of course no proper cloning
+			//maybe use this instead?: http://blog.another-d-mention.ro/programming/how-to-clone-duplicate-an-object-in-actionscript-3/
+			clone.extra = this.extra;
+			var csubMeshs:Vector.<SubMesh> = clone.subMeshes;
+			
+			var _subMeshes:Vector.<SubMesh> = subMeshes;
+			var len:int = _subMeshes.length;
+			for (var i:int = 0; i < len; ++i)
+				csubMeshs[i]._material = _subMeshes[i]._material;
+			
+			len = numChildren;
+			for (i = 0; i < len; ++i)
+				clone.addChild(ObjectContainer3D(getChildAt(i).clone()));
+			
+			if (animator)
+				clone.animator = animator.clone();
+			
+			return clone;
+		}*/
 		
 		/**
 		 * 根据实际大小更新UV坐标

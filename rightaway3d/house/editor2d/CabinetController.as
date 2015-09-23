@@ -7,6 +7,8 @@ package rightaway3d.house.editor2d
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
 	
+	import away3d.entities.Mesh;
+	
 	import rightaway3d.engine.core.EngineManager;
 	import rightaway3d.engine.product.ProductInfo;
 	import rightaway3d.engine.product.ProductManager;
@@ -30,6 +32,8 @@ package rightaway3d.house.editor2d
 	import rightaway3d.house.vo.Room;
 	import rightaway3d.house.vo.Wall;
 	import rightaway3d.house.vo.WallObject;
+	
+	import ztc.meshbuilder.room.CubeMesh;
 
 	public class CabinetController
 	{
@@ -729,6 +733,68 @@ package rightaway3d.house.editor2d
 			roomPillarDict[p.vo] = p;
 			//RenderUtils.setMaterial(p.vo.modelObject.meshs[0],currRoomPillarMaterial);
 			p.vo.customMaterialName = currRoomPillarMaterial;
+		}
+		
+		public function setSquarePillarSize(squarePillar:ProductObject,width:uint,depth:uint):Boolean
+		{
+			var p:ProductObject = squarePillar;
+			trace("setSquarePillarSize:"+p.name);
+			if(p.name==ProductObjectName.ROOM_SQUARE_PILLAR)
+			{
+				if(p.modelObject && p.modelObject.modelInfo.meshs)
+				{
+					trace("modelObject:"+p.modelObject,p.modelObject.meshs[0]);
+					if(p.modelObject.modelInfo.meshs[0] is CubeMesh)
+					{
+						trace("meshs:"+p.modelObject.meshs.length);
+						var wo:WallObject = p.objectInfo;
+						var cw:CrossWall = wo.crossWall;
+						if(cw)
+						{
+							cw.removeWallObject(wo);
+						}
+						var tw:int = wo.width;
+						var td:int = wo.depth;
+						
+						wo.width = width;
+						wo.depth = depth;
+						
+						if(cw)
+						{
+							if(cw.testAddObject(wo))
+							{
+								cw.addWallObject(wo);
+							}
+							else
+							{
+								wo.width = tw;
+								wo.depth = td;
+								cw.addWallObject(wo);
+								return false;//修改尺寸失败
+							}
+						}
+						
+						p.productInfo.dimensions.x = width;
+						p.productInfo.dimensions.z = depth;
+						
+						var cmesh:CubeMesh = p.modelObject.modelInfo.meshs[0] as CubeMesh;
+						cmesh.resize(width,cmesh.height,depth);
+						
+						var mesh:Mesh = p.modelObject.meshs[0];
+						mesh.x = width * 0.5;
+						mesh.z = depth * 0.5;
+						
+						p.view2d.updateView();
+						if(cw)
+						{
+							this.setProductPos(p,wo.crossWall,wo.x,wo.y,wo.z);
+							cw.dispatchSizeChangeEvent();
+						}
+					}
+				}
+			}
+			
+			return true;
 		}
 		
 		/**
