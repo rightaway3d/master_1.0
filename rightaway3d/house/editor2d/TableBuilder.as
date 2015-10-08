@@ -71,7 +71,7 @@ package rightaway3d.house.editor2d
 			var wallArea:Array = sortCrossWall(wallCabinetDict);
 			if(wallArea)
 			{
-				resetWallCabinetPlate(wallArea,wallCabinetDict);
+				resetWallCabinetPlate(wallArea,wallCabinetDict);			
 				var lines:Array = getWallCabinetTopLine(wallArea,wallCabinetDict);
 				this.cabinetCreator.createTopLine(lines);
 			}
