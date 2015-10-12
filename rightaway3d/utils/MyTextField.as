@@ -44,12 +44,14 @@ package rightaway3d.utils
 
 		private function init():void
 		{
+			this.embedFonts = true;
 			//设置文本默认格式
 			_textFormat = new TextFormat();
 			//this.defaultTextFormat = _textFormat;
 
 			//_textFormat.size = _textSize;
-
+			_textFormat.font = "造字工房悦黑(非商用)细体";
+			
 			this.input = false;
 
 			//自动左对齐
