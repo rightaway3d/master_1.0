@@ -592,7 +592,7 @@ package rightaway3d.house.editor2d
 								}
 								else
 								{
-									this.addWallCornerPlate(cw0,300,w0.x,331,"拐角吊柜右侧封板1");
+									//this.addWallCornerPlate(cw0,300,w0.x,331,"拐角吊柜右侧封板1");
 									this.addWallCabinetPlate(cw0,100,w0.x-300,331,"拐角吊柜右侧封板2");
 								}
 							}
@@ -618,7 +618,7 @@ package rightaway3d.house.editor2d
 								}
 								else
 								{
-									this.addWallCornerPlate(cw1,300,w1.x-500,331,"拐角吊柜左侧封板1");
+									//this.addWallCornerPlate(cw1,300,w1.x-500,331,"拐角吊柜左侧封板1");
 									this.addWallCabinetPlate(cw1,100,w1.x-400,331,"拐角吊柜左侧封板2");
 								}
 							}
@@ -850,7 +850,7 @@ package rightaway3d.house.editor2d
 			return po;
 		}
 		
-		private function addGroundCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
+		/*private function addGroundCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
 			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.IGNORE_OBJECT_HEIGHT,zPos,name);
 			//cabinetCreator.addGroundCabinet(po);
@@ -859,7 +859,7 @@ package rightaway3d.house.editor2d
 			setCornerCode(po,width);
 			
 			return po;
-		}
+		}*/
 		
 		private function addWallCabinetPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String,height:int=720):ProductObject
 		{
@@ -870,7 +870,7 @@ package rightaway3d.house.editor2d
 			return po;
 		}
 		
-		private function addWallCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
+		/*private function addWallCornerPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String):ProductObject
 		{
 			var po:ProductObject = addCornerPlate(cw,width,xPos,CrossWall.WALL_OBJECT_HEIGHT,zPos,name);
 			//cabinetCreator.addWallCabinet(po);
@@ -878,7 +878,7 @@ package rightaway3d.house.editor2d
 			setCornerCode(po,width);
 
 			return po;
-		}
+		}*/
 		
 		private function addCabinetLegPlate(cw:CrossWall,width:int,depth:int,xPos:Number,zPos:Number):ProductObject
 		{
@@ -901,7 +901,7 @@ package rightaway3d.house.editor2d
 			return po;
 		}
 		
-		private function setCornerCode(po:ProductObject,width:int):void
+		/*private function setCornerCode(po:ProductObject,width:int):void
 		{
 			po.memo = po.name;
 			
@@ -917,7 +917,7 @@ package rightaway3d.house.editor2d
 				//po.productCode = "MCX006002";
 				//po.specifications = "720*347*18";
 			}
-		}
+		}*/
 		
 		private function addCornerPlate(cw:CrossWall,width:int,xpos:Number,ypos:Number,zpos:Number,name:String):ProductObject
 		{

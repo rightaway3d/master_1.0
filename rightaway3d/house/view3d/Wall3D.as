@@ -16,8 +16,6 @@ package rightaway3d.house.view3d
 	import away3d.materials.TextureMaterial;
 	import away3d.textures.BitmapTexture;
 	
-	import rightaway3d.engine.core.Engine3D;
-	import rightaway3d.engine.object.Text3D;
 	import rightaway3d.engine.utils.BMP;
 	import rightaway3d.engine.utils.GlobalEvent;
 	import rightaway3d.house.editor2d.CabinetController;

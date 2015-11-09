@@ -13,10 +13,10 @@ package rightaway3d.house.view3d
 	
 	public class SizeMarking3D extends ObjectContainer3D
 	{
-		public var lineColor:uint = 0x0000ff;
+		public var lineColor:uint = 0xff0000;
 		public var arrowHeight:uint = 150;
 		
-		public var textColor:uint = 0xff0000;
+		public var textColor:uint = 0x0000ff;
 		public var textHeight:uint = 100;
 		
 		public var ypos:Number = 1000;
