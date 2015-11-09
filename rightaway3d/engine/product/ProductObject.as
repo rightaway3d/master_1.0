@@ -318,6 +318,21 @@ package rightaway3d.engine.product
 		 */
 		public var subProductObjects:Vector.<ProductObject>;
 		
+		public function getSubProductByEnname(name:String):ProductObject
+		{
+			trace("---getSubProductByEnname:"+this.name_en);
+			if(!subProductObjects)return null;
+			for each(var sp:ProductObject in subProductObjects)
+			{
+				trace("---name_en:"+sp.name_en);
+				if(sp.name_en==name)
+				{
+					return sp;
+				}
+			}
+			return null;
+		}
+		
 		public function addSubProduct(pObj:ProductObject):void
 		{
 			subProductObjects ||= new Vector.<ProductObject>();
@@ -612,15 +627,8 @@ package rightaway3d.engine.product
 				subProductObjects = null;
 			}
 			
-			if(dynamicSubProductObjects)
-			{
-				pos = dynamicSubProductObjects.concat();
-				for each(spo in pos)
-				{
-					spo.dispose();
-				}
-				dynamicSubProductObjects = null;
-			}
+			clearDynamicSubProduct();
+			dynamicSubProductObjects = null;
 			
 			if(container3d)
 			{
@@ -661,6 +669,17 @@ package rightaway3d.engine.product
 			masterProducts = null;
 			
 			this.dispatchDisposeEvent();
+		}
+		
+		public function clearDynamicSubProduct():void
+		{
+			if(!dynamicSubProductObjects)return;
+			
+			var pos:Vector.<ProductObject> = dynamicSubProductObjects.concat();
+			for each(var spo:ProductObject in pos)
+			{
+				spo.dispose();
+			}
 		}
 		
 		override public function toString():String

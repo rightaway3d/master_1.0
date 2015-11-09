@@ -605,19 +605,22 @@ package rightaway3d.house.editor2d
 		*/		
 		public function getCabinetList():String
 		{
+			trace("getCabinetList");
 			var subtotal:Object = {};
 			
 			var s:String = "{";
 			s += "\"gttm\":{";
-			s += "\"list\":["+getProductsData(CabinetType.BODY,subtotal);
+			s += "\"list\":[";
 			
-			var dps:String = getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal);
-			if(dps)s += dps + ",";
+			var ts:String = _getProductList(subtotal);
+			if(ts)
+			{
+				ts = ts.slice(0,-1);
+				s += ts;
+			}
 			
-			var cps:String = getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal);
-			if(cps)s += cps + ",";
+			s += "],";
 			
-			s += getTableData(subtotal)+"],";
 			s += "\"body\":"+getNum(subtotal,CabinetType.BODY)+",";
 			s += "\"door\":"+getNum(subtotal,CabinetType.DOOR_PLANK)+",";
 			s += "\"table\":"+getNum(subtotal,CabinetType.TABLE)+"},";
@@ -637,19 +640,43 @@ package rightaway3d.house.editor2d
 			return s;
 		}
 		
+		private function _getProductList(subtotal:Object):String
+		{
+			var ts:String = "";
+			ts += getProductsData(CabinetType.BODY,subtotal);
+			ts += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal);
+			ts += getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal);
+			ts += getTableData(subtotal);
+			return ts;
+		}
+		
 		public function getProductList():String
 		{
 			var subtotal:Object = {};
 			var s:String = "[";
-			s += getProductsData(CabinetType.BODY,subtotal);
-			s += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal) + ",";
-			s += getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal) + ",";
-			s += getTableData(subtotal)+",";
+			s += _getProductList(subtotal);
 			s += getDeviceData(subtotal);
+			s += getWujinSubtotal(subtotal)+",";
+			s += getDeviceSubtotal(subtotal);
 			s += "]";
 			
 			_totalPrice = getTotal(subtotal);
 			trace("getProductList:"+_totalPrice);
+			return s;
+		}
+		
+		public function getProductList2():String
+		{
+			var subtotal:Object = {};
+			var s:String = "[";
+			var ts:String = _getProductList(subtotal);
+			ts += getDeviceData(subtotal);
+			if(ts)
+			{
+				ts = ts.slice(0,-1);
+				s += ts;
+			}
+			s += "]";
 			return s;
 		}
 		
@@ -762,8 +789,9 @@ package rightaway3d.house.editor2d
 			s += getProductsData(CabinetType.HANDLE,subtotal);
 			s += getLetPlankData(subtotal);
 			s += getProductsData(CabinetType.LEG_PLANK_CONNECTION,subtotal);
+			s += getProductsData(CabinetType.METAL_FITTINGS,subtotal);
 			s += getIncreaseProductData(subtotal);
-			s = s.slice(0,-1);
+			//s = s.slice(0,-1);
 			return s;
 		}
 		
@@ -818,7 +846,7 @@ package rightaway3d.house.editor2d
 					}
 				}
 			//}
-			if(s.length>0)s = s.slice(0,-1);
+			//if(s.length>0)s = s.slice(0,-1);
 			return s;
 		}
 		
@@ -1140,7 +1168,7 @@ package rightaway3d.house.editor2d
 			var other:String = lib.getMaterialAttribute(name,"other");
 			var image:String = lib.baseUrl + lib.getMaterialAttribute(name,"diffuseMap");
 			
-			return toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,name,image);
+			return toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,name,image) + ",";
 		}
 		
 		//[name:部件名称，guige:规格，price:单价，num：数量，subtotal：金额，other；备注]
@@ -1249,6 +1277,7 @@ package rightaway3d.house.editor2d
 			//productManager.deleteProductObjectsByType(CabinetType.BAFFLE);
 			productManager.deleteProductObjectsByEnName(CabinetType.BAFFLE);
 			productManager.deleteProductObjectsByEnName(CabinetType.CORNER_PLANK);
+			//productManager.deleteProductObjectsByEnName(CabinetType.PLANK_WUJING);
 		}
 		
 		/**
@@ -1269,7 +1298,11 @@ package rightaway3d.house.editor2d
 		
 		public function clearSingleDoor(po:ProductObject):void
 		{
+			if(!CabinetLib.lib.isDynamicDoor(po.productInfo.productModel))return;
+			
 			var spos:Vector.<ProductObject> = po.dynamicSubProductObjects;
+			if(spos)deleteDoor(spos);
+			/*trace("----clearSingleDoor:"+spos);
 			if(spos && spos.length==1)//厨柜中只有一个动态子产品（门）
 			{
 				var spo:ProductObject = spos[0];
@@ -1283,7 +1316,7 @@ package rightaway3d.house.editor2d
 			{
 				if(spos)deleteDoor(spos);
 				//if(po.subProductObjects)deleteDoor(po.subProductObjects);
-			}
+			}*/
 		}
 		
 		private function deleteDoor(spos:Vector.<ProductObject>):void
@@ -1314,7 +1347,7 @@ package rightaway3d.house.editor2d
 			//clearSingleDoor();
 		}
 		
-		private function createTableMesh(dangshui:Array,points:Array,holes:Array=null,r:int=1,segment:uint=8,height:Number=40):void
+		private function createTableMesh(dangshui:Array,points:Array,yPos:int,holes:Array=null,r:int=1,segment:uint=8,height:Number=40):void
 		{
 			var ct:CabinetTable3D = CabinetTableTool.createCabinetTable(dangshui,points,holes,r,segment,height);//,textureURL,normalURL,color,ambient,specular,gloss);
 			//ct.material.lightPicker = engineManager.engine3d.lightPicker;
@@ -1322,7 +1355,7 @@ package rightaway3d.house.editor2d
 			//RenderUtils.setMaterial(ct,RenderUtils.getDefaultMaterial("table"));
 			ct.setMaterial(this.cabinetTableDefaultMaterial);
 			
-			ct.y = 800;
+			ct.y = yPos;
 			//ct.visible = false;
 			//trace("tableMesh:"+m);
 			tableMeshs.push(ct);
@@ -1484,7 +1517,8 @@ package rightaway3d.house.editor2d
 				var materialName:String = ctData.materialName;
 				this.cabinetTableDefaultMaterial = materialName;
 				
-				createTableMesh(dangshui,border,hole,radius,segment,height);//,textureURL,normalURL,color,ambient,specular,gloss);
+				var yPos:int = ctData.tableY ? ctData.tableY : 800;//tableY 为2015.10.29新增数据，
+				createTableMesh(dangshui,border,yPos,hole,radius,segment,height);//,textureURL,normalURL,color,ambient,specular,gloss);
 			}
 			
 			addTableMeshs();
@@ -1568,8 +1602,6 @@ package rightaway3d.house.editor2d
 			var tss:Array = setGroundCabinetArea(tables);
 			
 			createGroundCabinetArea(tss);
-			
-			//createCabinetTable3(tss,[[600,600,600],[600,600,600],[600,600,600]]);
 			
 			setWallCabinetArea(tss);
 			
@@ -2356,30 +2388,6 @@ package rightaway3d.house.editor2d
 			if(cw)
 			{
 				ProductManager.own.addProductToScene(po);
-				
-				/*var n:int = cw.wall.width*0.5+zPos;
-				zPos = cw.isHead?-n:n;
-				var p:Point = new Point(xPos,zPos);
-				cw.wall.localToGlobal2(p,p);
-				
-				po.position.x = p.x;
-				po.position.y = yPos;
-				po.position.z = p.y;
-				
-				var a:Number = 360 - cw.wall.angles;
-				po.rotation.y = po.container3d.rotationY = cw.isHead ? a+180 : a;
-				
-				var wo:WallObject = po.objectInfo;
-				wo.x = xPos;
-				wo.y = yPos;
-				wo.z = zPos;
-				wo.crossWall = cw;
-			}
-			else
-			{
-				po.position.x = xPos;
-				po.position.y = yPos;
-				po.position.z = zPos;*/
 			}
 			this.cabinetCtr.setProductPos(po,cw,xPos,yPos,zPos);
 			
@@ -2439,61 +2447,8 @@ package rightaway3d.house.editor2d
 						var p01:ProductObject=null,p02:ProductObject=null;
 						var po:ProductObject;
 						
-						/*if(ht==ObstacleType.CORNER_CABINET)//当前的柜子首端顶着另一边的拐角柜
-						{
-							var w:Number = x0+startOffset-cw.wall.width*0.5-347;//计算挡板宽度
-							//var w:Number = 50;
-							p01 = this.createCabinetPlate(cw,w,720,16,x0+startOffset,CrossWall.WALL_OBJECT_HEIGHT,331,CabinetType.DOOR_PLANK,"吊柜拐角侧缝挡板");//创建拐角缝挡板
-							addWallCabinet(p01);
-							
-							p02 = this.createCabinetPlate(cw,w,10,330,x0+startOffset,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.BODY_PLANK,"吊柜拐角底缝挡板");//创建拐角缝底挡板
-							//addWallCabinet(po);
-							//trace("bothEndProducts1:"+bothEndProducts);
-							if(bothEndProducts)
-							{
-								po = bothEndProducts[1];//前面尾部的拐角柜
-								po.addSlaveProduct(p01);
-								po.addSlaveProduct(p02);
-							}
-						}*/
-						
 						bothEndProducts = loadWallCabinet(x0+startOffset,cs,cw);
 						//trace("bothEndProducts0:"+bothEndProducts);
-						
-						/*if(p01)
-						{
-							po = bothEndProducts[0];//当前头部的柜子关联到封板
-							po.addSlaveProduct(p01);
-							po.addSlaveProduct(p02);
-						}
-						
-						if(p11)//当前头部的柜子关联到拐角前面尾部的封板
-						{
-							po = bothEndProducts[0];//当前头部的柜子
-							po.addSlaveProduct(p11);
-							po.addSlaveProduct(p12);
-						}*/
-						
-						/*var p11:ProductObject=null,p12:ProductObject=null;
-						
-						if(et==ObstacleType.CORNER_CABINET)//最尾部顶着拐角柜
-						{
-							//w = 50;
-							var tx:Number = cw.localEnd.x - 347;
-							w = tx - (x0+startOffset+gw);
-							p11 = this.createCabinetPlate(cw,w,720,16,tx,CrossWall.WALL_OBJECT_HEIGHT,331,CabinetType.DOOR_PLANK,"吊柜拐角侧缝挡板");//创建拐角缝挡板
-							addWallCabinet(p11);
-							
-							p12 = this.createCabinetPlate(cw,w,10,330,tx,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.BODY_PLANK,"吊柜拐角底缝挡板");//创建拐角缝底挡板
-							//addWallCabinet(po);
-							
-							po = bothEndProducts[1];//当前尾部的柜子关联到封板
-							if(po)
-							{
-								po.addSlaveProduct(p11);
-								po.addSlaveProduct(p12);
-							}
-						}*/
 					}
 				}
 			}
@@ -2608,6 +2563,7 @@ package rightaway3d.house.editor2d
 					o = flueData?flueData:getDefaultCookerData(ListType.FLUE);
 					flueProduct = addCookerProduct(o,cw,flueFlag_.vo,ProductObjectName.FLUE);
 					flueProduct.isLock = true;
+					this.cabinetCtr.setProductPos(flueProduct,cw,flueProduct.objectInfo.x,840,flueProduct.objectInfo.z);
 				}
 				
 				var isCornerCabinet:Boolean = false;
@@ -2657,140 +2613,6 @@ package rightaway3d.house.editor2d
 			}
 			
 			return;
-			/*
-			//trace("list:"+list);
-			var xml0:XML = list[0];
-			var type0:String = xml0.flag;
-			var width0:int = xml0.width;
-			trace("type0,ht:"+type0,ht);
-			
-			if(hc && type0=="corner")//当前组第一个柜子为拐角柜
-			{
-				tx0 = xml0.x-450-1.5;
-				//trace("xml0.x:"+xml0.x);
-				//trace("-----head x:"+tx0);
-				//productManager.createCustomizeProduct();
-				var po:ProductObject = this.createCabinetPlate(cw,450,720,16,tx0,80,551,CabinetType.DOOR_PLANK,"拐角地柜左侧封板");//在插角地柜左侧创建封板
-				addGroundCabinet(po);
-			}
-			else if(ht==ObstacleType.CORNER_CABINET || ht==ObstacleType.OBJECT_CORNER_CABINET)//当前的柜子顶着另一边的拐角柜
-			{
-//				var w:Number = x0-cw.wall.width*0.5-550+offset;//计算挡板宽度-1.5
-				var w:Number = x0+offset-570-cw.localHead.x;
-				//trace("--------xxx------",w,x0,offset);
-				po = this.createCabinetPlate(cw,w,720,16,x0+offset,80,551,CabinetType.DOOR_PLANK,"地柜拐角侧缝挡板");//创建拐角缝挡板
-				addGroundCabinet(po);
-				//this.createCabinetPlate(cw,w+30,80,5,x0+offset,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//创建拐角腿挡板，长度延伸30,至相邻插角地柜的柜腿挡板
-			}
-			else if(ht==ObstacleType.WALL)//柜子顶墙
-			{
-				w = offset;//x0-cw.wall.width*0.5+
-				if(w>1)//柜子与墙之间有间隙
-				{
-					if(!ho)
-					{
-						po = this.createCabinetPlate(cw,w,720,16,x0+offset,80,551,CabinetType.DOOR_PLANK,"地柜侧缝挡板");//柜子顶墙或障碍物时，缝隙封板
-						addGroundCabinet(po);
-					}
-					//this.createCabinetPlate(cw,w,80,5,x0+offset,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//柜子顶墙或障碍物时，柜腿封板
-				}
-			}
-			else if(ht==ObstacleType.OBJECT || ht==ObstacleType.MIDDLE_OBJECT || ht==ObstacleType.CABINET_OBJECT || ht==ObstacleType.MIDDLE_CABINET_OBJECT)//当前组第一个柜子顶在障碍物上(烟道，立柱)
-			{
-				var tx:Number = ho?x1:beforeX1>0?beforeX1:cw.localHead.x;
-				w = x0 - tx + offset;
-				
-				trace("------headObject tx,w:"+tx,w);
-				if(!ho)
-				{
-					po = this.createCabinetPlate(cw,w,720,16,x0+offset,80,551,CabinetType.DOOR_PLANK,"地柜侧缝挡板");//柜子顶墙或障碍物时，缝隙封板
-					addGroundCabinet(po);
-					//this.createCabinetPlate(cw,w,80,5,x0+offset,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//柜子顶墙或障碍物时，柜腿封板
-				}
-				else
-				{
-					//this.createCabinetPlate(cw,w,80,5,x0+offset,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//柜子顶墙或障碍物时，柜腿封板
-				}
-			}
-			else if(ht==ObstacleType.HOLE || ht==ObstacleType.NULL)//柜子顶门边或者什么都不靠
-			{
-				if(ho)
-				{
-					//this.createCabinetPlate(cw,offset,80,5,x0+offset,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//柜子顶墙或障碍物时，柜腿封板
-					//this.createCabinetPlate(cw,5,80,520,x0+10,0,0,CabinetType.LEG_BAFFLE,"柜腿封板");//柜子头上什么都没有时，侧面柜腿封板
-				}
-				else
-				{
-					//this.createCabinetPlate(cw,10,80,520,x0+offset+10,0,0,CabinetType.LEG_BAFFLE,"柜腿封板");//柜子头上什么都没有时，侧面柜腿封板
-				}
-			}
-			
-			var xml1:XML = list[len-1];
-			var type1:String = xml1.flag;
-			var width1:int = xml1.width;
-			var tx1:Number = xml1.x;
-			trace("----et:"+et,x1,tx1);
-			
-			if(ec && type1=="corner")//当前组最后一个柜子为拐角柜
-			{
-				var tx0:Number = tx1 - width1 + 450 + 1.5;//拐角柜门右则位置
-				//trace("xml1.x:"+xml1.x);
-				//trace("-----end x:"+tx0);
-				po = this.createCabinetPlate(cw,450,720,16,tx0+450,80,551,CabinetType.DOOR_PLANK,"拐角地柜右侧封板");//在插角地柜右侧创建封板
-				addGroundCabinet(po);
-			}
-			else if(et==ObstacleType.CORNER_CABINET || et==ObstacleType.OBJECT_CORNER_CABINET)//最尾部顶着拐角柜
-			{
-				//w = x1-tx1+50;+1.5
-				w = cw.localEnd.x - tx1 - 570;
-				po = this.createCabinetPlate(cw,w,720,16,tx1+w,80,551,CabinetType.DOOR_PLANK,"地柜拐角侧缝挡板");//创建拐角缝挡板
-				addGroundCabinet(po);
-				//this.createCabinetPlate(cw,w,80,5,tx1+w,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//创建拐角腿挡板，长度与插角地柜等长
-			}
-			else if(et==ObstacleType.WALL)// || et==ObstacleType.OBJECT)
-			{
-				x1 = eo?x1:cw.localEnd.x;
-				w = x1 - tx1;
-				if(w>1)
-				{
-					if(!eo)
-					{
-						po = this.createCabinetPlate(cw,w,720,16,x1,80,551,CabinetType.DOOR_PLANK,"地柜侧缝挡板");//柜子顶墙或障碍物时，缝隙封板
-						addGroundCabinet(po);
-					}
-					//this.createCabinetPlate(cw,w,80,5,x1,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//柜子顶墙或障碍物时，柜腿封板
-				}
-			}
-			else if(et==ObstacleType.OBJECT || ht==ObstacleType.CABINET_OBJECT)// || et==ObstacleType.OBJECT)
-			{
-				x1 = eo?x1:cw.localEnd.x;
-				w = x1 - tx1;
-				trace("------endObject x1,w:"+x1,w);
-
-				if(w<1000 && w>1)
-				{
-					if(!eo)
-					{
-						po = this.createCabinetPlate(cw,w,720,16,x1,80,551,CabinetType.DOOR_PLANK,"地柜侧缝挡板");//柜子顶墙或障碍物时，缝隙封板
-						addGroundCabinet(po);
-					}
-					//this.createCabinetPlate(cw,w,80,5,x1,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//柜子顶墙或障碍物时，柜腿封板
-				}
-			}
-			else if(et==ObstacleType.HOLE || et==ObstacleType.NULL)//柜子顶门边或者什么都不靠
-			{
-				if(eo)
-				{
-					w = x1 - tx1;
-					//this.createCabinetPlate(cw,w,80,5,x1,0,520,CabinetType.LEG_BAFFLE,"柜腿挡板");//柜子顶墙或障碍物时，柜腿封板
-					//this.createCabinetPlate(cw,5,80,520,x1,0,0,CabinetType.LEG_BAFFLE,"柜腿封板");//柜子头上什么都没有时，侧面柜腿封板
-				}
-				else
-				{
-					//this.createCabinetPlate(cw,10,80,520,tx1,0,0,CabinetType.LEG_BAFFLE,"柜腿封板");//柜子头上什么都没有时，侧面柜腿封板
-				}
-			}
-			*/
 		}
 		
 		//
@@ -2814,37 +2636,6 @@ package rightaway3d.house.editor2d
 			cabinetCtr.setProductPos(p.vo,cw,x,wo.y,wo.z);
 			wo.x = x;
 		}
-		
-		/*public function addCabinet(po:ProductObject):void
-		{
-			if(po.position.y<1000)//地柜
-			{
-				addGroundCabinet(po);
-			}
-			else//吊柜
-			{
-				addWallCabinet(po);
-			}
-		}*/
-		
-		/*public function addGroundCabinet(po:ProductObject):void
-		{
-			sceneGroundCabinets.push(po);
-			po.addEventListener("dispose",onProductDispose);
-		}*/
-		
-		/*public function addWallCabinet(po:ProductObject):void
-		{
-			sceneWallCabinets.push(po);
-			po.addEventListener("dispose",onProductDispose);
-		}*/
-		
-		/*private function onProductDispose(e:Event):void
-		{
-			var po:ProductObject = e.currentTarget as ProductObject;
-			removeProduct(sceneGroundCabinets,po);
-			removeProduct(sceneWallCabinets,po);
-		}*/
 		
 		private function removeProduct(cabs:Array,po:ProductObject):void
 		{
@@ -3740,7 +3531,7 @@ package rightaway3d.house.editor2d
 		
 		public function createCabinetTable3(tabless:Array,depthss:Array):void
 		{
-			trace("createCabinetTable3");
+			//trace("createCabinetTable3");
 			_cabinetTabless = tabless;
 			_tableDepthss = depthss;
 			
@@ -3752,7 +3543,7 @@ package rightaway3d.house.editor2d
 			{
 				var tables:Array = tabless[i];//每个独立台面分区
 				var depths:Array = depthss[i];
-				trace("depths:",depths);
+				//trace("depths:",depths);
 				
 				var points:Array = [];
 				var dangshui:Array = [];
@@ -3762,7 +3553,7 @@ package rightaway3d.house.editor2d
 					
 				var x0:Number = tableData.x0;
 				var x1:Number = tableData.x1;
-				trace("0:",x0,x1);
+				//trace("0:",x0,x1);
 				
 				if(tableData.headCabinet)x0+=tableData.headCabinet.objectInfo.width;
 				if(tableData.endCabinet)x1-=tableData.endCabinet.objectInfo.width;
@@ -3806,7 +3597,7 @@ package rightaway3d.house.editor2d
 					cw = tableData.cw;
 					x0 = tableData.x0;
 					x1 = tableData.x1;
-					trace(j+":",x0,x1,cw.wall.index);
+					//trace(j+":",x0,x1,cw.wall.index);
 					
 					if(tableData.headCabinet)x0+=tableData.headCabinet.objectInfo.width;
 					if(tableData.endCabinet)x1-=tableData.endCabinet.objectInfo.width;
@@ -3823,7 +3614,7 @@ package rightaway3d.house.editor2d
 					offsetCrossWall(cw,depth,head2,end2,h,e);
 					
 					var cp:Point = Geom.intersection(head,end,head2,end2);//计算台面外沿相交点坐标
-					trace("cp:"+cp,h,e);
+					//trace("cp:"+cp,h,e);
 					points.push(cp);
 					
 					head = head2;
@@ -3881,11 +3672,11 @@ package rightaway3d.house.editor2d
 				{
 					dangshui.push(dangshui.shift());//将一开始取到点放到最后的位置，形成一个沿墙的逆时针挡水起止点
 				}
-				trace("points:"+points);
-				trace("dangshui:"+dangshui);
+				//trace("points:"+points);
+				//trace("dangshui:"+dangshui);
 				
 				//trace(points);
-				
+				var yPos:int = tableData.tableY;
 				if(isDrainerArea(tables))//检测是否为放置水盆的区域
 				{
 					var holeWidth:int = drainerProduct.objectInfo.width;
@@ -3916,13 +3707,13 @@ package rightaway3d.house.editor2d
 					wall.localToGlobal2(p4,p4);
 					
 					var hole:Array = [p1,p2,p3,p4];
-					trace("hole:"+hole);
+					//trace("hole:"+hole);
 					
-					createTableMesh(dangshui,points,hole,30);
+					createTableMesh(dangshui,points,yPos,hole,30);
 				}
 				else
 				{
-					createTableMesh(dangshui,points);
+					createTableMesh(dangshui,points,yPos);
 				}
 			}
 			
@@ -3932,22 +3723,22 @@ package rightaway3d.house.editor2d
 		private function isDrainerArea(tables:Array):Boolean
 		{
 			drainerProduct = getProduct(ProductObjectName.DRAINER);
-			trace("isDrainerArea drainerProduct:"+drainerProduct);
+			//trace("isDrainerArea drainerProduct:"+drainerProduct);
 			if(!drainerProduct)return false;
 			
 			var o:WallObject = drainerProduct.objectInfo;
-			trace("isDrainerArea cw:"+o.crossWall);
+			//trace("isDrainerArea cw:"+o.crossWall);
 			for each(var tableData:Object in tables)
 			{
 				var cw:CrossWall = tableData.cw;
 				var x0:Number = tableData.x0;
 				var x1:Number = tableData.x1;
-				trace("x0,x1,o.x,o.width:",x0,x1,o.x,o.width);
+				//trace("x0,x1,o.x,o.width:",x0,x1,o.x,o.width);
 				
 				if(o.crossWall==cw && o.x-o.width>x0 && x1>o.x)return true;//此处只考虑了墙面为正面的情况
 				//if(o.crossWall==cw && o.x>x0 && o.x<x1)return true;//此处只考虑了墙面为正面的情况
 			}
-			trace("isDrainerArea2");
+			//trace("isDrainerArea2");
 			return false;
 		}
 		
@@ -4036,8 +3827,12 @@ package rightaway3d.house.editor2d
 			var p:Point = new Point(x2,y);
 			cw.wall.localToGlobal2(p,p);
 			
+			var ty:int = flagObject.y + flagObject.height;//地柜上沿高度
+			//trace("---ty:"+ty);
 			po.position.x = p.x;
-			po.position.y = isHood?CrossWall.WALL_OBJECT_HEIGHT:CrossWall.GROUND_OBJECT_HEIGHT+40;//840:柜台高度加上台面厚度;
+			//po.position.y = isHood?CrossWall.WALL_OBJECT_HEIGHT:CrossWall.GROUND_OBJECT_HEIGHT+40;//840:柜台高度加上台面厚度;
+			po.position.y = ty + (isHood?670:40);//670：吊柜下沿到地柜上沿（不含台面）的间距，40:台面厚度;
+			//trace("---po.position.y:"+po.position.y);
 			po.position.z = p.y;
 			
 			wo.y = po.position.y;
@@ -4138,6 +3933,8 @@ package rightaway3d.house.editor2d
 		 */
 		public function addSingleDoor(po:ProductObject,direction:String,openDoor:Boolean):void
 		{
+			if(!CabinetLib.lib.isDynamicDoor(po.productInfo.productModel))return;
+			
 			isOpenDoor = openDoor;//添加门后是否打开门
 			if(po.productInfo.isReady)
 			{
@@ -4169,31 +3966,31 @@ package rightaway3d.house.editor2d
 		
 		private function _addSingleDoor(po:ProductObject,direction:String):void
 		{
-			var s:String = po.productInfo.productModel.slice(0,3);
-			if(s=="A30" || s=="A40" || s=="A45" || s=="AJ9"//地柜
-				|| s=="B30" || s=="B40" || s=="B45" || s=="BJ8"//吊柜
-				|| s=="C45" || s=="C60" || s=="CK/"//中高柜
-				|| s=="D60" || s=="DK/" || s=="DZ6")//高柜
+			if(po.name == ProductObjectName.CORNER_CABINET)//清除拐角柜的门及封板装饰板
 			{
-				if(hasDoor(po))return;//如果已经有门则返回
-				
-				var doorList:XMLList = CabinetTool.tool.getDoorData(po,direction);
-				var len:int = doorList.length();
-				for(var i:int=0;i<len;i++)
+				po.clearDynamicSubProduct();
+			}
+			else if(hasDoor(po))
+			{
+				return;//如果已经有门则返回
+			}
+			
+			var doorList:XMLList = CabinetTool.tool.getDoorData(po,direction);
+			var len:int = doorList.length();
+			for(var i:int=0;i<len;i++)
+			{
+				var doorData:XML = doorList[i];
+				var spo:ProductObject = ProductManager.own.addDynamicSubProduct(po,doorData);
+				if(isOpenDoor)
 				{
-					var doorData:XML = doorList[i];
-					var spo:ProductObject = ProductManager.own.addDynamicSubProduct(po,doorData);
-					if(isOpenDoor)
+					if(spo.productInfo.isReady)
 					{
-						if(spo.productInfo.isReady)
-						{
-							doAction(spo);
-						}
-						else
-						{
-							doorDict[spo.productInfo] = spo;
-							spo.productInfo.addEventListener("ready",onProductReady);
-						}
+						doAction(spo);
+					}
+					else
+					{
+						doorDict[spo.productInfo] = spo;
+						spo.productInfo.addEventListener("ready",onProductReady);
 					}
 				}
 			}

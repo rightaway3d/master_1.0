@@ -96,12 +96,7 @@ package ztc.meshbuilder.room
 			s += "\"radius\":" + radius + ",";
 			s += "\"segment\":" + segment + ",";
 			s += "\"height\":" + height + ",";
-			//s += "\"textureURL\":\"" + _textureURL + "\",";
-			//s += "\"normalURL\":\"" + _normalURL + "\",";
-			//s += "\"color\":" + _mat.color + ",";
-			//s += "\"ambient\":" + _mat.ambient + ",";
-			//s += "\"specular\":" + _mat.specular + ",";
-			//s += "\"gloss\":" + _mat.gloss;
+			s += "\"tableY\":" + y + ",";//2015.10.29 new add by jell
 			s += "\"materialName\":\"" + materialName + "\"";
 			s += "}";
 			return s;

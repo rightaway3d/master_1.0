@@ -20,6 +20,11 @@ package rightaway3d.house.vo
 		 */
 		public var x1:Number = 0;
 		
+		/**
+		 * 此区域台面的Y位置
+		 */
+		public var tableY:int = 800;
+		
 		private var _length:Number = 0;
 
 		/**

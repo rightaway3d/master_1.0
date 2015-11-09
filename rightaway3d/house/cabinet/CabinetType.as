@@ -27,6 +27,10 @@ package rightaway3d.house.cabinet
 		 */
 		static public const CORNER_PLANK:String = "corner_cabinet_plank";
 		/**
+		 * 含有五金配件的装饰板或封板
+		 */
+		static public const PLANK_WUJING:String = "cabinet_plank_wujing";
+		/**
 		 * 柜门板件
 		 */
 		static public const DOOR_PLANK:String = "cabinet_door_plank";
@@ -54,6 +58,10 @@ package rightaway3d.house.cabinet
 		 * 台面
 		 */
 		static public const TABLE:String = "cabinet_table";
+		/**
+		 * 五金配件
+		 */
+		static public const METAL_FITTINGS:String = "metal_fittings";
 		/**
 		 * 门把手
 		 */

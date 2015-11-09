@@ -216,13 +216,13 @@ package rightaway3d.engine.product
 			productObjects = null;
 		}
 		
-		public function updateAction():void
+		/*public function updateAction():void
 		{
 			for each(var po:ProductObject in productObjects)
 			{
 				this._updateAction(po);
 			}
-		}
+		}*/
 		
 		private function _updateAction(productObj:ProductObject):void
 		{
@@ -244,6 +244,12 @@ package rightaway3d.engine.product
 				{
 					//if(!productObj.container3d)throw new Error("ProductObject.container3d is null!");
 					action.target = productObj.container3d;
+				}
+				else
+				{
+					var sp:ProductObject = productObj.getSubProductByEnname(action.targetName);
+					trace("--------_updateAction:"+action.targetName,sp);
+					if(sp)action.target = sp.container3d;
 				}
 			}
 		}
@@ -279,7 +285,7 @@ package rightaway3d.engine.product
 			productObject.productInfo = this;
 			//trace("----------addProductObject:"+id+" infoID:"+this.infoID);
 			
-			this._updateAction(productObject);
+			//this._updateAction(productObject);
 		}
 		
 		
@@ -451,6 +457,8 @@ package rightaway3d.engine.product
 					}
 				}
 			}
+			
+			this._updateAction(productObjectInstance);
 		}
 		
 		/**

@@ -466,7 +466,7 @@ package rightaway3d.engine.product
 							actions[i] = action;
 						}
 						pInfo.actions = actions;
-						pInfo.updateAction();
+						//pInfo.updateAction();
 						//trace(pInfo.infoID+":"+pInfo.actions.length);
 					}
 				}
@@ -1046,7 +1046,7 @@ package rightaway3d.engine.product
 			//trace("");
 			//trace("--setProductObject:"+obj.id,obj.productInfo.fileURL);
 			
-			trace("objectID1:"+obj.objectID);
+			//trace("objectID1:"+obj.objectID);
 			if(objectDict[obj.objectID])
 			{
 				delete objectDict[obj.objectID];
@@ -1055,7 +1055,7 @@ package rightaway3d.engine.product
 			}
 			
 			var objectID:String = String(obj.id);
-			trace("objectID2:"+objectID);
+			//trace("objectID2:"+objectID);
 			var p:ProductObject = obj.parentProductObject;
 			while(p)
 			{
@@ -1064,12 +1064,12 @@ package rightaway3d.engine.product
 			}
 			
 			obj.objectID = objectID;
-			trace("objectID3:"+obj.objectID);
+			//trace("objectID3:"+obj.objectID);
 			
 			if(objectDict[obj.objectID])
 			{
 				var o:ProductObject = objectDict[obj.objectID];
-				trace("old data:"+o);
+				//trace("old data:"+o);
 				throw new Error("当前添加的产品实例已经存在:"+obj);
 			}
 			

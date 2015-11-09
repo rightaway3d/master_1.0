@@ -345,10 +345,12 @@ package rightaway3d.house.lib
 				b = "右";
 			}
 			
-			//中高柜用型号来匹配
-			size = wo.height<1000 ? wo.width+"x"+wo.height+"x"+wo.depth : po.productInfo.productModel;
+			//之前是中高柜用型号来匹配
+			//size = wo.height<1000 ? wo.width+"x"+wo.height+"x"+wo.depth : po.productInfo.productModel;
+			//现在是所有柜子都用型号来匹配 modify by jell at 2015/10/13
+			size = po.productModel;
 			
-			var list:XMLList = CabinetLib.lib.getDoor(type,kind,size);
+			var list:XMLList = CabinetLib.lib.getDoors(type,kind,size);
 			var len:int = list.length();
 			for(var i:int=0;i<len;i++)
 			{
@@ -380,7 +382,7 @@ package rightaway3d.house.lib
 			if(dx<center)kind = "left";//左开门
 			else kind = "right";//右开门
 			
-			productModel = po.productInfo.productModel;
+			productModel = po.productModel;
 			//trace("getMiddleDoorData productModel:"+productModel);
 			
 			return CabinetLib.lib.getDoors(type,kind,productModel);

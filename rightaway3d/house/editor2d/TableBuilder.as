@@ -105,6 +105,7 @@ package rightaway3d.house.editor2d
 		public function builderDoor():void
 		{
 			var cabs:Array = productManager.getProductObjectsByType(CabinetType.BODY);
+			//trace("--------builderDoor:",cabs);
 			for each(var po:ProductObject in cabs)
 			{
 				cabinetCreator.addSingleDoor(po,null,false);
@@ -117,10 +118,10 @@ package rightaway3d.house.editor2d
 		//创建台面前检查，同一面墙不出现连续门洞，同一面墙上的柜子之间不能有间隙，有障碍物（烟道、方柱）除外
 		//同一墙同一区域的柜子深度须一致，拐角柜只能出现在拐角处
 		//同一面墙上，两个放置台面的柜子之间不能有中高柜
-		private function testCabinet():void
+		/*private function testCabinet():void
 		{
 			
-		}
+		}*/
 		
 		
 		private function resetGroundArea(groundArea:Array,wallDict:Dictionary,depthss:Array):Array
@@ -168,10 +169,14 @@ package rightaway3d.house.editor2d
 								var two:WallObject = cabs[k+1].objectInfo;
 								if(two.height>CrossWall.GROUND_OBJECT_HEIGHT)//如果碰到连续的中高柜，则跳过前面的
 								{
-									continue;//跳出当前循环，进入下一轮循环
+									continue;
 								}
 								
 								tableData.headCabinet = cab1;
+							}
+							else
+							{
+								tableData.tableY = wo.y + wo.height;
 							}
 							
 							if(j>0)//拐角区域
@@ -193,7 +198,7 @@ package rightaway3d.house.editor2d
 						if(isAreaStart && tableData.headCabinet!=cab1)
 						{
 							tableData.x1 = wo.x;
-							if(wo.height>CrossWall.GROUND_OBJECT_HEIGHT)//碰到尾部第一个拐角柜
+							if(wo.height>CrossWall.GROUND_OBJECT_HEIGHT)
 							{
 								tableData.endCabinet = cab1;
 								break;
@@ -221,10 +226,14 @@ package rightaway3d.house.editor2d
 								var dw:Number = dx1 - w0.x;
 								if(dw>10)
 								{
-									var po:ProductObject = this.addGroundCabinetPlate(cw,dw,dx1,w0.z+w0.depth-dz,"地柜间隙封板");
+									var po:ProductObject = this.addGroundCabinetPlate(cw,dw,dx1,w0.z+w0.depth-dz,"地柜间隙封板",wo.height);
 									addAssistPlate(po,dw);
 								}
 							}
+						}
+						else
+						{
+							tableData.tableY = wo.y + wo.height;
 						}
 						
 						cab0 = cab1;
@@ -248,10 +257,14 @@ package rightaway3d.house.editor2d
 			
 			if(cab0.name == ProductObjectName.CORNER_CABINET)//子区域尾部是拐角柜
 			{
+				//计算拐角相邻柜子的面板线在拐角柜上的位置
+				var n:Number = w1.z + w1.depth - (cw0.localEnd.x - w0.x);
+				CabinetUtils.resetCornerProductModel(cab0,n);
+				
 				var d:Number = w0.z+w0.depth;
-				var ww:Number = w0.width*0.5;
+				//var ww:Number = w0.width*0.5;
 				//addGroundCabinetPlate(cw0,w0.width*0.5,w0.x,d-dz,"拐角地柜右侧封板");
-				if(cw0.localEnd.x - (w0.x-ww+maxWidth)>w1.z+w1.depth)
+				/*if(cw0.localEnd.x - (w0.x-ww+maxWidth)>w1.z+w1.depth)
 				{
 					this.addGroundCabinetPlate(cw0,ww-3,w0.x-1.5,d-dz,"拐角地柜右侧封板",717);
 				}
@@ -259,23 +272,27 @@ package rightaway3d.house.editor2d
 				{
 					this.addGroundCornerPlate(cw0,ww-100,w0.x,d-dz,"拐角地柜右侧封板1");
 					this.addGroundCabinetPlate(cw0,100,w0.x-ww+100,d-dz,"拐角地柜右侧封板2");
-				}
+				}*/
 				
 				tx = w1.x - w1.width;
 				w = tx - cw1.localHead.x - d;
 				if(w>1)// && w<=100)
 				{
-					var po:ProductObject = addGroundCabinetPlate(cw1,w,tx,w1.z+w1.depth-dz,"地柜拐角侧缝挡板");
+					var po:ProductObject = addGroundCabinetPlate(cw1,w,tx,w1.z+w1.depth-dz,"地柜拐角侧缝挡板",w0.height);
 					addAssistPlate(po,w);
 				}
 			}
-			else if(cab1.name==ProductObjectName.CORNER_CABINET)//子区域头部是拐角柜
+			else if(cab1.name == ProductObjectName.CORNER_CABINET)//子区域头部是拐角柜
 			{
+				//计算拐角相邻柜子的面板线在拐角柜上的位置
+				n = w0.z + w0.depth - (w1.x - w1.width - cw1.localHead.x);
+				CabinetUtils.resetCornerProductModel(cab1,n);
+				
 				var w:Number = w1.width * 0.5;
 				d = w1.z+w1.depth;
-				ww = w1.width*0.5;
+				//ww = w1.width*0.5;
 				//addGroundCabinetPlate(cw1,w,w1.x-w,d-dz,"拐角地柜左侧封板");
-				if(w1.x-ww-maxWidth-cw1.localHead.x>w0.z+w0.depth)
+				/*if(w1.x-ww-maxWidth-cw1.localHead.x>w0.z+w0.depth)
 				{
 					this.addGroundCabinetPlate(cw1,ww-3,w1.x-ww-1.5,d-dz,"拐角地柜左侧封板",717);
 				}
@@ -283,13 +300,13 @@ package rightaway3d.house.editor2d
 				{
 					this.addGroundCornerPlate(cw1,ww-100,w1.x-ww-100,d-dz,"拐角地柜左侧封板1");
 					this.addGroundCabinetPlate(cw1,100,w1.x-ww,d-dz,"拐角地柜左侧封板2");
-				}
+				}*/
 				
 				var tx:Number = cw0.localEnd.x - d;
 				w = tx - w0.x;
 				if(w>1)// && w<=100)
 				{
-					po = addGroundCabinetPlate(cw0,w,tx,w0.z+w0.depth-dz,"地柜拐角侧缝挡板");
+					po = addGroundCabinetPlate(cw0,w,tx,w0.z+w0.depth-dz,"地柜拐角侧缝挡板",w1.height);
 					addAssistPlate(po,w);
 				}
 			}
@@ -424,7 +441,7 @@ package rightaway3d.house.editor2d
 			{
 				var po:ProductObject = areas[i];
 				var wo:WallObject = po.objectInfo;
-				if(wo.height==720)return true;
+				if(wo.height<=720)return true;
 			}
 			return false;
 		}
@@ -531,167 +548,6 @@ package rightaway3d.house.editor2d
 			}
 			return false;
 		}
-		
-		/*厨柜分区判断
-		厨柜子区域墙体数量超过一时，拐角处需放置拐角柜，如不放拐角柜，将作新增拆分子区域处理
-		如果在厨柜之间有门隔开，则要增加厨柜子区域，如果门洞不在厨柜之间，则要避开门洞
-		*/
-		/*private function resetGroundArea2(groundArea:Array,depthss:Array):Array
-		{
-			var tabless:Array = [];
-			var areaLen:int = groundArea.length;
-			var tableData:WallSubArea;
-			var tables:Array;
-			var depths:Array;
-			
-			for(var i:int=0;i<areaLen;i++)
-			{
-				var cws:Array = groundArea[i];
-				var cwLen:int = cws.length;
-				tableData = null;
-				
-				for(var j:int=0;j<cwLen;j++)
-				{
-					var cw:CrossWall = cws[j];
-					var gos:Array = cw.groundObjects;
-					var woLen:int = gos.length;
-					
-					for(var k:int=0;k<woLen;k++)
-					{
-						var wo:WallObject = gos[k];
-						var object:* = wo.object;
-						
-						if(!tableData)
-						{
-							if(!(object is ProductObject))//避开门洞
-							{
-								tables = null;
-								continue;
-							}
-							
-							var po:ProductObject = object;
-							if(!tables && po.productInfo.type!=CabinetType.BODY)continue;//避开障碍物
-							
-							var isCreateNewSubArea:Boolean = true;//是否要创建新的子分区，只有拐角另一面墙以中高柜开始时，才不要创建
-							
-							if(!tables)//新的分区开始
-							{
-								tables = [];
-								tabless.push(tables);
-								
-								depths = [];
-								depthss.push(depths);
-								depths.push(getTableWidth(wo));//当前子区域台面宽度
-							}
-							else if(po.name==ProductObjectName.CORNER_CABINET)//拐角开始处存在拐角柜
-							{
-								if(wo.width==900)
-								{
-									addGroundCabinetPlate(cw,450,wo.x-450,551,"拐角地柜左侧封板");
-								}
-								else if(wo.width == 800)//窄柜转角柜
-								{
-									
-								}
-								else//转角柜在另一边，此处为投影
-								{
-									var two:WallObject = gos[k+1];
-									if(two.height>CrossWall.GROUND_OBJECT_HEIGHT)//拐角柜过来是中高柜
-									{
-										isCreateNewSubArea = false;//此处没有考虑中高柜的右边再放置台面的情况
-									}
-									else
-									{
-										var tx1:Number = two.x - two.width;
-										var w:Number = tx1 - wo.x - 20;
-										if(w>1)
-										{
-											addGroundCabinetPlate(cw,w,tx1,two.z+two.depth+1,"地柜拐角侧缝挡板");
-										}
-									}
-								}
-							}
-							
-							if(isCreateNewSubArea)
-							{
-								tableData = new WallSubArea();//台面子区域开始
-								tableData.cw = cw;
-								tables.push(tableData);
-								
-								setHeadTableData(tableData,wo,cw);
-							}
-						}
-						else if(depths.length<tables.length)
-						{
-							depths.push(getTableWidth(wo));//当前子区域台面宽度
-						}
-						
-						if(!hasGroundCabinet(gos,k+1))//柜子右侧没有柜子了(当前到了墙尾)
-						{
-							if(cwLen==1)//当前子区域只有一面墙
-							{
-								setEndTableData(tableData,wo,cw);
-								//trace("柜子右侧没有柜子了");
-								tables = null;
-								break;
-							}
-							else//相连子区域
-							{
-								po = object;
-								if(po.name==ProductObjectName.CORNER_CABINET)//存在拐角柜
-								{
-									tableData.x1 = cw.localEnd.x;
-									
-									if(wo.width==900)
-									{
-										addGroundCabinetPlate(cw,450,wo.x,551,"拐角地柜右侧封板");
-									}
-									else if(wo.width == 800)//窄柜转角柜
-									{
-										
-									}
-									else//转角柜在另一边，此处为投影
-									{
-										two = gos[k-1];
-										if(two.height>CrossWall.GROUND_OBJECT_HEIGHT)//拐角柜过来是中高柜
-										{
-											//isCreateNewSubArea = false;//此处没有考虑中高柜的右边再放置台面的情况
-										}
-										else
-										{
-											tx1 = wo.x - wo.width - 20;
-											w = tx1 - two.x;
-											if(w>1)
-											{
-												addGroundCabinetPlate(cw,w,tx1,two.z+two.depth+1,"地柜拐角侧缝挡板");
-											}
-										}
-									}
-								}
-								else//如果拐角处没有拐角柜，将新建子区域
-								{
-									setEndTableData(tableData,wo,cw);
-									
-									tables = null;
-								}
-								
-								tableData = null;
-							}
-						}
-						else if(object is WallHole)//在柜子右侧遇到墙洞，并且墙洞右侧还有柜子
-						{
-							wo = gos[k-1];
-							setEndTableData(tableData,wo,cw);
-							
-							tables = null;
-							tableData = null;
-						}
-					}
-				}
-			}
-			
-			return tabless;
-		}*/
 		
 		private const maxWidth:int = 90;//转角柜使用窄封板时，最大露出宽度
 		
@@ -987,7 +843,7 @@ package rightaway3d.house.editor2d
 		
 		private function addGroundCabinetPlate(cw:CrossWall,width:int,xPos:Number,zPos:Number,name:String,height:int=720):ProductObject
 		{
-			var dy:Number = (720-height)*0.5;
+			var dy:Number = 0;//(720-height)*0.5;
 			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,height,16,xPos,CrossWall.IGNORE_OBJECT_HEIGHT+dy,zPos,CabinetType.DOOR_PLANK,name);
 			//cabinetCreator.addGroundCabinet(po);
 			addPlateProduct(po,width,height);
@@ -1033,6 +889,7 @@ package rightaway3d.house.editor2d
 		
 		private function addWallCabinetBottomPlate(cw:CrossWall,width:int,xPos:Number):ProductObject
 		{
+			//新的处理方案是，间隙宽度不等于50[49-51]时，就不加封板
 			var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,18,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"封板B-330");
 			po.name_en = CabinetType.CORNER_PLANK;
 			po.specifications = "330*"+width+"*18";
@@ -1280,7 +1137,7 @@ package rightaway3d.house.editor2d
 				var w:Number = tx0-tableData.x0;
 				if(w>1)
 				{
-					var po:ProductObject = addGroundCabinetPlate(cw,w,tx0,wo.z+wo.depth-dz,"地柜侧缝挡板");
+					var po:ProductObject = addGroundCabinetPlate(cw,w,tx0,wo.z+wo.depth-dz,"地柜侧缝挡板",wo.height);
 					addAssistPlate(po,w);
 				}
 			}
@@ -1312,7 +1169,7 @@ package rightaway3d.house.editor2d
 				//trace("w:"+w);
 				if(w>1)
 				{
-					var po:ProductObject = addGroundCabinetPlate(cw,w,tableData.x1,wo.depth-dz,"地柜侧缝挡板");
+					var po:ProductObject = addGroundCabinetPlate(cw,w,tableData.x1,wo.depth-dz,"地柜侧缝挡板",wo.height);
 					addAssistPlate(po,w);
 				}
 			}

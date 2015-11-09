@@ -4,6 +4,7 @@ package rightaway3d.house.lib
 	import flash.events.EventDispatcher;
 	
 	import rightaway3d.URLTool;
+	import rightaway3d.utils.Log;
 	
 	[Event(name="complete", type="flash.events.Event")]
 
@@ -50,8 +51,9 @@ package rightaway3d.house.lib
 			return list[0];
 		}
 		
-		public function getDoor(type_:String,kind_:String,size_:String):XMLList
+		/*public function getDoor(type_:String,kind_:String,size_:String):XMLList
 		{
+			//trace("getDoor:"+type_,kind_,size_);
 			var list:XMLList = doorsList.(type==type_ && kind==kind_ && matching==size_);
 			if(list.length()==0)
 			{
@@ -59,7 +61,7 @@ package rightaway3d.house.lib
 			}
 			
 			return list;
-		}
+		}*/
 		
 		public function getDoors(type_:String,kind_:String,productModel:String):XMLList
 		{
@@ -67,10 +69,29 @@ package rightaway3d.house.lib
 			var list:XMLList = doorsList.(type==type_ && kind==kind_ && matching==productModel);
 			if(list.length()==0)
 			{
-				throw new Error("找不到指定的厨柜门："+type_+","+kind_+","+productModel);
+				Log.log("找不到指定的厨柜门："+type_+","+kind_+","+productModel);
 			}
 			
 			return list;
+		}
+		
+		/**
+		 * 检测指定型号的厨柜是否为动态门
+		 * @param productModel
+		 * @return 
+		 * 
+		 */		
+		public function isDynamicDoor(productModel:String):Boolean
+		{
+			//trace("----isDynamicDoor:"+productModel);
+			var len:int = dynamicDoorList.length();
+			for(var i:int=0;i<len;i++)
+			{
+				var xml:XML = dynamicDoorList[i];
+				var s:String = xml.toString();
+				if(productModel==s)return true;
+			}
+			return false;
 		}
 		
 		public function getReplaceList(targets:Array):Array
@@ -198,6 +219,8 @@ package rightaway3d.house.lib
 		private var dynamicSubProduct:XML;
 		private var dynamicProductList:Array;
 		
+		private var dynamicDoorList:XMLList;
+		
 		private function loadData():void
 		{
 			var url:String = "config/cabinet_group.xml";
@@ -222,6 +245,8 @@ package rightaway3d.house.lib
 			var s:String = dynamicSubProduct.list;
 			dynamicProductList = s.split(",");
 			//trace("dynamicProductList:"+dynamicProductList);
+			
+			dynamicDoorList = libXML.dynamicDoor.item;
 			
 			libReady = true;
 			
