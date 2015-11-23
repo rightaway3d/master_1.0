@@ -97,14 +97,30 @@ package rightaway3d.house.view3d
 		
 		protected function onSizeChange(e:Event):void
 		{
-			//trace("-------onWallSizeChange");
 			if(!showMark)return;
 			
 			var cw:CrossWall = _wall.frontCrossWall;
-			if(mark1 || cw.groundObjects.length>0)
-				markGrounCabinet(cw);
-			if(mark2 || cw.wallObjects.length>0)
-				markWallCabinet(cw);
+			var gos:Array = cw.groundObjects;
+			//trace("-------onWallSizeChange",gos);
+			
+			if(gos.length>0)
+			{
+				markGrounCabinet(cw,gos);
+			}
+			else if(mark1)
+			{
+				mark1.visible = false;
+			}
+			
+			var wos:Array = cw.wallObjects;
+			if(wos.length>0)
+			{
+				markWallCabinet(cw,wos);
+			}
+			else if(mark2)
+			{
+				mark2.visible = false;
+			}
 		}
 		
 		public function get vo():Wall
@@ -128,7 +144,7 @@ package rightaway3d.house.view3d
 		private var mark2:SizeMarking3D;
 		
 		//标注地柜
-		private function markGrounCabinet(cw:CrossWall):void
+		private function markGrounCabinet(cw:CrossWall,groundObjects:Array):void
 		{
 			if(!mark1)
 			{
@@ -137,21 +153,17 @@ package rightaway3d.house.view3d
 				mark1.zpos = -(_wall.width*0.5 + 5);
 				this.addChild(mark1);
 			}
-			
-			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.groundObjects);
-			if(a.length>2)
-			{
-				mark1.update(a);
-				mark1.visible = true;
-			}
 			else
 			{
-				mark1.visible = false;
+				mark1.visible = true;
 			}
+			
+			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,groundObjects);
+			mark1.update(a);
 		}
 		
 		//标注吊柜
-		private function markWallCabinet(cw:CrossWall):void
+		private function markWallCabinet(cw:CrossWall,wallObjects:Array):void
 		{
 			if(!mark2)
 			{
@@ -160,17 +172,13 @@ package rightaway3d.house.view3d
 				mark2.zpos = -(_wall.width*0.5 + 5);
 				this.addChild(mark2);
 			}
-			
-			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,cw.wallObjects);
-			if(a.length>2)
-			{
-				mark2.update(a);
-				mark2.visible = true;
-			}
 			else
 			{
-				mark2.visible = false;
+				mark2.visible = true;
 			}
+			
+			var a:Array = WallUtils.sortWallObject(cw.localHead.x,cw.localEnd.x,wallObjects);
+			mark2.update(a);
 		}
 		/*private function markWallCabinet(cw:CrossWall):void
 		{

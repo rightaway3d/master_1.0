@@ -106,7 +106,7 @@ package rightaway3d.house.editor2d
 		public function set groundCabinetDoorMaterial(matName:String):void
 		{
 			groundCabinetDoorMat = matName;
-			ProductInfo.defaultMaterialDict[CabinetType.DOOR_PLANK+CrossWall.IGNORE_OBJECT_HEIGHT] = matName;
+			ProductInfo.defaultMaterialDict[CabinetType.GROUND_DOOR_PLANK] = matName;
 			//setCabinetsDoorMaterial(sceneGroundCabinets,matName);
 			
 			var a:Array = this.productManager.getProductObjectsByType(CabinetType.DOOR_PLANK);
@@ -134,7 +134,7 @@ package rightaway3d.house.editor2d
 		public function set wallCabinetDoorMaterial(matName:String):void
 		{
 			wallCabinetDoorMat = matName;
-			ProductInfo.defaultMaterialDict[CabinetType.DOOR_PLANK+CrossWall.WALL_OBJECT_HEIGHT] = matName;
+			ProductInfo.defaultMaterialDict[CabinetType.WALL_DOOR_PLANK] = matName;
 			//setCabinetsDoorMaterial(sceneWallCabinets,matName);
 			
 			var a:Array = this.productManager.getProductObjectsByType(CabinetType.DOOR_PLANK);
@@ -167,7 +167,7 @@ package rightaway3d.house.editor2d
 		//设置一个厨柜中所有门的材质
 		public function setCabinetDoorsMaterial(po:ProductObject,matName:String):void
 		{
-			trace("--name:"+po.name);
+			//trace("--name:"+po.name);
 			/*if(po.modelObject)
 			{
 				setDoorMaterial(po,matName);
@@ -195,7 +195,7 @@ package rightaway3d.house.editor2d
 		//设置当前门的材质
 		public function setDoorMaterial(po:ProductObject,matName:String):void
 		{
-			trace("------name,type:",po.name,po.type);
+			//trace("------name,type:",po.name,po.type);
 			if(po.type==CabinetType.DOOR_PLANK)
 			{
 				po.customMaterialName = matName;
@@ -605,7 +605,7 @@ package rightaway3d.house.editor2d
 		*/		
 		public function getCabinetList():String
 		{
-			trace("getCabinetList");
+			//trace("getCabinetList");
 			var subtotal:Object = {};
 			
 			var s:String = "{";
@@ -625,7 +625,14 @@ package rightaway3d.house.editor2d
 			s += "\"door\":"+getNum(subtotal,CabinetType.DOOR_PLANK)+",";
 			s += "\"table\":"+getNum(subtotal,CabinetType.TABLE)+"},";
 			s += "\"wjdq\":{";
-			s += "\"list\":["+getDeviceData(subtotal)+"],";
+			s += "\"list\":[";
+			ts = getDeviceData(subtotal);
+			if(ts)
+			{
+				ts = ts.slice(0,-1);
+				s += ts;
+			}
+			s += "],";
 			s += "\"wjxj\":"+getWujinSubtotal(subtotal)+",";
 			s += "\"dqxj\":"+getDeviceSubtotal(subtotal);
 			s += "},";
@@ -661,7 +668,7 @@ package rightaway3d.house.editor2d
 			s += "]";
 			
 			_totalPrice = getTotal(subtotal);
-			trace("getProductList:"+_totalPrice);
+			//trace("getProductList:"+_totalPrice);
 			return s;
 		}
 		
@@ -710,12 +717,17 @@ package rightaway3d.house.editor2d
 					s += getProductsData(CabinetType.BODY,subtotal);
 					s += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal) + ",";
 					s += getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal) + ",";
-					s += getTableData(subtotal)+",";
-					s += getDeviceData(subtotal);
+					s += getTableData(subtotal);
+					var ts:String = getDeviceData(subtotal);
+					if(ts)
+					{
+						ts = ts.slice(0,-1);
+						s += ts;
+					}
 				s += "],";
 				
 				_totalPrice = getTotal(subtotal);//订单总价
-				trace("getERPData:"+_totalPrice);
+				//trace("getERPData:"+_totalPrice);
 				
 				s += "\"orderinfo\":{";
 					s += "\"startTime\":\"" + startTime + "\",";
@@ -734,7 +746,7 @@ package rightaway3d.house.editor2d
 		private var _totalPrice:Number = 0;
 		public function getTotalPrice():Number
 		{
-			trace("getTotalPrice:"+_totalPrice);
+			//trace("getTotalPrice:"+_totalPrice);
 			return _totalPrice;
 		}
 		
@@ -776,6 +788,7 @@ package rightaway3d.house.editor2d
 			return subtotal[type]?subtotal[type]:0;
 		}
 		
+		static public var isTestMode:Boolean = false;
 		private function getDeviceData(subtotal:Object):String
 		{
 			var s:String = "";
@@ -789,7 +802,14 @@ package rightaway3d.house.editor2d
 			s += getProductsData(CabinetType.HANDLE,subtotal);
 			s += getLetPlankData(subtotal);
 			s += getProductsData(CabinetType.LEG_PLANK_CONNECTION,subtotal);
-			s += getProductsData(CabinetType.METAL_FITTINGS,subtotal);
+			if(isTestMode)
+			{
+				s += getWJData(CabinetType.METAL_FITTINGS,subtotal);
+			}
+			else
+			{
+				s += getProductsData(CabinetType.METAL_FITTINGS,subtotal);
+			}
 			s += getIncreaseProductData(subtotal);
 			//s = s.slice(0,-1);
 			return s;
@@ -813,7 +833,7 @@ package rightaway3d.house.editor2d
 				//var pos:Array = info.getProductObjects();
 				var pos:Array = productManager.getProductObjectsByType(productType);
 				var plen:int = pos.length;
-				trace("getCabinetDoorData:"+plen,productType,pos);
+				//trace("getCabinetDoorData:"+plen,productType,pos);
 				//if(info.name!=CabinetType.BAFFLE && plen>0)
 				if(plen>0)
 				{
@@ -825,7 +845,7 @@ package rightaway3d.house.editor2d
 						{
 							var matName:String = po.customMaterialName + (po.parentProductObject?po.parentProductObject.memo:"");//memo信息为地（吊）左（右）
 							matName = po.name + "|" + po.specifications + "|" + matName;
-							trace("________matName:",matName);
+							//trace("________matName:",matName);
 							var a:Array;
 							if(dict[matName])
 							{
@@ -875,7 +895,7 @@ package rightaway3d.house.editor2d
 			var price:Number = matLib.getMaterialPrice(name);
 			
 			var d:Vector3D = info.dimensions;
-			trace(info.name+":"+d+" num:"+plen,info.memo,po.memo,po.name);
+			//trace(info.name+":"+d+" num:"+plen,info.memo,po.memo,po.name);
 			
 			var n:Number;
 			if(d.x == 18)n = d.y * d.z;
@@ -911,7 +931,14 @@ package rightaway3d.house.editor2d
 				var c1:String = productCode.substr(0,4);
 				var c2:String = po.productCode && po.productCode.length==3?po.productCode:"0XX";
 				var c3:String = productCode.substr(5,2);
-				productCode = c1 + c2 + c3;
+				if(c2=="0XX")
+				{
+					productCode = "000000000";
+				}
+				else
+				{
+					productCode = c1 + c2 + c3;
+				}
 				
 				other = name;
 			}
@@ -1002,7 +1029,7 @@ package rightaway3d.house.editor2d
 				if(po.isOrder)
 				{
 					var key:String = po.productInfo.infoID + po.memo;
-					trace(key);
+					//trace(key);
 					if(o[key])
 					{
 						var a:Array = o[key];
@@ -1014,6 +1041,94 @@ package rightaway3d.house.editor2d
 					}
 					a.push(po);
 				}
+			}
+			
+			for each(a in o)
+			{
+				po = a[0];
+				var plen:int = a.length;
+				var info:ProductInfo = po.productInfo;
+				var total:Number = info.price*plen;
+				var c:int = Math.ceil(total*100);
+				total = c/100;//保留两位小数
+				
+				if(subtotal[type])
+				{
+					subtotal[type] += total;
+				}
+				else
+				{
+					subtotal[type] = total;
+				}
+				
+				s += toOrderJson3(info.infoID,info.name,info.type,info.productModel,info.specifications,info.productCode,"","",
+					info.unit,info.price,plen,total,po.memo,info.image3dURL) + ",";
+			}
+			
+			return s;
+		}
+		
+		private function getTypeParent(po:ProductObject,type:String):ProductObject
+		{
+			while(po)
+			{
+				if(po.type==type)
+				{
+					return po;
+				}
+				po = po.parentProductObject;
+			}
+			return null;
+		}
+		
+		private function getWJData(type:String,subtotal:Object):String
+		{
+			var pos:Array = productManager.getProductObjectsByType(type);
+			var len:int = pos.length;
+			
+			var o:Object = {};
+			var s:String = "";
+			
+			for(var i:int=0;i<len;i++)
+			{
+				var po:ProductObject = pos[i];
+				var ppo:ProductObject;
+				if(ppo = getTypeParent(po,CabinetType.DOOR))//柜门（左开右开）五金
+				{
+				}
+				else if(ppo = getTypeParent(po,CabinetType.DOOR_BASKET))//拉篮五金
+				{
+				}
+				else if(ppo = getTypeParent(po,CabinetType.DOOR_DRAWER))//抽屉五金
+				{
+				}
+				else if(ppo = getTypeParent(po,CabinetType.DOOR_PLANK))//装饰板的辅助板及五金
+				{
+				}
+				else if(ppo = getTypeParent(po,CabinetType.PLANK_WUJING))//拐角柜封板及装饰板五金
+				{
+				}
+				else if(ppo = getTypeParent(po,CabinetType.BODY))//柜体五金
+				{
+				}
+				else
+				{
+					ppo = po;
+				}
+				var key:String = ppo.objectID + "-" + po.productInfo.infoID;
+				po.memo = ppo.productInfo.name;
+				//trace(key);
+				
+				if(o[key])
+				{
+					var a:Array = o[key];
+				}
+				else
+				{
+					a = [];
+					o[key] = a;
+				}
+				a.push(po);
 			}
 			
 			for each(a in o)
@@ -2358,7 +2473,7 @@ package rightaway3d.house.editor2d
 			return startOffset;
 		}
 		
-		private var plateDict:Dictionary = new Dictionary();
+		//private var plateDict:Dictionary = new Dictionary();
 		
 		/**
 		 * 创建厨柜封板
@@ -2391,7 +2506,7 @@ package rightaway3d.house.editor2d
 			}
 			this.cabinetCtr.setProductPos(po,cw,xPos,yPos,zPos);
 			
-			plateDict[po] = po;
+			//plateDict[po] = po;
 			
 			return po;
 		}
@@ -3845,11 +3960,11 @@ package rightaway3d.house.editor2d
 			{
 				var tcw:CrossWall = wo.crossWall;
 				tcw.removeWallObject(wo);
-				tcw.dispatchSizeChangeEvent();
+				//tcw.dispatchSizeChangeEvent();
 			}
 			
 			cw.addWallObject(wo);
-			cw.dispatchSizeChangeEvent();
+			//cw.dispatchSizeChangeEvent();
 		}
 		
 		public var hoodProduct:Product2D;

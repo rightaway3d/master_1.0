@@ -408,138 +408,150 @@ package rightaway3d.engine.product
 		public function parseProductInfo(xml:XML):ProductInfo
 		{
 			var id:int = xml.id;
-			//trace("parseProductInfo id:",id," infoDict[id]:",infoDict[id]);
-			if(infoDict[id])
+			if(! infoDict[id])
+				throw new Error("找不到指定ID的产品信息:"+id);
+			
+			var pInfo:ProductInfo = infoDict[id];
+			if(pInfo.infoID!=id)
+				throw new Error("指定的产品信息ID[" + pInfo.infoID + "]与找到的产品信息ID[" + id + "]不一致！");
+			
+			if(xml.name!=undefined)pInfo.name = xml.name;
+			if(xml.name_en!=undefined)pInfo.name_en = xml.name_en;
+			if(xml.type!=undefined)pInfo.type = xml.type;
+			
+			if(xml.productCode!=undefined)pInfo.productCode = xml.productCode;//物料编码
+			if(xml.productModel!=undefined)pInfo.productModel = xml.productModel;//产品型号
+			
+			if(xml.category!=undefined)pInfo.category = xml.category;
+			if(xml.version!=undefined)pInfo.version = xml.version;
+			if(xml.style!=undefined)pInfo.style = xml.style;
+			
+			if(xml.productID!=undefined)pInfo.productID = xml.productID;
+			if(xml.dscp!=undefined)pInfo.dscp = xml.dscp;
+			if(xml.memo!=undefined)pInfo.memo = xml.memo;
+			
+			if(xml.unit!=undefined)pInfo.unit = xml.unit;
+			if(xml.price!=undefined)pInfo.price = xml.price;
+			if(xml.specifications!=undefined)pInfo.specifications = xml.specifications;
+			
+			if(xml.image2dURL!=undefined)pInfo.image2dURL = xml.image2dURL;
+			if(xml.image3dURL!=undefined)pInfo.image3dURL = xml.image3dURL;
+			
+			if(xml.tag!=undefined)
 			{
-				var pInfo:ProductInfo = infoDict[id];
-				pInfo.name = xml.name;
-				pInfo.name_en = xml.name_en;
-				pInfo.type = xml.type;
-				
-				if(xml.productCode!=undefined)pInfo.productCode = xml.productCode;//物料编码
-				if(xml.productModel!=undefined)pInfo.productModel = xml.productModel;//产品型号
-				
-				if(xml.category!=undefined)pInfo.category = xml.category;
-				if(xml.version!=undefined)pInfo.version = xml.version;
-				if(xml.style!=undefined)pInfo.style = xml.style;
-				
-				if(xml.productID!=undefined)pInfo.productID = xml.productID;
-				if(xml.dscp!=undefined)pInfo.dscp = xml.dscp;
-				if(xml.memo!=undefined)pInfo.memo = xml.memo;
-				
-				if(xml.unit!=undefined)pInfo.unit = xml.unit;
-				if(xml.price!=undefined)pInfo.price = xml.price;
-				if(xml.specifications!=undefined)pInfo.specifications = xml.specifications;
-				
-				if(xml.image2dURL!=undefined)pInfo.image2dURL = xml.image2dURL;
-				if(xml.image3dURL!=undefined)pInfo.image3dURL = xml.image3dURL;
-				
 				var tag:String = xml.tag;
 				pInfo.tags = tag.split(",");
-				
-				var s:String = xml.align;
-				pInfo.aligns = s.split("|");
-				
-				if(xml.align.@dx!=undefined)pInfo.alignOffset.x = xml.align.@dx;
-				if(xml.align.@dy!=undefined)pInfo.alignOffset.y = xml.align.@dy;
-				if(xml.align.@dz!=undefined)pInfo.alignOffset.z = xml.align.@dz;
-				//trace("+++++++++++alignOffset:"+pInfo.alignOffset,pInfo.infoID);
-				
-				pInfo.scale = parseVectorStr(xml.scale);
-				
-				pInfo.dimensions = parseVectorStr(xml.dimensions);
-				//trace("---------pInfo.dimensions:"+pInfo.dimensions,typeof(xml.dimensions));
-				
-				if(xml.actions!=undefined)
-				{
-					var actionList:XMLList = xml.actions.action;
-					//trace("-----------------------------------actions:"+actionList);
-					len = actionList.length();
-					
-					if(len>0)
-					{
-						var actions:Vector.<PropertyAction> = new Vector.<PropertyAction>(len);
-						
-						for(i=0;i<len;i++)
-						{
-							var action:PropertyAction = PropertyAction.parse(actionList[i]);
-							actions[i] = action;
-						}
-						pInfo.actions = actions;
-						//pInfo.updateAction();
-						//trace(pInfo.infoID+":"+pInfo.actions.length);
-					}
-				}
-				
-				if(xml.model!=undefined)
-				{
-					var m:XML = xml.model[0];
-					var mInfo:ModelInfo = ModelManager.own.getModelInfo(m);//获取此产品所关联的模型信息
-					//mInfo.products.push(pInfo);//在模型信息添加关联的产品信息
-					
-					pInfo.modelInfo = mInfo;
-					//pInfo.modelInstance = mInfo.ownModelInstance;
-					//pInfo.ownProductInstance.modelObject = mInfo.ownModelInstance;
-					
-					//trace("parseProductInfo:"+pInfo.fileURL);
-					//trace("mInfo.materials:"+mInfo.materials);
-					/*if(!mInfo.materials)
-					{
-						if(pInfo.type=="cabinet_door_plank")
-						{
-							var md:Object = MaterialLibrary.instance.getMaterialData(RenderUtils.getDefaultMaterial('cabinetDoor'));
-						} else if (pInfo.type=="cabinet_body_plank") {
-							md = MaterialLibrary.instance.getMaterialData(RenderUtils.getDefaultMaterial('cabinetBody'));
-						}
-						//trace("md:"+md);
-						if(md)
-						{
-							mInfo.materials = new Vector.<MaterialBase>(1);
-							mInfo.materials[0] = md.material;
-						}
-					}*/
-					
-					//复制子产品
-					pInfo.cloneToAllProductObject();
-				}
-				else if(xml.subProduct!=undefined)
-				{
-					var subProduct:XML = xml.subProduct[0];
-					var ps:XMLList = subProduct.item;
-					var len:int = ps.length();
-					
-					pInfo.subProductInstances = new Vector.<ProductObject>(len);
-					
-					for(var i:int=0;i<len;i++)
-					{
-						var subXML:XML = ps[i];
-						//parseProductObject(subXML,pInfo);
-						pInfo.subProductInstances[i] = createSubProduct(subXML);//创建子产品
-					}
-					
-					//trace("infoID:"+pInfo.infoID+" childrens:"+subProduct.children().length()+" products:"+len);
-					if(subProduct.children().length()>len)//总的子产品数量大于固定子产品数量时，有动态子产品
-					{
-						pInfo.subProductData = subProduct;
-					}
-					//setDynamicProduct(pInfo);
-					
-					//复制子产品
-					pInfo.cloneToAllProductObject();
-				}
-				else
-				{
-					//trace("ProductInfo Error:"+xml);
-					//既没有子产品，也没有模型的产品，只能作为子产品存在，用于数据统计，而不需要显示的产品
-				}
-				
-				pInfo.isReady = true;
-				pInfo.dispatchReadyEvent();
 			}
 			else
 			{
-				trace("ProductInfo ID Error:"+xml);
+				pInfo.tags = [];
 			}
+			
+			if(xml.align!=undefined)
+			{
+				var s:String = xml.align;
+				pInfo.aligns = s.split("|");
+			}
+			else
+			{
+				pInfo.aligns = [];
+			}
+			
+			if(xml.align.@dx!=undefined)pInfo.alignOffset.x = xml.align.@dx;
+			if(xml.align.@dy!=undefined)pInfo.alignOffset.y = xml.align.@dy;
+			if(xml.align.@dz!=undefined)pInfo.alignOffset.z = xml.align.@dz;
+			//trace("+++++++++++alignOffset:"+pInfo.alignOffset,pInfo.infoID);
+			
+			pInfo.scale = (xml.scale!=undefined)?parseVectorStr(xml.scale):new Vector3D(1,1,1);;
+			
+			pInfo.dimensions = (xml.dimensions!=undefined)?parseVectorStr(xml.dimensions):new Vector3D();
+			//trace("---------pInfo.dimensions:"+pInfo.dimensions,typeof(xml.dimensions));
+			
+			if(xml.actions!=undefined)
+			{
+				var actionList:XMLList = xml.actions.action;
+				//trace("-----------------------------------actions:"+actionList);
+				len = actionList.length();
+				
+				if(len>0)
+				{
+					var actions:Vector.<PropertyAction> = new Vector.<PropertyAction>(len);
+					
+					for(i=0;i<len;i++)
+					{
+						var action:PropertyAction = PropertyAction.parse(actionList[i]);
+						actions[i] = action;
+					}
+					pInfo.actions = actions;
+					//pInfo.updateAction();
+					trace(pInfo.infoID+":"+pInfo.actions.length);
+				}
+			}
+			
+			if(xml.model!=undefined)
+			{
+				var m:XML = xml.model[0];
+				var mInfo:ModelInfo = ModelManager.own.getModelInfo(m);//获取此产品所关联的模型信息
+				//mInfo.products.push(pInfo);//在模型信息添加关联的产品信息
+				
+				pInfo.modelInfo = mInfo;
+				//pInfo.modelInstance = mInfo.ownModelInstance;
+				//pInfo.ownProductInstance.modelObject = mInfo.ownModelInstance;
+				
+				//trace("parseProductInfo:"+pInfo.fileURL);
+				//trace("mInfo.materials:"+mInfo.materials);
+				/*if(!mInfo.materials)
+				{
+				if(pInfo.type=="cabinet_door_plank")
+				{
+				var md:Object = MaterialLibrary.instance.getMaterialData(RenderUtils.getDefaultMaterial('cabinetDoor'));
+				} else if (pInfo.type=="cabinet_body_plank") {
+				md = MaterialLibrary.instance.getMaterialData(RenderUtils.getDefaultMaterial('cabinetBody'));
+				}
+				//trace("md:"+md);
+				if(md)
+				{
+				mInfo.materials = new Vector.<MaterialBase>(1);
+				mInfo.materials[0] = md.material;
+				}
+				}*/
+				
+				//复制子产品
+				pInfo.cloneToAllProductObject();
+			}
+			else if(xml.subProduct!=undefined)
+			{
+				var subProduct:XML = xml.subProduct[0];
+				var ps:XMLList = subProduct.item;
+				var len:int = ps.length();
+				
+				pInfo.subProductInstances = new Vector.<ProductObject>(len);
+				
+				for(var i:int=0;i<len;i++)
+				{
+					var subXML:XML = ps[i];
+					//parseProductObject(subXML,pInfo);
+					pInfo.subProductInstances[i] = createSubProduct(subXML);//创建子产品
+				}
+				
+				//trace("infoID:"+pInfo.infoID+" childrens:"+subProduct.children().length()+" products:"+len);
+				if(subProduct.children().length()>len)//总的子产品数量大于固定子产品数量时，有动态子产品
+				{
+					pInfo.subProductData = subProduct;
+				}
+				//setDynamicProduct(pInfo);
+				
+				//复制子产品
+				pInfo.cloneToAllProductObject();
+			}
+			else
+			{
+				//trace("ProductInfo Error:"+xml);
+				//既没有子产品，也没有模型的产品，只能作为子产品存在，用于数据统计，而不需要显示的产品
+			}
+			
+			pInfo.isReady = true;
+			pInfo.dispatchReadyEvent();
 			
 			return pInfo;
 		}
@@ -630,6 +642,42 @@ package rightaway3d.engine.product
 		}
 		
 		//==================================================
+		public function createRootProductObject(data:XML):ProductObject
+		{
+			var vo:ProductObject = getProductObject(data);
+			addProductToScene(vo);
+			
+			return vo;
+		}
+		
+		public function getProductObject(data:XML):ProductObject
+		{
+			var id:int = data.id;
+			var file:String = data.file;
+			var width:int = data.width;
+			var height:int = data.height;
+			var depth:int = data.depth;
+			var name:String = data.name;
+			
+			var oid:int = ProductObject.getNextIndex();
+			
+			//var vo:ProductObject = addProductObject(oid,name,id,file);
+			var info:ProductInfo = createProductInfo(id,file,"text");;
+			if(!info.isReady)
+			{
+				loadProduct();
+			}
+			
+			var vo:ProductObject = createProductObject(info,oid,name);
+			
+			var wo:WallObject = vo.objectInfo;
+			wo.width = width;
+			wo.height = height;
+			wo.depth = depth;
+			
+			return vo;
+		}
+		
 		public function addProductObject(objID:int,objName:String,infoID:int,fileURL:String,dataFormat:String="text"):ProductObject
 		{
 			var info:ProductInfo = createProductInfo(infoID,fileURL,dataFormat);;

@@ -215,11 +215,16 @@ package rightaway3d.engine.core
 		
 		public function startRender():void
 		{
-			container.stage.addEventListener(Event.ENTER_FRAME,onStageEnterFrame);			
+			if(!container.stage)return;
+			
+			container.stage.addEventListener(Event.ENTER_FRAME,onStageEnterFrame);
+			container.addEventListener(Event.REMOVED_FROM_STAGE,stopRender);
 		}
 		
-		public function stopRender():void
+		public function stopRender(e:Event=null):void
 		{
+			if(e)container.removeEventListener(Event.REMOVED_FROM_STAGE,stopRender);
+			
 			container.stage.removeEventListener(Event.ENTER_FRAME,onStageEnterFrame);
 		}
 		

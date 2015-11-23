@@ -219,7 +219,7 @@ package rightaway3d.engine.parser
 		protected function onSeaComplete(event:SEAEvent):void
 		{
 			//trace("onSeaComplete:"+currModel.modelFileURL);
-			trace("onSeaComplete:"+currModel.infoFileURL+"::"+currModel.renderBothSides2);			
+			trace("------Model loaded:"+currModel.modelFileURL+" renderBothSides:"+currModel.renderBothSides);			
 			isParsing = false;
 			
 			var mts:Vector.<MaterialBase> = sea3d.materials;
@@ -230,7 +230,7 @@ package rightaway3d.engine.parser
 			for each(var mat:MaterialBase in mts)
 			{
 				mat.smooth = true;
-				mat.bothSides = currModel.renderBothSides2;
+				mat.bothSides = currModel.renderBothSides;
 				
 				if(mat is SinglePassMaterialBase)
 				{

@@ -10,6 +10,9 @@ package rightaway3d.engine.product
 	import rightaway3d.engine.action.PropertyAction;
 	import rightaway3d.engine.model.ModelInfo;
 	import rightaway3d.engine.model.ModelObject;
+	import rightaway3d.house.cabinet.CabinetType;
+	import rightaway3d.house.vo.CrossWall;
+	import rightaway3d.house.vo.WallObject;
 	
 	[Event(name="ready", type="flash.events.Event")]
 
@@ -248,7 +251,7 @@ package rightaway3d.engine.product
 				else
 				{
 					var sp:ProductObject = productObj.getSubProductByEnname(action.targetName);
-					trace("--------_updateAction:"+action.targetName,sp);
+					//trace("--------_updateAction:"+action.targetName,sp);
 					if(sp)action.target = sp.container3d;
 				}
 			}
@@ -391,7 +394,9 @@ package rightaway3d.engine.product
 			}
 			else
 			{
-				type += String(ProductManager.own.getRootParent(po).objectInfo.y);
+				var wo:WallObject = ProductManager.own.getRootParent(po).objectInfo;
+				var s:String = wo.y > CrossWall.GROUND_OBJECT_HEIGHT ? "wall_" : "ground_";
+				type = s + type;
 				
 				if(defaultMaterialDict[type])
 				{

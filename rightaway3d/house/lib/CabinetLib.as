@@ -203,6 +203,11 @@ package rightaway3d.house.lib
 		public function getProductList(type_:String,cate_:String):XMLList
 		{
 			var list:XMLList = cabinetsList.(type==type_ && cate==cate_);
+			if(list.length()==0)
+			{
+				Log.log("====找不到指定的产品 type：" + type_ + " cate:" + cate_);
+			}
+			
 			return list;
 		}
 		

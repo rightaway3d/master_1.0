@@ -55,6 +55,7 @@ package rightaway3d.house.vo
 		
 		public function dispatchSizeChangeEvent():void
 		{
+			this.wall.isChanged = true;
 			if(this.hasEventListener(SIZE_CHANGE))
 			{
 				this.dispatchEvent(new Event(SIZE_CHANGE));
@@ -312,12 +313,14 @@ package rightaway3d.house.vo
 		
 		private function getHeadWallObject(x0:Number,x1:Number,sources:Array,objects:Array):void
 		{
+			if(x0==x1)return;
+			
 			var len:int = sources.length;
 			//trace("getHeadWallObject x0:"+x0+" x1:"+x1+" srcNum:"+len);
 			for(var i:int=0;i<len;i++)
 			{
 				var o:WallObject = sources[i];
-				if(o.x>=x0 && o.x-o.width<=x1)//找出与[x0，x1]区间有重叠的物体，并添加到数组中返回
+				if(o.x>x0 && o.x-o.width<x1)//找出与[x0，x1]区间有重叠的物体，并添加到数组中返回
 				{
 					objects.push(o);
 					//trace(i+" : "+o);
@@ -335,23 +338,22 @@ package rightaway3d.house.vo
 		 * @param object
 		 * 
 		 */
-		public function addWallObject(object:WallObject):void
+		public function addWallObject(wo:WallObject):void
 		{
 			//trace("addWallObject_1");
-			if(object.crossWall==this)return;
+			if(wo.crossWall==this)return;
 			
-			if(object.crossWall)
+			if(wo.crossWall)
 			{
-				var cw:CrossWall = object.crossWall;
-				cw.removeWallObject(object);
-				cw.dispatchSizeChangeEvent();
+				var cw:CrossWall = wo.crossWall;
+				cw.removeWallObject(wo);
 			}
 			//trace("addWallObject_2");
 			
 			//关联到此墙面的圆柱体，可以与其它物体重叠在一块
-			if(object.isIgnoreObject)//object.type==ModelType.CYLINDER || object.type==ModelType.CYLINDER_C || object.y+object.height<IGNORE_OBJECT_HEIGHT)
+			if(wo.isIgnoreObject)//object.type==ModelType.CYLINDER || object.type==ModelType.CYLINDER_C || object.y+object.height<IGNORE_OBJECT_HEIGHT)
 			{
-				object.crossWall = this;
+				wo.crossWall = this;
 				return;
 			}
 			//trace("addWallObject isHead:"+isHead+" index:"+wall.index+" x:"+object.x+" y:"+object.y+" width:"+object.width+" height:"+object.height);
@@ -359,28 +361,71 @@ package rightaway3d.house.vo
 			//trace("_wallObjects1:"+_wallObjects);
 			//trace("addWallObject2");
 			
-			object.crossWall = this;
+			wo.crossWall = this;
 			
-			if(object.y<GROUND_OBJECT_HEIGHT)
+			if(wo.y<GROUND_OBJECT_HEIGHT)
 			{
-				_groundObjects.push(object);
+				_groundObjects.push(wo);
 				_groundObjects.sortOn("x",Array.NUMERIC);//进行排序
+				
+				tmpGroundObjects.push(wo);
+				tmpGroundObjects.sortOn("x",Array.NUMERIC);
+				
+				var wo01:WallObject = this.getMaxDepthObject(this.headCrossWall._groundObjects);
+				if(wo01)
+				{
+					headCrossWall.resetGroundObjects(wo01);
+				}
+				
+				var wo11:WallObject = this.getMaxDepthObject(this.endCrossWall._groundObjects);
+				if(wo11)
+				{
+					endCrossWall.resetGroundObjects(wo11);
+				}
 			}
 			
-			if(object.y+object.height>WALL_OBJECT_HEIGHT)
+			if(wo.y+wo.height>WALL_OBJECT_HEIGHT)
 			{
-				_wallObjects.push(object);
+				_wallObjects.push(wo);
 				_wallObjects.sortOn("x",Array.NUMERIC);//进行排序
+				
+				tmpWallObjects.push(wo);
+				tmpWallObjects.sortOn("x",Array.NUMERIC);
+				
+				var wo02:WallObject = this.getMaxDepthObject(this.headCrossWall._wallObjects);
+				if(wo02)
+				{
+					headCrossWall.resetWallObject(wo02);
+				}
+				
+				var wo12:WallObject = this.getMaxDepthObject(this.endCrossWall._wallObjects);
+				if(wo12)
+				{
+					endCrossWall.resetWallObject(wo12);
+				}
 			}
+			
+			if(wo01 || wo02)
+			{
+				headCrossWall.dispatchSizeChangeEvent();
+			}
+			
+			if(wo11 || wo12)
+			{
+				endCrossWall.dispatchSizeChangeEvent();
+			}
+			
+			this.dispatchSizeChangeEvent();
+			
 			//trace("addWallObject_groundObjects.length:"+_groundObjects.length);
 			//trace("--wallObjects num:"+_wallObjects.length+","+_wallObjects);
-			//trace("--addWallObject index:",wall.index,object,"ground:",_groundObjects.length,"wall:",_wallObjects.length);
+			//trace("--acddWallObject index:",wall.index,object,"ground:",_groundObjects.length,"wall:",_wallObjects.length);
 			
-			this.initTestObject();
-			this.wall.isChanged = true;
+			//this.initTestObject();
+			//this.wall.isChanged = true;
 			//this.wall.dispatchChangeEvent();
 			
-			if(object.object is ProductObject)
+			/*if(object.object is ProductObject)
 			{
 				this.headCrossWall.initTestObject();
 				this.endCrossWall.initTestObject();
@@ -390,7 +435,7 @@ package rightaway3d.house.vo
 				
 				//headCrossWall.wall.dispatchChangeEvent();
 				//endCrossWall.wall.dispatchChangeEvent();
-			}
+			}*/
 		}
 		
 		/**
@@ -398,31 +443,67 @@ package rightaway3d.house.vo
 		 * @param object
 		 * 
 		 */
-		public function removeWallObject(object:WallObject):Boolean
+		public function removeWallObject(wo:WallObject):Boolean
 		{
 			//trace("removeWallObject1");
-			if(object.crossWall!=this)return false;
+			if(wo.crossWall!=this)return false;
 			
-			object.crossWall = null;
+			wo.crossWall = null;
 			//trace("removeWallObject2");
 			
-			if(object.isIgnoreObject)//object.type==ModelType.CYLINDER || object.type==ModelType.CYLINDER_C || object.y+object.height<IGNORE_OBJECT_HEIGHT)
+			if(wo.isIgnoreObject)//object.type==ModelType.CYLINDER || object.type==ModelType.CYLINDER_C || object.y+object.height<IGNORE_OBJECT_HEIGHT)
 				return true;
 			
-			if(object.y<GROUND_OBJECT_HEIGHT)
+			if(wo.y<GROUND_OBJECT_HEIGHT)
 			{
-				_groundObjects.splice(_groundObjects.indexOf(object),1);
+				_groundObjects.splice(_groundObjects.indexOf(wo),1);
+				
+				tmpGroundObjects.splice(tmpGroundObjects.indexOf(wo),1);
+				
+				var a:Array = headCrossWall.tmpGroundObjects;
+				if(a.length>0 && a[a.length-1].object == wo.object)
+				{
+					a.pop();
+					headCrossWall.dispatchSizeChangeEvent();
+				}
+				else
+				{
+					a = endCrossWall.tmpGroundObjects;
+					if(a.length>0 && a[0].object == wo.object)
+					{
+						a.shift();
+						endCrossWall.dispatchSizeChangeEvent();
+					}
+				}
 			}
 			//trace("removeWallObject_groundObjects.length:",_groundObjects.length);
-			if(object.y+object.height>WALL_OBJECT_HEIGHT)
+			if(wo.y+wo.height>WALL_OBJECT_HEIGHT)
 			{
-				_wallObjects.splice(_wallObjects.indexOf(object),1);
+				_wallObjects.splice(_wallObjects.indexOf(wo),1);
+				
+				tmpWallObjects.splice(tmpWallObjects.indexOf(wo),1);
+				
+				a= headCrossWall.tmpWallObjects;
+				if(a.length>0 && a[a.length-1].object == wo.object)
+				{
+					a.pop();
+					headCrossWall.dispatchSizeChangeEvent();
+				}
+				else
+				{
+					a = endCrossWall.tmpWallObjects;
+					if(a.length>0 && a[0].object == wo.object)
+					{
+						a.shift();
+						endCrossWall.dispatchSizeChangeEvent();
+					}
+				}
 			}
 			
-			this.initTestObject();
-			this.wall.isChanged = true;
+			//this.initTestObject();
+			this.dispatchSizeChangeEvent();
 			
-			if(object.object is ProductObject)
+			/*if(object.object is ProductObject)
 			{
 				if(headCrossWall)
 				{
@@ -434,20 +515,130 @@ package rightaway3d.house.vo
 					this.endCrossWall.initTestObject();
 					this.endCrossWall.wall.isChanged = true;
 				}
-			}
+			}*/
 			
 			return true;
 		}
 		
-		public function initTestObject(groundObjectDepth:int=570,wallObjectDepth:int=350):void
+		private function resetGroundObjects(testWO:WallObject):void
 		{
+			var wos:Array = [];
+			var wo:WallObject,two:WallObject;
+			var x0:Number,x1:Number;
+			var td:Number;
+			
+			if(testWO.y < GROUND_OBJECT_HEIGHT)
+			{
+				tmpGroundObjects = _groundObjects.concat();
+				
+				if(headCrossWall._groundObjects.length>0)
+				{
+					x1 = headCrossWall.localEnd.x;
+					td = testWO.z + testWO.depth;
+					x0 = x1 - td;
+					
+					headCrossWall._getGroundObjectOfPos(x0,x1,wos,headCrossWall._groundObjects);
+					wo = this.getMaxDepthObject(wos);
+					
+					if(wo)
+					{
+						two = cloneWallObject(wo);
+						two.x = localHead.x + two.width;
+						tmpGroundObjects.unshift(two);
+					}
+				}
+				
+				if(endCrossWall._groundObjects.length>0)
+				{
+					wos.length = 0;
+					x0 = endCrossWall.localHead.x;
+					x1 = x0 + testWO.z + testWO.depth;
+					
+					endCrossWall._getGroundObjectOfPos(x0,x1,wos,endCrossWall._groundObjects);
+					wo = this.getMaxDepthObject(wos);
+					
+					if(wo)
+					{
+						two = cloneWallObject(wo);
+						two.x = localEnd.x;
+						tmpGroundObjects.push(two);
+					}
+				}
+			}
+			
+			resetWallObject(testWO);
+		}
+		
+		private function resetWallObject(testWO:WallObject):void
+		{
+			var wos:Array = [];
+			var wo:WallObject,two:WallObject;
+			var x0:Number,x1:Number;
+			var td:Number;
+			
+			if(testWO.y + testWO.height > GROUND_OBJECT_HEIGHT)
+			{
+				tmpWallObjects = _wallObjects.concat();
+				
+				if(headCrossWall._wallObjects.length>0)
+				{
+					wos.length = 0;
+					x1 = headCrossWall.localEnd.x;
+					td = testWO.z + testWO.depth;
+					x0 = x1 - td;
+					headCrossWall._getWallObjectOfPos(x0,x1,wos,headCrossWall._wallObjects);
+					wo = getMaxDepthObject(wos);
+					if(wo)
+					{
+						two = cloneWallObject(wo);
+						two.x = localHead.x + two.width;
+						tmpWallObjects.unshift(two);
+					}
+				}
+				
+				if(endCrossWall._wallObjects.length>0)
+				{
+					wos.length = 0;
+					x0 = endCrossWall.localHead.x;
+					x1 = x0 + testWO.z + testWO.depth;
+					endCrossWall._getWallObjectOfPos(x0,x1,wos,endCrossWall._wallObjects);
+					wo = getMaxDepthObject(wos);
+					if(wo)
+					{
+						two = cloneWallObject(wo);
+						two.x = localEnd.x;
+						tmpWallObjects.push(two);
+					}
+				}
+			}
+		}
+		
+		private function cloneWallObject(wo:WallObject):WallObject
+		{
+			var two:WallObject = new WallObject();
+			two.width = wo.z + wo.depth;
+			two.height = wo.height;
+			
+			two.y = wo.y;
+			
+			two.type = wo.type;
+			two.object = wo.object;
+			
+			return two;
+		}
+		
+		/*public function initTestObject2():void
+		{
+			return;
+			
 			tmpGroundObjects = _groundObjects.concat();
 			tmpWallObjects = _wallObjects.concat();
-			
+			trace("initTestObjects:",wall.index,tmpGroundObjects);
 			var gos:Array = [];
 			var wos:Array = [];
 			var x0:Number,x1:Number;
 			var two:WallObject;
+			var groundObjectDepth:int=570,wallObjectDepth:int=350;
 			
 			if(headCrossWall)//计算头端相邻墙面要避让的物体
 			{
@@ -455,11 +646,16 @@ package rightaway3d.house.vo
 				if(headCrossWall.isHead)//为相邻墙体的正面
 				{
 					x1 = headCrossWall.localEnd.x;
-					
+					wo = getMaxDepthObject(_groundObjects);
+					groundObjectDepth = wo ? wo.z + wo.depth : 0;
+					trace("groundObjectDepth:"+groundObjectDepth);
 					x0 = x1 - groundObjectDepth;
 					headCrossWall._getGroundObjectOfPos(x0,x1,gos,headCrossWall._groundObjects);
 					//trace("x0:"+x0+" x1:"+x1+" gos:"+gos);
 					
+					wo = getMaxDepthObject(_wallObjects);
+					wallObjectDepth = wo ? wo.z + wo.depth : 0;
+					trace("wallObjectDepth:"+wallObjectDepth);
 					x0 = x1 - wallObjectDepth;
 					headCrossWall._getWallObjectOfPos(x0,x1,wos,headCrossWall._wallObjects);
 					//trace("x0:"+x0+" x1:"+x1+" wos:"+wos);
@@ -485,7 +681,7 @@ package rightaway3d.house.vo
 					removeRepeatObject1(tmpGroundObjects,two);
 					
 					tmpGroundObjects.unshift(two);
-					//trace("tmpGroundObjects0:"+two);
+					trace("tmpGroundObjects0:"+two);
 				}
 				
 				wo = getMaxDepthObject(wos);
@@ -504,7 +700,7 @@ package rightaway3d.house.vo
 					removeRepeatObject1(tmpWallObjects,two);
 					
 					tmpWallObjects.unshift(two);
-					//trace("tmpWallObjects1:"+two);
+					trace("tmpWallObjects1:"+two);
 				}
 			}
 			
@@ -518,10 +714,14 @@ package rightaway3d.house.vo
 				{
 					x0 = endCrossWall.localHead.x;
 					
+					wo = getMaxDepthObject(_groundObjects);
+					groundObjectDepth = wo ? wo.z + wo.depth : 0;
 					x1 = x0 + groundObjectDepth;
 					endCrossWall._getGroundObjectOfPos(x0,x1,gos,endCrossWall._groundObjects);
 					//trace("x0:"+x0+" x1:"+x1+" gos:"+gos);
 					
+					wo = getMaxDepthObject(_wallObjects);
+					wallObjectDepth = wo ? wo.z + wo.depth : 0;
 					x1 = x0 + wallObjectDepth;
 					endCrossWall._getWallObjectOfPos(x0,x1,wos,endCrossWall._wallObjects);
 					//trace("x0:"+x0+" x1:"+x1+" wos:"+wos);
@@ -547,7 +747,7 @@ package rightaway3d.house.vo
 					removeRepeatObject2(tmpGroundObjects,two);
 					
 					tmpGroundObjects.push(two);
-					//trace("tmpGroundObjects2:"+two);
+					trace("tmpGroundObjects2:"+two);
 				}
 				
 				wo = getMaxDepthObject(wos);
@@ -566,14 +766,14 @@ package rightaway3d.house.vo
 					removeRepeatObject2(tmpWallObjects,two);
 					
 					tmpWallObjects.push(two);
-					//trace("tmpWallObjects3:"+two);
+					trace("tmpWallObjects3:"+two);
 				}
 			}
-			//trace("--tmpWallObjects num:"+tmpGroundObjects.length+","+tmpGroundObjects);
-			//trace("--tmpWallObjects num:"+tmpWallObjects.length+","+tmpWallObjects);
+			trace("--tmpWallObjects num:"+tmpGroundObjects.length+","+tmpGroundObjects);
+			trace("--tmpWallObjects num:"+tmpWallObjects.length+","+tmpWallObjects);
 			//trace("--initTestObject index:",wall.index);
 			//trace("--initTestObject index:",wall.index,"ground:",tmpGroundObjects.length,"wall:",tmpWallObjects.length);
-		}
+		}*/
 		
 		private function removeRepeatObject1(objects:Array,wo:WallObject):void
 		{
@@ -611,7 +811,7 @@ package rightaway3d.house.vo
 			for(var i:int=1;i<len;i++)
 			{
 				var t:WallObject = objects[i];
-				if(t.depth>o.depth)
+				if(t.z + t.depth > o.z + o.depth)
 				{
 					o = t;
 				}
@@ -995,8 +1195,11 @@ package rightaway3d.house.vo
 		
 		public function testAddObject2(object:WallObject):Boolean
 		{
+			resetGroundObjects(object);
+			
 			var oldX:Number = object.x;
 			var result:Boolean;
+			
 			if(isHead)//墙体正面
 			{
 				//trace("1");
@@ -1096,10 +1299,14 @@ package rightaway3d.house.vo
 		
 		public function testAddCabinet(object:WallObject):Boolean
 		{
+			//trace("--------testAddCabinet:",object,this.tmpGroundObjects);
+			
 			var result:Boolean = true;
 			if(object.isIgnoreObject)return result;
 			
-			if(MyMath.isLessEqual(object.y,IGNORE_OBJECT_HEIGHT))
+			resetGroundObjects(object);
+			
+			if(MyMath.isEqual(object.y,IGNORE_OBJECT_HEIGHT))
 			{
 				result = testAddObjectHead(object,tmpGroundObjects);
 			}

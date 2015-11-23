@@ -61,7 +61,7 @@ package rightaway3d.house.vo
 			{
 				var cw:CrossWall = crossWall;
 				cw.removeWallObject(this);
-				cw.dispatchSizeChangeEvent();
+				//cw.dispatchSizeChangeEvent();
 			}
 			object = null;
 		}

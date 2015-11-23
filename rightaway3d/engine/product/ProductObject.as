@@ -320,11 +320,20 @@ package rightaway3d.engine.product
 		
 		public function getSubProductByEnname(name:String):ProductObject
 		{
-			trace("---getSubProductByEnname:"+this.name_en);
-			if(!subProductObjects)return null;
-			for each(var sp:ProductObject in subProductObjects)
+			//trace("---getSubProductByEnname:"+this.name_en);
+			var sub:ProductObject = getSubProduct(subProductObjects,name);
+			if(!sub)
 			{
-				trace("---name_en:"+sp.name_en);
+				sub = getSubProduct(dynamicSubProductObjects,name);
+			}
+			return sub;
+		}
+		
+		private function getSubProduct(subs:Vector.<ProductObject>,name:String):ProductObject
+		{
+			if(!subs)return null;
+			for each(var sp:ProductObject in subs)
+			{
 				if(sp.name_en==name)
 				{
 					return sp;
@@ -390,10 +399,12 @@ package rightaway3d.engine.product
 		
 		public function addDynamicSubProduct(pObj:ProductObject):void
 		{
+			//trace("addDynamicSubProduct:"+this.productInfo.fileURL,pObj.name,pObj.name_en);
 			dynamicSubProductObjects ||= new Vector.<ProductObject>();
 			dynamicSubProductObjects.push(pObj);
 			
 			_addSubProduct(pObj);
+			updateSubDynamicProductAction(pObj);
 		}
 		
 		public function hasDynamicProduct(name:String):Boolean
@@ -426,6 +437,25 @@ package rightaway3d.engine.product
 			{
 				n = subProductObjects.indexOf(po);
 				if(n>-1)subProductObjects.splice(n,1);
+			}
+		}
+		
+		private function updateSubDynamicProductAction(subDynamicProduct:ProductObject):void
+		{
+			if(this.actions)
+			{
+				var len:int = actions.length;
+				for(var i:int=0;i<len;i++)
+				{
+					var action:PropertyAction = actions[i];
+					if(!action.target)
+					{
+						if(subDynamicProduct.name_en==action.targetName)
+						{
+							action.target = subDynamicProduct.container3d;
+						}
+					}
+				}
 			}
 		}
 		

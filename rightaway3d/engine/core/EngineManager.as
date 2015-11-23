@@ -470,13 +470,13 @@ package rightaway3d.engine.core
 			if(!picked)return;
 			
 			var o3d:ObjectContainer3D = picked.entity;
-			trace("--------onStageRightClick:"+o3d,modelDict[o3d],picked.index,picked.subGeometryIndex);
+			//trace("--------onStageRightClick:"+o3d,modelDict[o3d],picked.index,picked.subGeometryIndex);
 			
 			if(modelDict[o3d])
 			{
 				var mo:ModelObject = modelDict[o3d];
 				var rp:ProductObject = getRootProduct(mo);
-				trace(mo);
+				//trace(mo);
 				//if(gvar.currProduct!=rp)
 				//{
 					gvar.currProduct = rp;
@@ -505,7 +505,7 @@ package rightaway3d.engine.core
 		
 		private function onMouseDown(e:MouseEvent3D):void
 		{
-			trace("onEngineMouseDown");
+			//trace("onEngineMouseDown");
 			if(isMouseDown)return;//鼠标按下后，未复位，拒绝执行
 
 			mousedownObject = modelDict[e.currentTarget];
@@ -520,7 +520,7 @@ package rightaway3d.engine.core
 			
 			isMouseDown = true;
 			isMouseMove = false;
-			trace("onMouseDown1");
+			//trace("onMouseDown1");
 			
 			//mousePoint3d = event.scenePosition;
 			//trace("onMouseDown:"+mousePoint3d);
@@ -548,7 +548,7 @@ package rightaway3d.engine.core
 			}
 			
 			if(p.isLock)isSwitchModel = true;//如果模型被锁定时，也不准移动
-			trace("onMouseDown2,isLock,isSwitchModel,isDragMode,objectInfo:",p.isLock,isSwitchModel,isDragMode,p.objectInfo);
+			//trace("onMouseDown2,isLock,isSwitchModel,isDragMode,objectInfo:",p.isLock,isSwitchModel,isDragMode,p.objectInfo);
 			
 			currCrossWall = null;
 			
@@ -571,7 +571,7 @@ package rightaway3d.engine.core
 				//productManager.initDrag(currProduct.container3d);
 				
 				engine3d.camCtrl.disable();
-				trace("onMouseDown3");
+				//trace("onMouseDown3");
 				
 				//engine3d.disableScene();
 				p.container3d.mouseChildren = false;
@@ -589,7 +589,7 @@ package rightaway3d.engine.core
 			event.stopImmediatePropagation();
 			
 			isMouseMove = true;
-			//trace("onMouseMove1");//,gvar.currProduct);
+			//trace("----------------------------onMouseMove1");//,gvar.currProduct);
 			
 			if(!isSwitchModel && isDragMode)
 			{
@@ -658,8 +658,9 @@ package rightaway3d.engine.core
 					{
 						if(currCrossWall)
 						{
+							//trace("-----------remove1");
 							currCrossWall.removeWallObject(wo);
-							currCrossWall.dispatchSizeChangeEvent();
+							//currCrossWall.dispatchSizeChangeEvent();
 						}
 						
 						currCrossWall = cw;
@@ -674,8 +675,9 @@ package rightaway3d.engine.core
 				{
 					if(currCrossWall)
 					{
+						//trace("-----------remove2");
 						currCrossWall.removeWallObject(wo);
-						currCrossWall.dispatchSizeChangeEvent();
+						//currCrossWall.dispatchSizeChangeEvent();
 						currCrossWall = null;
 					}
 				}
@@ -732,6 +734,7 @@ package rightaway3d.engine.core
 			if(currCrossWall)//currCabinet.vo.objectInfo.crossWall)//当前产品被吸附在某个墙上
 			{
 				var cw:CrossWall = currCrossWall;
+				//trace("-----------remove3",isReset);
 				var isReset:Boolean = cw.removeWallObject(wo);
 				//cw.dispatchSizeChangeEvent();
 				
@@ -780,8 +783,9 @@ package rightaway3d.engine.core
 					po.position.z = footPoint.y;
 					po.rotation.y = po.container3d.rotationY = a;
 					
+					//trace("-----------add");
 					cw.addWallObject(wo);
-					cw.dispatchSizeChangeEvent();
+					//cw.dispatchSizeChangeEvent();
 					
 					ProductUtils.showBounds(po,true,gvar.defaultColor);
 				}
@@ -825,7 +829,7 @@ package rightaway3d.engine.core
 			engine3d.camCtrl.enable();
 			//engine3d.enableScene();
 			
-			trace("onmouseup1");//,gvar.currProduct);
+			//trace("onmouseup1");//,gvar.currProduct);
 			var p:ProductObject = gvar.currProduct;
 			if(p)
 			{
@@ -928,7 +932,7 @@ package rightaway3d.engine.core
 		
 		private function _doAction():void
 		{
-			trace("productMouseUpEvent2:"+lastTime);
+			//trace("productMouseUpEvent2:"+lastTime);
 			if(lastTime>0)//执行单击
 			{
 				__doAction(mousedownObject);//只在单击时，执行相关动作
@@ -946,13 +950,13 @@ package rightaway3d.engine.core
 		{
 			while(pObj)
 			{
-				trace("pObj:"+pObj.name,pObj.productInfo.fileURL+" isActive:"+pObj.isActive+" actions:"+pObj.actions);
+				//trace("pObj:"+pObj.name,pObj.productInfo.fileURL+" isActive:"+pObj.isActive+" actions:"+pObj.actions);
 				if(pObj.isActive && pObj.actions)
 				{
-					trace("id:"+pObj.name);
+					//trace("id:"+pObj.name);
 					for each(var action:PropertyAction in pObj.actions)
 					{
-						trace("action:"+action);
+						//trace("action:"+action);
 						action.run();
 					}
 				}

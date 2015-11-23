@@ -35,6 +35,14 @@ package rightaway3d.house.cabinet
 		 */
 		static public const DOOR_PLANK:String = "cabinet_door_plank";
 		/**
+		 * 地柜柜门板件
+		 */
+		static public const GROUND_DOOR_PLANK:String = "ground_cabinet_door_plank";
+		/**
+		 * 吊柜柜门板件
+		 */
+		static public const WALL_DOOR_PLANK:String = "wall_cabinet_door_plank";
+		/**
 		 * 动态创建的封板
 		 */
 		static public const BAFFLE:String = "cabinet_baffle";

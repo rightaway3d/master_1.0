@@ -82,7 +82,7 @@ package rightaway3d.engine.model
 		/**
 		 * 此模型是否双面渲染
 		 */
-		public var renderBothSides2:Boolean = false;
+		public var renderBothSides:Boolean = false;
 		
 		public function ModelInfo()
 		{
@@ -156,7 +156,7 @@ package rightaway3d.engine.model
 			//trace("dimensions:"+s+" "+bounds);
 			
 			s = xml.renderBothSides!=undefined?xml.renderBothSides:"false";
-			renderBothSides2 = s=="true"?true:false;
+			renderBothSides = s=="true"?true:false;
 			
 			/*s = xml.centerOffset;
 			a = s.split(",");

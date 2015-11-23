@@ -111,11 +111,11 @@ package rightaway3d.house.view2d
 			{
 				//vo.objectInfo.crossWall.initTestObject();
 				var cw:CrossWall = vo.objectInfo.crossWall;
-				cw.initTestObject();
+				//cw.initTestObject();
 				cw.wall.dispatchSizeChangeEvent();
-				cw.headCrossWall.initTestObject();
+				//cw.headCrossWall.initTestObject();
 				cw.headCrossWall.wall.dispatchSizeChangeEvent();
-				cw.endCrossWall.initTestObject();
+				//cw.endCrossWall.initTestObject();
 				cw.endCrossWall.wall.dispatchSizeChangeEvent();
 			}
 			

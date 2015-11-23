@@ -407,7 +407,7 @@ package rightaway3d.house.editor2d
 			{
 				var cw:CrossWall = po.objectInfo.crossWall;
 				cw.removeWallObject(po.objectInfo);
-				cw.dispatchSizeChangeEvent();
+				//cw.dispatchSizeChangeEvent();
 			}
 			
 			gvar.currProduct2 = null;
@@ -548,7 +548,7 @@ package rightaway3d.house.editor2d
 			p.vo.objectInfo.width = width;
 			p.vo.objectInfo.depth = depth;
 			p.vo.objectInfo.height = height;
-			trace("----createCabinet objectInfo：",p.vo.objectInfo);
+			//trace("----createCabinet objectInfo：",p.vo.objectInfo);
 			
 			addProduct(p);
 			//setCurrProduct(p);
@@ -582,7 +582,7 @@ package rightaway3d.house.editor2d
 			
 			initCabinet(cw,xPos,yPos,0);
 			//initCabinet(cw,xPos,yPos,-1);
-			trace(p.vo);
+			//trace(p.vo);
 			GlobalEvent.event.dispatchProductCreatedEvent(p.vo);
 			
 			return p;
