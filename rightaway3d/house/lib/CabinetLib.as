@@ -211,6 +211,11 @@ package rightaway3d.house.lib
 			return list;
 		}
 		
+		public function getAddProducts():XMLList
+		{
+			return addProducts;
+		}
+		
 		//==============================================================================================
 		private var libXML:XML;
 		private var groupList:XMLList;
@@ -218,7 +223,7 @@ package rightaway3d.house.lib
 		private var cabinetsList:XMLList;
 		private var doorsList:XMLList;
 		private var replaceList:XMLList;
-		
+		private var addProducts:XMLList;
 		private var productTypeList:XML;
 		
 		private var dynamicSubProduct:XML;
@@ -245,7 +250,8 @@ package rightaway3d.house.lib
 			//trace(cabinetsList);
 			//trace(doorsList);
 			productTypeList = libXML.productTypeList[0];
-
+			addProducts = libXML.addProducts.item;
+			
 			dynamicSubProduct = libXML.dynamicSubProduct[0];
 			var s:String = dynamicSubProduct.list;
 			dynamicProductList = s.split(",");
