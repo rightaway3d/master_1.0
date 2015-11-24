@@ -32,6 +32,8 @@ package rightaway3d.house.utils
 			SO.setSO("wallPlateWidth",String(value));
 		}
 		
+		//public function set drainer
+		
 		public function toJsonString():String
 		{
 			var s:String = "{" +

@@ -649,6 +649,7 @@ package rightaway3d.house.editor2d
 		
 		private function _getProductList(subtotal:Object):String
 		{
+			trace("_getProductList");
 			var ts:String = "";
 			ts += getProductsData(CabinetType.BODY,subtotal);
 			ts += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal);
@@ -1249,16 +1250,19 @@ package rightaway3d.house.editor2d
 			return n;
 		}*/
 		
-		public function getTableData(subtotal:Object):String
+		private function getTableData(subtotal:Object):String
 		{
 			var name:String = this._cabinetTableDefaultMaterial;
 			var n:Number = 0;
 			for each(var ct:CabinetTable3D in tableMeshs)
 			{
 				n += ct.getArea();
+				
+				//trace("n:"+n);
 			}
+			//trace("getTableData n:"+n);
 			
-			if(n<1)return "";
+			if(n==0)return "";
 			
 			var lib:MaterialLibrary = MaterialLibrary.instance;
 			var price:Number = lib.getMaterialPrice(name);
