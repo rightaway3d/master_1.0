@@ -645,7 +645,7 @@ package rightaway3d.engine.core
 			//trace("picked:"+picked);
 			var pillar:WallObject = null;
 			var wo:WallObject = po.objectInfo;
-			wo.z= 0;
+			//wo.z= 0;
 			
 			if(picked)
 			{
@@ -746,6 +746,7 @@ package rightaway3d.engine.core
 				footPoint.x = (pillar ? pillar.x-pillar.width*0.5-picked.localPosition.x : picked.localPosition.x) + dx;
 				
 				var zWall:int = wo.z;
+				//trace("zWall:"+zWall);
 				var dy:Number = zWall + ww;
 				
 				footPoint.y = cw.isHead?-dy:dy;

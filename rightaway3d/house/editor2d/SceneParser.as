@@ -30,6 +30,7 @@ package rightaway3d.house.editor2d
 		 */
 		public function parseEncodeString(s:String):Floor
 		{
+			Log.log(s);
 			s = decodeString(s);
 			return parseJsonString(s);
 		}

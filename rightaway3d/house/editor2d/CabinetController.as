@@ -218,7 +218,7 @@ package rightaway3d.house.editor2d
 		{
 			disposeFlagProduct();
 			
-			var p:Product2D = this.createCabinet(703,"cabinet_703_450x1390x570.pdt",450,1390,550,"text",null,-1,CrossWall.IGNORE_OBJECT_HEIGHT,"",true);
+			var p:Product2D = this.createCabinet(703,"cabinet_703_450x1390x570.pdt",450,1390,550,"text",null,-1,CrossWall.IGNORE_OBJECT_HEIGHT,0,"",true);
 			p.errorFlag = true;
 			addMiddleCabinet(p.vo);
 			return p.vo;
@@ -231,7 +231,7 @@ package rightaway3d.house.editor2d
 		{
 			disposeFlagProduct();
 			
-			var p:Product2D = this.createCabinet(705,"cabinet_705_600x1390x570.pdt",600,1390,550,"text",null,-1,CrossWall.IGNORE_OBJECT_HEIGHT,"",true);
+			var p:Product2D = this.createCabinet(705,"cabinet_705_600x1390x570.pdt",600,1390,550,"text",null,-1,CrossWall.IGNORE_OBJECT_HEIGHT,0,"",true);
 			p.errorFlag = true;
 			addMiddleCabinet(p.vo);
 			return p.vo;
@@ -244,7 +244,7 @@ package rightaway3d.house.editor2d
 		{
 			disposeFlagProduct();
 			
-			var p:Product2D = this.createCabinet(805,"cabinet_805_600x2110x570.pdt",600,2110,550,"text",null,-1,CrossWall.IGNORE_OBJECT_HEIGHT,"",true);
+			var p:Product2D = this.createCabinet(805,"cabinet_805_600x2110x570.pdt",600,2110,550,"text",null,-1,CrossWall.IGNORE_OBJECT_HEIGHT,0,"",true);
 			p.errorFlag = true;
 			addMiddleCabinet(p.vo);
 			return p.vo;
@@ -541,7 +541,7 @@ package rightaway3d.house.editor2d
 		
 		//private var cabinetDict:Dictionary = new Dictionary();
 		
-		public function createCabinet(infoID:int,fileURL:String,width:int,height:int,depth:int,dataFormat:String="text",cw:CrossWall=null,xPos:int=-1,yPos:uint=0,name:String="",isDrag:Boolean=true):Product2D
+		public function createCabinet(infoID:int,fileURL:String,width:int,height:int,depth:int,dataFormat:String="text",cw:CrossWall=null,xPos:int=-1,yPos:int=0,zPos:int=0,name:String="",isDrag:Boolean=true):Product2D
 		{
 			var p:Product2D = new Cabinet2D(infoID,fileURL,dataFormat);
 			//trace("width:"+width);
@@ -580,7 +580,8 @@ package rightaway3d.house.editor2d
 				//zPos = WallObject.distToWall;
 			}
 			
-			initCabinet(cw,xPos,yPos,0);
+			initCabinet(cw,xPos,yPos,zPos);
+			
 			//initCabinet(cw,xPos,yPos,-1);
 			//trace(p.vo);
 			GlobalEvent.event.dispatchProductCreatedEvent(p.vo);
@@ -738,15 +739,15 @@ package rightaway3d.house.editor2d
 		public function setSquarePillarSize(squarePillar:ProductObject,width:uint,depth:uint):Boolean
 		{
 			var p:ProductObject = squarePillar;
-			trace("setSquarePillarSize:"+p.name);
+			//trace("setSquarePillarSize:"+p.name);
 			if(p.name==ProductObjectName.ROOM_SQUARE_PILLAR)
 			{
 				if(p.modelObject && p.modelObject.modelInfo.meshs)
 				{
-					trace("modelObject:"+p.modelObject,p.modelObject.meshs[0]);
+					//trace("modelObject:"+p.modelObject,p.modelObject.meshs[0]);
 					if(p.modelObject.modelInfo.meshs[0] is CubeMesh)
 					{
-						trace("meshs:"+p.modelObject.meshs.length);
+						//trace("meshs:"+p.modelObject.meshs.length);
 						var wo:WallObject = p.objectInfo;
 						var cw:CrossWall = wo.crossWall;
 						if(cw)
@@ -973,9 +974,9 @@ package rightaway3d.house.editor2d
 			//trace("initEvent:"+gvar.currProduct.toJsonString());
 		}
 		
-		private function initCabinet(cw:CrossWall=null,xPos:int=-1,yPos:uint=0,zPos:uint=0,setPos:Boolean=true):void
+		private function initCabinet(cw:CrossWall=null,xPos:int=-1,yPos:int=0,zPos:int=0,setPos:Boolean=true):void
 		{
-			//trace("initCabinet");
+			trace("initCabinet:"+zPos);
 			sceneHeightSize = Scene2D.sceneHeightSize;
 			
 			rooms = scene.currFloor.rooms;
@@ -1011,6 +1012,7 @@ package rightaway3d.house.editor2d
 			}
 			else if(setPos)
 			{
+				trace("initCabinet2:"+zPos);
 				setProductPos(gvar.currProduct,cw,xPos,yPos,zPos);
 			}
 			
@@ -1036,6 +1038,8 @@ package rightaway3d.house.editor2d
 		
 		public function setProductPos(po:ProductObject,cw:CrossWall,xPos:int,yPos:int,zPos:Number):void
 		{
+			//throw new Error("some error");
+			//trace("setProduct zPos:"+zPos);
 			var view2d:Product2D = po.view2d;
 			
 			if(cw)

@@ -48,6 +48,11 @@ package rightaway3d.house.cabinet
 		static public const SINGLE_DOOR_Z:String = "single_door_z";
 		
 		/**
+		 * 单开门柜_窄(地柜不靠墙)
+		 */
+		static public const SINGLE_DOOR_B:String = "single_door_b";
+		
+		/**
 		 * 对开门柜(地柜/吊柜)
 		 */
 		static public const DOUBLE_DOOR:String = "double_door";
@@ -61,6 +66,11 @@ package rightaway3d.house.cabinet
 		 * 对开门柜_窄(地柜)
 		 */
 		static public const DOUBLE_DOOR_Z:String = "double_door_z";
+		
+		/**
+		 * 对开门柜_窄(地柜不靠墙)
+		 */
+		static public const DOUBLE_DOOR_B:String = "double_door_b";
 		
 		/**
 		 * 上翻门柜(地柜/吊柜)

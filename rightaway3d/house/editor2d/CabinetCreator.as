@@ -3990,7 +3990,7 @@ package rightaway3d.house.editor2d
 			var height:int = o.height;
 			var depth:int = o.depth;
 			//trace("------createGroundCabinet:"+width);
-			var p:Product2D = cabinetCtr.createCabinet(id,file,width,height,depth,"text",cw,x,CrossWall.IGNORE_OBJECT_HEIGHT,name,false);
+			var p:Product2D = cabinetCtr.createCabinet(id,file,width,height,depth,"text",cw,x,CrossWall.IGNORE_OBJECT_HEIGHT,0,name,false);
 			p.vo.productInfo.type = CabinetType.BODY;
 			//if(door)//动态添加门
 			//{
@@ -4166,7 +4166,7 @@ package rightaway3d.house.editor2d
 			var depth:int = o.depth;
 			//this.setTestObject(0,CrossWall.WALL_OBJECT_HEIGHT,width,height);
 			//trace("------createWallCabinet"+width);
-			var p:Product2D = cabinetCtr.createCabinet(id,file,width,height,depth,"text",cw,x,CrossWall.WALL_OBJECT_HEIGHT,name,false);
+			var p:Product2D = cabinetCtr.createCabinet(id,file,width,height,depth,"text",cw,x,CrossWall.WALL_OBJECT_HEIGHT,0,name,false);
 			
 			if(name!=ProductObjectName.HOOD)p.vo.productInfo.type = CabinetType.BODY;
 			//if(door)
