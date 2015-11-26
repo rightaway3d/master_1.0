@@ -2,11 +2,8 @@ package rightaway3d.house.utils
 {
 	import flash.geom.Vector3D;
 	
-	import away3d.errors.AbstractMethodError;
-	
 	import jell3d.utils.SO;
 	
-	import rightaway3d.house.vo.Floor;
 	import rightaway3d.utils.Log;
 
 	/**
@@ -33,6 +30,7 @@ package rightaway3d.house.utils
 		public function set wallPlateWidth(value:uint):void
 		{
 			Log.log("set wallPlateWidth:"+value);
+			
 			SO.setSO("wallPlateWidth",String(value));
 		}
 		

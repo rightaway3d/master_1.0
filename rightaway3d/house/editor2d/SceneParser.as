@@ -80,10 +80,10 @@ package rightaway3d.house.editor2d
 			var products:Array = data.products;
 			var cabinetTable:Object = data.cabinetTable;
 			
-			Log.log("config1:"+data.config);
+			//Log.log("config1:"+data.config);
 			if(data.config!=undefined)
 			{
-				Log.log("config2:"+data.config);
+				//Log.log("config2:"+data.config);
 				GlobalConfig.instance.setConfigData(data.config);
 			}
 			
@@ -246,8 +246,8 @@ package rightaway3d.house.editor2d
 				wh.modelType = hd.type;
 				wh.modelURL = hd.url;
 				
+				//Log.log("-----------wh:",wh.objectInfo);
 				wall.addHole(wh);
-				trace("-----------wh:",wh.objectInfo);
 			}
 		}
 		

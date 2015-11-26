@@ -371,13 +371,13 @@ package rightaway3d.house.vo
 				tmpGroundObjects.push(wo);
 				tmpGroundObjects.sortOn("x",Array.NUMERIC);
 				
-				var wo01:WallObject = this.getMaxDepthObject(this.headCrossWall._groundObjects);
+				if(headCrossWall)var wo01:WallObject = this.getMaxDepthObject(this.headCrossWall._groundObjects);
 				if(wo01)
 				{
 					headCrossWall.resetGroundObjects(wo01);
 				}
 				
-				var wo11:WallObject = this.getMaxDepthObject(this.endCrossWall._groundObjects);
+				if(endCrossWall)var wo11:WallObject = this.getMaxDepthObject(this.endCrossWall._groundObjects);
 				if(wo11)
 				{
 					endCrossWall.resetGroundObjects(wo11);
@@ -392,13 +392,13 @@ package rightaway3d.house.vo
 				tmpWallObjects.push(wo);
 				tmpWallObjects.sortOn("x",Array.NUMERIC);
 				
-				var wo02:WallObject = this.getMaxDepthObject(this.headCrossWall._wallObjects);
+				if(headCrossWall)var wo02:WallObject = this.getMaxDepthObject(this.headCrossWall._wallObjects);
 				if(wo02)
 				{
 					headCrossWall.resetWallObject(wo02);
 				}
 				
-				var wo12:WallObject = this.getMaxDepthObject(this.endCrossWall._wallObjects);
+				if(endCrossWall)var wo12:WallObject = this.getMaxDepthObject(this.endCrossWall._wallObjects);
 				if(wo12)
 				{
 					endCrossWall.resetWallObject(wo12);
