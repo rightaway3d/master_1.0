@@ -1619,7 +1619,7 @@ package rightaway3d.house.editor2d
 		 * @param cabinetTable
 		 * 
 		 */
-		public function createCabinetTable(cabinetTable:Object):void
+		public function recreateCabinetTable(cabinetTable:Object):void
 		{
 			//removeTableMeshs();
 			
@@ -1759,7 +1759,7 @@ package rightaway3d.house.editor2d
 			if(!_cabinetTabless)return;
 			
 			this.removeTableMeshs();
-			createCabinetTable3(_cabinetTabless,_tableDepthss);
+			createCabinetTable(_cabinetTabless,_tableDepthss);
 			updateTableMeshsPos(houseDX,houseDZ);
 		}
 		
@@ -3648,7 +3648,7 @@ package rightaway3d.house.editor2d
 			return type;
 		}
 		
-		public function createCabinetTable3(tabless:Array,depthss:Array):void
+		public function createCabinetTable(tabless:Array,depthss:Array):void
 		{
 			//trace("createCabinetTable3");
 			_cabinetTabless = tabless;

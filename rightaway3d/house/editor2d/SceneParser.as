@@ -102,7 +102,7 @@ package rightaway3d.house.editor2d
 		
 		private function parseCabinetTable(cabinetTables:Object):void
 		{
-			cabinetCreator.createCabinetTable(cabinetTables);
+			cabinetCreator.recreateCabinetTable(cabinetTables);
 		}
 		
 		//解析户型数据

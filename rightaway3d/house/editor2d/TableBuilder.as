@@ -61,7 +61,7 @@ package rightaway3d.house.editor2d
 			{
 				var depthss:Array = [];
 				var tabless:Array = resetGroundArea(groundArea,groundCabinetDict,depthss);
-				cabinetCreator.createCabinetTable3(tabless,depthss);//[[600,600,600],[600,600,600],[600,600,600]]);
+				cabinetCreator.createCabinetTable(tabless,depthss);//[[600,600,600],[600,600,600],[600,600,600]]);
 				
 				var house:House = House.getInstance();
 				house.updateBounds();
