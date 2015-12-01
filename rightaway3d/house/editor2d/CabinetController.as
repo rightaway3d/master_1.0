@@ -38,7 +38,7 @@ package rightaway3d.house.editor2d
 	public class CabinetController
 	{
 		public var scene:Scene2D;
-		public var sceneController:SceneController2D;
+		//public var sceneController:SceneController2D;
 		public var engineManager:EngineManager;
 		
 		private var productManager:ProductManager = ProductManager.own;

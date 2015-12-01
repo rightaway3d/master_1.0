@@ -24,7 +24,7 @@ package rightaway3d.house.editor2d
 			this.addChild(wallFace);
 		}
 		
-		private function reset():void
+		public function reset():void
 		{
 			index = 0;
 			wallFace.resetMatData();
@@ -67,7 +67,7 @@ package rightaway3d.house.editor2d
 				}
 				
 				//index = 0;//当索引超出范围时，归零并返回false，待下一次调用时，重新循环显示立面图
-				reset();
+				//reset();
 			}
 			
 			return false;
@@ -142,8 +142,8 @@ package rightaway3d.house.editor2d
 			face.scaleX = s;
 			face.scaleY = s;
 			
-			var sw:int = stage.stageWidth;
-			var sh:int = stage.stageHeight;
+			var sw:int = Scene2D.viewWidth;//stage.stageWidth;
+			var sh:int = Scene2D.viewHeight;//stage.stageHeight;
 			var w:Number = Base2D.sizeToScreen(cw.validLength+500);//face.width;
 			var h:Number = face.height;
 			
@@ -170,8 +170,8 @@ package rightaway3d.house.editor2d
 		
 		private function updateBG(color:uint=0xffffff):void
 		{
-			var sw:int = stage.stageWidth;
-			var sh:int = stage.stageHeight;
+			var sw:int = Scene2D.viewWidth;//stage.stageWidth;
+			var sh:int = Scene2D.viewHeight;//stage.stageHeight;
 			
 			var g:Graphics = this.graphics;
 			g.clear();

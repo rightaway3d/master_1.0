@@ -34,8 +34,6 @@ package rightaway3d.house.editor2d
 		private var ruler:ScaleRuler2D;
 		
 		//--------------------------------------------
-		public var viewWidth:int = 800;
-		public var viewHeight:int = 600;
 		
 		//public var menuWidth:int = 0;
 		
@@ -112,8 +110,8 @@ package rightaway3d.house.editor2d
 		
 		private function dragingScene():void
 		{
-			var sw:Number = viewWidth/(Scene2D.sceneWidth + gridBorder*2);
-			var sh:Number = viewHeight/(Scene2D.sceneHeight + gridBorder*2);
+			var sw:Number = Scene2D.viewWidth/(Scene2D.sceneWidth + gridBorder*2);
+			var sh:Number = Scene2D.viewHeight/(Scene2D.sceneHeight + gridBorder*2);
 			var scale:Number = scene.scaleX;
 			var dx:Number = scene.stage.mouseX - mouseX0;
 			var dy:Number = scene.stage.mouseY - mouseY0;
@@ -203,8 +201,8 @@ package rightaway3d.house.editor2d
 			
 			var scale:Number = this.scene.scaleX + deltaScale;
 			
-			var sw:Number = viewWidth/(Scene2D.sceneWidth + gridBorder*2);
-			var sh:Number = viewHeight/(Scene2D.sceneHeight + gridBorder*2);
+			var sw:Number = Scene2D.viewWidth/(Scene2D.sceneWidth + gridBorder*2);
+			var sh:Number = Scene2D.viewHeight/(Scene2D.sceneHeight + gridBorder*2);
 			
 			var minScale:Number = sh<sw?sh:sw;
 			var maxScale:Number = 20;
@@ -230,8 +228,8 @@ package rightaway3d.house.editor2d
 			if(scale == minScale)
 			{
 				scene.backGrid.mouseEnabled = false;
-				tx = (viewWidth-Scene2D.sceneWidth*scale)/2;
-				ty = (viewHeight-Scene2D.sceneHeight*scale)/2;
+				tx = (Scene2D.viewWidth-Scene2D.sceneWidth*scale)/2;
+				ty = (Scene2D.viewHeight-Scene2D.sceneHeight*scale)/2;
 			}
 			else
 			{
@@ -295,14 +293,14 @@ package rightaway3d.house.editor2d
 		//=========================================================================================================================		
 		public function updateView(w:int,h:int):void
 		{
-			this.viewWidth = w;
-			this.viewHeight = h;
+			Scene2D.viewWidth = w;
+			Scene2D.viewHeight = h;
 			/*updateMask(w,h);
 			
 			ruler.y = h - ruler.height - 20;*/
 			
-			var sw:Number = viewWidth/(Scene2D.sceneWidth + gridBorder*2);
-			var sh:Number = viewHeight/(Scene2D.sceneHeight + gridBorder*2);
+			var sw:Number = Scene2D.viewWidth/(Scene2D.sceneWidth + gridBorder*2);
+			var sh:Number = Scene2D.viewHeight/(Scene2D.sceneHeight + gridBorder*2);
 			var s:Number = sh<sw?sh:sw;
 			var scale:Number = scene.scaleX;
 			if(scale<s)
@@ -310,8 +308,8 @@ package rightaway3d.house.editor2d
 				scene.backGrid.mouseEnabled = false;
 				scene.scaleX = s;
 				scene.scaleY = s;
-				scene.x = (viewWidth-Scene2D.sceneWidth*s)/2;
-				scene.y = (viewHeight-Scene2D.sceneHeight*s)/2;
+				scene.x = (Scene2D.viewWidth-Scene2D.sceneWidth*s)/2;
+				scene.y = (Scene2D.viewHeight-Scene2D.sceneHeight*s)/2;
 			}
 			else
 			{
@@ -700,8 +698,8 @@ package rightaway3d.house.editor2d
 			}
 			
 			//if(stageMouseX<0)stageMouseX=(scene.stage.stageWidth-this.menuWidth)/2+this.menuWidth;
-			if(stageMouseX<0)stageMouseX=viewWidth/2;
-			if(stageMouseY<0)stageMouseY=viewHeight/2;
+			if(stageMouseX<0)stageMouseX=Scene2D.viewWidth/2;
+			if(stageMouseY<0)stageMouseY=Scene2D.viewHeight/2;
 			
 			var p:Point = new Point(stageMouseX,stageMouseY);
 			
@@ -733,15 +731,15 @@ package rightaway3d.house.editor2d
 			//trace("房子中心点:"+x0+","+y0);
 			
 			//计算视图中心点
-			var p0:Point = new Point(viewWidth/2,viewHeight/2);
+			var p0:Point = new Point(Scene2D.viewWidth/2,Scene2D.viewHeight/2);
 			//p0 = scene.backGrid.localToGlobal(p0);
 			//p0 = scene.localToGlobal(p0);
 			p0 = scene.parent.localToGlobal(p0);
 			//trace("视图中心点:"+p0.x+","+p0.y);
 			
 			//计算适应视图后，x、y轴的缩放比例；
-			var sx:Number = this.viewWidth/tdx;
-			var sy:Number = this.viewHeight/tdy;
+			var sx:Number = Scene2D.viewWidth/tdx;
+			var sy:Number = Scene2D.viewHeight/tdy;
 			
 			//x、y轴的缩放比例取小值；再计算比例差值
 			var scale:Number = (sx<sy)?(sx):(sy);

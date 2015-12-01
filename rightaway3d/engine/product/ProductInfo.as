@@ -383,6 +383,8 @@ package rightaway3d.engine.product
 		
 		static public function setDefaultMaterial(po:ProductObject):void
 		{
+			if(!po.productInfo)return;
+			
 			if(po.customMaterialName)return;//如果物体已经存在自定义材质，则不再设置默认材质
 			
 			var type:String = po.productInfo.type;

@@ -23,6 +23,9 @@ package rightaway3d.house.editor2d
 		 */
 		static public var sceneHeight:int = 4000;
 		
+		static public var viewWidth:int = 800;
+		static public var viewHeight:int = 600;
+		
 		/**
 		 * 场景宽度，单位mm
 		 * @return 

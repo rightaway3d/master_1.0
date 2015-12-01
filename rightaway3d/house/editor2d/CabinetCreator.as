@@ -3733,7 +3733,7 @@ package rightaway3d.house.editor2d
 					offsetCrossWall(cw,depth,head2,end2,h,e);
 					
 					var cp:Point = Geom.intersection(head,end,head2,end2);//计算台面外沿相交点坐标
-					//trace("cp:"+cp,h,e);
+					trace("cp:"+cp,head,end,h,e);
 					points.push(cp);
 					
 					head = head2;
@@ -3791,7 +3791,7 @@ package rightaway3d.house.editor2d
 				{
 					dangshui.push(dangshui.shift());//将一开始取到点放到最后的位置，形成一个沿墙的逆时针挡水起止点
 				}
-				//trace("points:"+points);
+				trace("points:"+points);
 				//trace("dangshui:"+dangshui);
 				
 				//trace(points);
@@ -3839,7 +3839,7 @@ package rightaway3d.house.editor2d
 			addTableMeshs();
 		}
 		
-		private function isDrainerArea(tables:Array):Boolean
+		public function isDrainerArea(tables:Array):Boolean
 		{
 			drainerProduct = getProduct(ProductObjectName.DRAINER);
 			//trace("isDrainerArea drainerProduct:"+drainerProduct);
@@ -3862,7 +3862,7 @@ package rightaway3d.house.editor2d
 		}
 		
 		//三维点转换为二维点，去掉了高度信息
-		private function turnPoint3d(p3d:Point3D):Point
+		public function turnPoint3d(p3d:Point3D):Point
 		{
 			return new Point(p3d.x,p3d.z);
 		}
@@ -3877,7 +3877,7 @@ package rightaway3d.house.editor2d
 		 * @param e
 		 * 
 		 */
-		private function offsetCrossWall(cw:CrossWall,offset:int,head:Point,end:Point,h:Point3D,e:Point3D):void
+		public function offsetCrossWall(cw:CrossWall,offset:int,head:Point,end:Point,h:Point3D,e:Point3D):void
 		{
 			//var h:Point3D = cw.localHead;
 			head.x = h.x;
