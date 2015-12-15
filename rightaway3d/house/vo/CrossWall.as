@@ -622,7 +622,7 @@ package rightaway3d.house.vo
 			two.y = wo.y;
 			
 			two.type = wo.type;
-			two.object = wo.object;
+			//two.object = wo.object;
 			
 			return two;
 		}

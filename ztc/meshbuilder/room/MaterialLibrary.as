@@ -4,12 +4,10 @@ package ztc.meshbuilder.room
 	import flash.events.EventDispatcher;
 	import flash.geom.Vector3D;
 	
-	import away3d.cameras.lenses.PerspectiveLens;
 	import away3d.containers.View3D;
 	import away3d.materials.TextureMaterial;
 	import away3d.materials.methods.EnvMapMethod;
 	import away3d.materials.methods.FresnelEnvMapMethod;
-	import away3d.materials.methods.HardShadowMapMethod;
 	import away3d.textures.BitmapCubeTexture;
 	import away3d.textures.BitmapTexture;
 	import away3d.textures.CubeReflectionTexture;

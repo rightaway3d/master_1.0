@@ -551,14 +551,14 @@ package rightaway3d.house.editor2d
 			
 			updateTopLinePos();
 			
-			flueProduct = getProduct(ProductObjectName.FLUE);
+			//flueProduct = getProduct(ProductObjectName.FLUE);
 			if(flueProduct)
 			{
 				flueProduct.container3d.x = flueProduct.position.x - dx;
 				flueProduct.container3d.z = flueProduct.position.z - dz;
 			}
 			
-			drainerProduct = getProduct(ProductObjectName.DRAINER);
+			//drainerProduct = getProduct(ProductObjectName.DRAINER);
 			if(drainerProduct)
 			{
 				drainerProduct.container3d.x = drainerProduct.position.x - dx;
@@ -812,70 +812,54 @@ package rightaway3d.house.editor2d
 				s += getProductsData(CabinetType.METAL_FITTINGS,subtotal);
 			}
 			s += getIncreaseProductData(subtotal);
-			//s = s.slice(0,-1);
+			
 			return s;
 		}
 		
 		private function getCabinetDoorData(productType:String,subtotal:Object):String
 		{
-			//var productType:String = CabinetType.DOOR_PLANK;
 			subtotal[productType] = 0;
 			
 			maxDoorArea = 0;
 			doorColor = "";
 			
-			//var infos:Array = productManager.getProductsByType(productType);
-			//var len:int = infos.length;
 			var n:Number = 0;
 			var s:String = "";
-			//for(var i:int=0;i<len;i++)
-			//{
-				//var info:ProductInfo = infos[i];
-				//var pos:Array = info.getProductObjects();
-				var pos:Array = productManager.getProductObjectsByType(productType);
-				var plen:int = pos.length;
-				//trace("getCabinetDoorData:"+plen,productType,pos);
-				//if(info.name!=CabinetType.BAFFLE && plen>0)
-				if(plen>0)
+			var pos:Array = productManager.getProductObjectsByType(productType);
+			var plen:int = pos.length;
+			
+			if(plen>0)
+			{
+				var dict:Dictionary = new Dictionary();
+				for(var j:int=0;j<plen;j++)
 				{
-					var dict:Dictionary = new Dictionary();
-					for(var j:int=0;j<plen;j++)
+					var po:ProductObject = pos[j];
+					if(po.name_en!=CabinetType.BAFFLE)
 					{
-						var po:ProductObject = pos[j];
-						if(po.name_en!=CabinetType.BAFFLE)
+						var matName:String = po.customMaterialName + (po.parentProductObject?po.parentProductObject.memo:"");//memo信息为地（吊）左（右）
+						matName = po.name + "|" + po.specifications + "|" + matName;
+						var a:Array;
+						if(dict[matName])
 						{
-							var matName:String = po.customMaterialName + (po.parentProductObject?po.parentProductObject.memo:"");//memo信息为地（吊）左（右）
-							matName = po.name + "|" + po.specifications + "|" + matName;
-							//trace("________matName:",matName);
-							var a:Array;
-							if(dict[matName])
-							{
-								a = dict[matName];
-							}
-							else
-							{
-								a = [];
-								dict[matName] = a;
-							}
-							a.push(po);
+							a = dict[matName];
 						}
-					}
-					
-					for each(a in dict)
-					{
-						s += getDoorData(a,subtotal) + ",";
+						else
+						{
+							a = [];
+							dict[matName] = a;
+						}
+						a.push(po);
 					}
 				}
-			//}
-			//if(s.length>0)s = s.slice(0,-1);
+				
+				for each(a in dict)
+				{
+					s += getDoorData(a,subtotal) + ",";
+				}
+			}
+				
 			return s;
 		}
-		
-		/*public function getDoorColor():String
-		{
-			//getCabinetDoorData({});
-			return doorColor;
-		}*/
 		
 		private var maxDoorArea:Number = 0;
 		private var doorColor:String = "";//门板色调
@@ -960,61 +944,9 @@ package rightaway3d.house.editor2d
 				doorURL = image;
 			}
 			
-			return toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,other,image);
-
-			//return toOrderJson1("门板","平方米",price,n,total,name);
-		}
-/*		
-		"productID":1001,
-		"productName":"产品名称",
-		"productType":"产品类型",
-		"productModel":"产品型号",
-		"specifications":"产品规格",
-		"productCode":"物料编码",
-		"materialName":"材质名称",
-		"materialDscp":"材质描述",
-		"unit":"单位",
-		"price":10,
-		"count":1,
-		"subtotal":10,
-		"other":"备注"
-*/		
-		/*private function getProductsData3(type:String,subtotal:Object):String
-		{
-			var s:String = "";
-			var infos:Array = productManager.getProductsByType(type);
-			var len:int = infos.length;
-			//trace("getProductsData type1:"+type+" num:"+len);
 			
-			for(var i:int=0;i<len;i++)
-			{
-				var info:ProductInfo = infos[i];
-				//var plen:int = info.getProductObjects().length;
-				var plen:int = getOrderProductNum(info);
-				//trace("getProductsData type2:"+type+" num:"+plen);
-				if(plen>0)
-				{
-					var total:Number = info.price*plen;
-					var c:int = Math.ceil(total*100);
-					total = c/100;//保留两位小数
-					
-					if(subtotal[type])
-					{
-						subtotal[type] += total;
-					}
-					else
-					{
-						subtotal[type] = total;
-					}
-					
-					s += toOrderJson3(info.infoID,info.name,info.type,info.productModel,info.specifications,info.productCode,"","",
-						info.unit,info.price,plen,total,info.memo,info.image3dURL) + ",";
-					//s += toOrderJson1(info.name,info.specifications,info.price,plen,total,info.memo) + ",";
-					//trace("部件名称："+info.name+" 规格："+info.specifications+" 单价："+info.price+" 数量："+plen+" 金额："+info.price*plen+" 备注："+info.memo);
-				}
-			}
-			return s;
-		}*/
+			return toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,other,image);
+		}
 		
 		private function getProductsData(type:String,subtotal:Object):String
 		{
@@ -1280,7 +1212,7 @@ package rightaway3d.house.editor2d
 			var productName:String = lib.getMaterialAttribute(name,"productName");
 			var productModel:String = lib.getMaterialAttribute(name,"productModel");
 			var specifications:String = lib.getMaterialAttribute(name,"specifications");
-			var productCode:String = lib.getMaterialAttribute(name,"productCode");
+			var productCode:String = "00000000T";//lib.getMaterialAttribute(name,"productCode");
 			var materialName:String = lib.getMaterialAttribute(name,"materialName");
 			var materialDscp:String = lib.getMaterialAttribute(name,"materialDscp");
 			var unit:String = lib.getMaterialAttribute(name,"unit");
@@ -2664,7 +2596,7 @@ package rightaway3d.house.editor2d
 					
 					//o = drainerData?drainerData:getCabinetData(cookerProducts2,2);
 					o = drainerData?drainerData:getDefaultCookerData(ListType.DRAINER);
-					drainerProduct = addCookerProduct(o,cw,drainerFlag_.vo,ProductObjectName.DRAINER);
+					addCookerProduct(o,cw,drainerFlag_.vo,ProductObjectName.DRAINER);
 					drainerProduct.isLock = true;
 				}
 				
@@ -2680,7 +2612,7 @@ package rightaway3d.house.editor2d
 					
 					//o = flueData?flueData:getCabinetData(cookerProducts,3);
 					o = flueData?flueData:getDefaultCookerData(ListType.FLUE);
-					flueProduct = addCookerProduct(o,cw,flueFlag_.vo,ProductObjectName.FLUE);
+					addCookerProduct(o,cw,flueFlag_.vo,ProductObjectName.FLUE);
 					flueProduct.isLock = true;
 					this.cabinetCtr.setProductPos(flueProduct,cw,flueProduct.objectInfo.x,840,flueProduct.objectInfo.z);
 				}
@@ -3791,7 +3723,7 @@ package rightaway3d.house.editor2d
 				{
 					dangshui.push(dangshui.shift());//将一开始取到点放到最后的位置，形成一个沿墙的逆时针挡水起止点
 				}
-				trace("points:"+points);
+				//trace("points:"+points);
 				//trace("dangshui:"+dangshui);
 				
 				//trace(points);
@@ -3841,27 +3773,37 @@ package rightaway3d.house.editor2d
 		
 		public function isDrainerArea(tables:Array):Boolean
 		{
-			drainerProduct = getProduct(ProductObjectName.DRAINER);
-			//trace("isDrainerArea drainerProduct:"+drainerProduct);
-			if(!drainerProduct)return false;
+			return isProductArea(ProductObjectName.DRAINER,tables);
+		}
+		
+		public function isFlueArea(tables:Array):Boolean
+		{
+			return isProductArea(ProductObjectName.FLUE,tables);
+		}
+		
+		private function isProductArea(pname:String,tables:Array):Boolean
+		{
+			var po:ProductObject = getProduct(pname);
+			if(!po)return false;
 			
-			var o:WallObject = drainerProduct.objectInfo;
-			//trace("isDrainerArea cw:"+o.crossWall);
+			var o:WallObject = po.objectInfo;
 			for each(var tableData:Object in tables)
 			{
 				var cw:CrossWall = tableData.cw;
 				var x0:Number = tableData.x0;
 				var x1:Number = tableData.x1;
-				//trace("x0,x1,o.x,o.width:",x0,x1,o.x,o.width);
 				
 				if(o.crossWall==cw && o.x-o.width>x0 && x1>o.x)return true;//此处只考虑了墙面为正面的情况
-				//if(o.crossWall==cw && o.x>x0 && o.x<x1)return true;//此处只考虑了墙面为正面的情况
 			}
-			//trace("isDrainerArea2");
 			return false;
 		}
 		
-		//三维点转换为二维点，去掉了高度信息
+		/**
+		 * 三维点转换为二维点，去掉了高度信息
+		 * @param p3d
+		 * @return 
+		 * 
+		 */
 		public function turnPoint3d(p3d:Point3D):Point
 		{
 			return new Point(p3d.x,p3d.z);
@@ -3972,8 +3914,50 @@ package rightaway3d.house.editor2d
 		}
 		
 		public var hoodProduct:Product2D;
-		public var flueProduct:ProductObject;
-		public var drainerProduct:ProductObject;
+		
+		private var _flueProduct:ProductObject;
+
+		public function get flueProduct():ProductObject
+		{
+			if(!_flueProduct)
+			{
+				_flueProduct = getProduct(ProductObjectName.FLUE);
+				if(_flueProduct)
+				{
+					_flueProduct.addEventListener("will_dispose",onFlueDispose);
+				}
+			}
+			return _flueProduct;
+		}
+		
+		private function onFlueDispose(e:Event):void
+		{
+			_flueProduct.removeEventListener("will_dispose",onFlueDispose);
+			_flueProduct = null;
+		}
+
+		
+		private var _drainerProduct:ProductObject;
+
+		public function get drainerProduct():ProductObject
+		{
+			if(!_drainerProduct)
+			{
+				_drainerProduct = getProduct(ProductObjectName.DRAINER);
+				if(_drainerProduct)
+				{
+					_drainerProduct.addEventListener("will_dispose",onDrainerDispose);
+				}
+			}
+			return _drainerProduct;
+		}
+		
+		public function onDrainerDispose(e:Event):void
+		{
+			_drainerProduct.removeEventListener("will_dispose",onDrainerDispose);
+			_drainerProduct = null;
+		}
+
 		
 		/**
 		 * 添加新橱柜前，检测所添加区段是否可用，

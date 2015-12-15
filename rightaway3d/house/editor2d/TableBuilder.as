@@ -902,6 +902,8 @@ package rightaway3d.house.editor2d
 			{
 				var name:String = "装饰板_" + width + "x" + height
 				po = cabinetCreator.createCabinetPlate(cw,width,height-3,16,xPos,yPos,zPos,CabinetType.DOOR_PLANK,name);
+				
+				po.productCode = "00000000F";
 			}
 			po.name_en = CabinetType.CORNER_PLANK;
 			addPlateProduct(po,width,height);
@@ -931,6 +933,8 @@ package rightaway3d.house.editor2d
 			{
 				var name:String = "装饰板_" + width + "x" + height
 				po = cabinetCreator.createCabinetPlate(cw,width,height-3,16,xPos,yPos,zPos,CabinetType.DOOR_PLANK,name);
+				
+				po.productCode = "00000000F";
 			}
 			po.name_en = CabinetType.CORNER_PLANK;
 			/*var dy:Number = (720-height)*0.5;

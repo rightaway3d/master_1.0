@@ -48,9 +48,14 @@ package rightaway3d.engine.product
 		static public const STERILIZER:String = "_sterilizerProduct_";
 		
 		/**
-		 * 与房间同高的立柱
+		 * 与房间同高的方立柱
 		 */
 		static public const ROOM_SQUARE_PILLAR:String = "_RoomSquarePillar_";
+		
+		/**
+		 * 与房间同高的圆立柱
+		 */
+		static public const ROOM_CIRCULAR_COLUMN:String = "_RoomCircularColumn_";
 		
 		/**
 		 * 增项产品容器

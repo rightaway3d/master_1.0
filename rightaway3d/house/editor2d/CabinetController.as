@@ -659,7 +659,7 @@ package rightaway3d.house.editor2d
 		 */
 		public function createRoomCircularColumn(diameter:uint,color:uint,zPos:uint=0):void
 		{
-			var pName:String = "RoomCircularColumn";
+			var pName:String = ProductObjectName.ROOM_CIRCULAR_COLUMN;//"RoomCircularColumn";
 			var height:int = scene.currFloor.vo.ceilingHeight;
 			var yPos:uint = 0;
 			var p:Product2D = createCircularColumn(pName,diameter,height,color,yPos,zPos);

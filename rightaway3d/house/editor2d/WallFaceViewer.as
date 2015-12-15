@@ -7,6 +7,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.house.view2d.WallFace2D;
 	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.WallObject;
+	import rightaway3d.utils.Utils;
 
 	public class WallFaceViewer extends Sprite
 	{
@@ -131,23 +132,19 @@ package rightaway3d.house.editor2d
 			updateBG();
 			face.updateView(cw);
 			
-			/*flash.utils.setTimeout(updateFace,1,face);
-		}
-		
-		private function updateFace(face:WallFace2D):void
-		{			*/
-			var n:Number = 0.8;
+			var sw:int = Scene2D.viewWidth;//stage.stageWidth;
+			var sh:int = Scene2D.viewHeight;//stage.stageHeight;
+			var w:Number = Base2D.sizeToScreen(cw.validLength+500);//face.width;
+			
+			Utils.fitContainer(sw,sh,face,0.8,w);
+			/*var n:Number = 0.8;
 			var s:Number = 1;
 			
 			face.scaleX = s;
 			face.scaleY = s;
 			
-			var sw:int = Scene2D.viewWidth;//stage.stageWidth;
-			var sh:int = Scene2D.viewHeight;//stage.stageHeight;
-			var w:Number = Base2D.sizeToScreen(cw.validLength+500);//face.width;
 			var h:Number = face.height;
 			
-			//trace("face.width,w:",face.width,w);
 			
 			if(sw/sh > w/h)//内容比较窄
 			{
@@ -160,9 +157,11 @@ package rightaway3d.house.editor2d
 			
 			face.scaleX = s;
 			face.scaleY = s;
-			//w = face.width;
+			
 			w *= s;
-			h = face.height;
+			h = face.height;*/
+			
+			var h:Number = face.height;
 			
 			face.x = 250;//(sw-w)/2;
 			face.y = h+(sh-h)/2 - sh*0.16;

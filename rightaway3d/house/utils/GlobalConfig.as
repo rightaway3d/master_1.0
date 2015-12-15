@@ -38,6 +38,15 @@ package rightaway3d.house.utils
 		 *灶台洞口数据，x：洞口宽度，y：洞口进深，z：圆角半径 
 		 */
 		private var flueHole:Vector3D;
+		public function getFlueHoleSize():String
+		{
+			var s:String = "";
+			if(flueHole)
+			{
+				s = "W"+flueHole.x+"xD"+flueHole.y+"xR"+flueHole.z;
+			}
+			return s;
+		}
 		/**
 		 * 设置灶台洞口数据，如果要清除自定义洞口数据，则将洞口宽度或进深设为0
 		 * @param width：洞口宽度
@@ -93,6 +102,15 @@ package rightaway3d.house.utils
 		 *水盆洞口数据，x：洞口宽度，y：洞口进深，z：圆角半径 
 		 */
 		private var drainerHole:Vector3D;
+		public function getDrainerHoleSize():String
+		{
+			var s:String = "";
+			if(drainerHole)
+			{
+				s = "W"+drainerHole.x+"xD"+drainerHole.y+"xR"+drainerHole.z;
+			}
+			return s;
+		}
 		/**
 		 * 设置水盆洞口数据，如果要清除自定义洞口数据，则将洞口宽度或进深设为0
 		 * @param width：洞口宽度

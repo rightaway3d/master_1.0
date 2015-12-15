@@ -108,7 +108,7 @@ package rightaway3d.house.view2d
 			
 			var tb:TableBuilder = TableBuilder.own;
 			var isCabinetHead:Boolean,isCabinetEnd:Boolean;//定义厨柜分区的头部标志，尾部标志
-			var ty:Number = -Base2D.sizeToScreen(840);
+			
 			var th:Number = Base2D.sizeToScreen(40);
 			var th2:Number = Base2D.sizeToScreen(80);
 			
@@ -133,6 +133,7 @@ package rightaway3d.house.view2d
 						if(sa.headCabinet)x0+=sa.headCabinet.objectInfo.width;
 						if(sa.endCabinet)x1-=sa.endCabinet.objectInfo.width;
 						
+						var ty:Number = -Base2D.sizeToScreen(sa.tableY+40);
 						var tx:Number = Base2D.sizeToScreen(x0-cw.localHead.x);
 						var tw:Number = Base2D.sizeToScreen(x1-x0);
 						
@@ -318,13 +319,14 @@ package rightaway3d.house.view2d
 			
 			var wos:Array = cw.wallObjects;
 			len = wos.length;
-			
+			//trace("---wos:",wos);
 			for(i=0;i<len;i++)
 			{
 				wo = wos[i];
 				var oy:int = 0;
 				
 				wox = wo.x - x0;
+				//trace("-----wo.x,x0,wox:",wo.x,x0,wox);
 				drawCabinetShape(wo,x0,wallHeight);
 				
 				if(wo.object is ProductObject)
@@ -559,19 +561,12 @@ package rightaway3d.house.view2d
 								var p:Point = getProductOffset(doorPlank.productInfo);
 								var x:Number = -tx-p.x;
 								var y:Number = -(ty+th+p.y);
-								//trace("p3:",x,y);
-								//trace("----customMaterialName:"+doorPlank.customMaterialName);
-								//g.lineStyle(0,0xff0000);
 								g.drawRect(x,y,tw,th);
 								var n1:Number = 1;
 								var n2:Number = 4;
 								
 								if(file.indexOf("left")>-1)//左开门
 								{
-									/*g.moveTo(x+tw,y);
-									g.lineTo(x,y+th*0.5);
-									g.lineTo(x+tw,y+th);*/
-									
 									p1.x = x+tw;
 									p1.y = y;
 									p0.x = x;
@@ -584,10 +579,6 @@ package rightaway3d.house.view2d
 								}
 								else if(file.indexOf("right")>-1)//右开门
 								{
-									/*g.moveTo(x,y);
-									g.lineTo(x+tw,y+th*0.5);
-									g.lineTo(x,y+th);*/
-									
 									p1.x = x;
 									p1.y = y;
 									p0.x = x+tw;
@@ -636,7 +627,6 @@ package rightaway3d.house.view2d
 								y = -(ty+th+p.y);
 								//trace("p4:",x,y);
 								
-								//g.lineStyle(0,0x00ff00);
 								g.drawRect(x,y,tw,th);
 							}
 						}

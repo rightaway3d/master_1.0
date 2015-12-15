@@ -1254,6 +1254,19 @@ package rightaway3d.engine.product
 			return null;
 		}
 		
+		public function getRootProductsByName(name:String):Array
+		{
+			var a:Array = [];
+			for each(var pb:ProductObject in objectDict)
+			{
+				if(!pb.parentProductObject && pb.name==name)
+				{
+					a.push(pb);
+				}
+			}
+			return a;
+		}
+		
 		public function getProductByName(name:String):ProductObject
 		{
 			for each(var pb:ProductObject in objectDict)
@@ -1265,6 +1278,20 @@ package rightaway3d.engine.product
 				}
 			}
 			return null;
+		}
+		
+		public function getProductsByName(name:String):Array
+		{
+			var a:Array = [];
+			for each(var pb:ProductObject in objectDict)
+			{
+				//trace(pb.productInfo.fileURL,pb.name);
+				if(pb.name==name)
+				{
+					a.push(pb);
+				}
+			}
+			return a;
 		}
 		
 		/*public function getProductObjects2():Array
