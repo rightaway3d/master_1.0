@@ -943,6 +943,12 @@ package rightaway3d.engine.core
 		
 		private function __doAction(mObj:ModelObject):void
 		{
+			if(mObj.meshs)
+			{
+				trace("-----------");
+				trace(mObj.meshs[0].geometry.subGeometries[0].scaleU);
+				trace(mObj.meshs[0].geometry.subGeometries[0].scaleV);
+			}
 			var pObj:ProductObject = mObj.parentProductObject;
 			doAction(pObj);
 		}

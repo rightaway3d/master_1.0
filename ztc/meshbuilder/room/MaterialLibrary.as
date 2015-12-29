@@ -1,5 +1,7 @@
 package ztc.meshbuilder.room
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Vector3D;
@@ -7,10 +9,15 @@ package ztc.meshbuilder.room
 	import away3d.containers.View3D;
 	import away3d.materials.TextureMaterial;
 	import away3d.materials.methods.EnvMapMethod;
+	import away3d.materials.methods.FilteredShadowMapMethod;
 	import away3d.materials.methods.FresnelEnvMapMethod;
+	import away3d.materials.methods.SoftShadowMapMethod;
 	import away3d.textures.BitmapCubeTexture;
 	import away3d.textures.BitmapTexture;
 	import away3d.textures.CubeReflectionTexture;
+	import away3d.textures.Texture2DBase;
+	
+	import rightaway3d.engine.utils.BMP;
 	
 	[Event(name="complete", type="flash.events.Event")]
 
@@ -184,11 +191,8 @@ package ztc.meshbuilder.room
 		/**
 		 * 创建普通材质
 		 */
-		public function getMaterialData(name:String):Object
+		public function getMaterialData(name:String,w:int,h:int,useNormal:Boolean=true):MaterialData
 		{
-			// 先从materials上得到此材质
-			var mat:TextureMaterial = materials[name];
-			
 			// 得到此材质对应的XML数据
 			var xml:XML = XML(materials[name + '_xml']);
 			
@@ -198,16 +202,38 @@ package ztc.meshbuilder.room
 				return null;
 			}
 			
+			var grid9:String = xml.grid9!=undefined ? xml.grid9 : "";//贴图是否要进行九宫格缩放
+			var grid:Array = grid9 ? grid9.split(",") : [];//贴图九宫格缩放尺寸，0：左侧宽度，1：右侧宽度，2：上侧宽度，3：下侧宽度
+			
+			var tw:int = xml.tileWidth;
+			var th:int = xml.tileHeight;
+			
+			//trace(xml.materialName,"--w x h:",w,"x",h);
+			//trace(xml.materialName,"--tw x th:",tw,"x",th);
+			
 			var scaleU:String = xml.scaleU == '' ? this.xml.defaultValue.scaleU : xml.scaleU;
 			var scaleV:String = xml.scaleV == '' ? this.xml.defaultValue.scaleV : xml.scaleV;
+			if(!scaleU)scaleU = "1";
+			if(!scaleV)scaleV = "1";
 			
-			//trace('1u: ' + scaleU + ' 1v: ' + scaleV);
+			trace('1u: ' + scaleU + ' 1v: ' + scaleV);
+			
+			var name2:String = name;
+			if((tw!=0 && th!=0) && (grid.length==4 || (scaleU=="0" && scaleV=="0")))//(grid.length==4)// && w>255 && h>255)
+			{
+				name2 = name+"_"+w+"_"+h;
+			}
+			
+			// 先从materials上得到此材质
+			var mat:TextureMaterial = materials[name2];
 			
 			// 先判断此材质是否已经创建,如果为null,则创建些材质
 			if (mat == null) {
 				// 创建材质
 				mat = new TextureMaterial();
 				mat.mipmap = false;
+				mat.repeat = true;
+				mat.smooth = true;
 				
 				if(lightManager != null) {
 					//mat.shadowMethod = new HardShadowMapMethod(lightManager.ceilingLight);
@@ -215,7 +241,7 @@ package ztc.meshbuilder.room
 				}
 				
 				// 将创建好的材质存入materials里面 
-				materials[name] = mat;
+				materials[name2] = mat;
 				
 				// 设置些材质的属性
 				mat.color = xml.color == '' ? this.xml.defaultValue.color : xml.color;
@@ -223,8 +249,10 @@ package ztc.meshbuilder.room
 				mat.gloss = xml.gloss == '' ? this.xml.defaultValue.gloss : xml.gloss;
 				mat.repeat = xml.repeat == '' ? this.xml.defaultValue.repeat : xml.repeat;
 				//mat.alpha = 0.5;
+				//mat.specularColor = 0xff0000;
 				
 				mat.ambient = (xml.ambient == '' || xml.ambient == undefined) ? this.xml.defaultValue.ambient : xml.ambient;
+				
 				
 				var reflection:String = xml.reflection == '' ? this.xml.defaultValue.reflection : xml.reflection;	
 				var fresnel:String = xml.fresnel == '' ? this.xml.defaultValue.fresnel : xml.fresnel;	
@@ -236,24 +264,113 @@ package ztc.meshbuilder.room
 				var normalMapUrl:String = xml.normalMap;
 				
 				if (diffuseMapUrl != '') {
-					RenderUtils.loadTexture(baseUrl + diffuseMapUrl,function(tex:BitmapTexture):void {
+					RenderUtils.loadTexture(baseUrl + diffuseMapUrl,function(bmp:Bitmap):void {
+						//trace("tw,th,grid1:",tw,th,grid);
+						var bd:BitmapData = bmp.bitmapData;
+						if((tw!=0 && th!=0) && (grid.length==4 || (scaleU=="0" && scaleV=="0")))
+						{
+							//trace("tileDiffuseBmpData:",tw,th,w,h,bd.width,bd.height);
+							
+							var sx:Number = w/tw;
+							var sy:Number = h/th;
+							
+							var dx:int = bd.width*sx;
+							var dy:int = bd.height*sy;
+							
+							bd = BMP.tileBmpData(bd,dx,dy);
+						}
+						
+						bd = BMP.scaleBmpData(bd);
+						
+						if(bd.width>2048 || bd.height>2048)
+						{
+							bd = BMP.scaleBmpData(bd,2048,2048);
+						}
+						
+						var tex:BitmapTexture = new BitmapTexture(bd);
 						mat.texture = tex;
 					});
 				}
 				
 				if (specularMapUrl != '') {
-					RenderUtils.loadTexture(baseUrl + specularMapUrl,function(tex:BitmapTexture):void {
+					RenderUtils.loadTexture(baseUrl + specularMapUrl,function(bmp:Bitmap):void {
+						//trace("tw,th,grid2:",tw,th,grid);
+						var bd:BitmapData = bmp.bitmapData;
+						
+						if((tw!=0 && th!=0) && (grid.length==4 || (scaleU=="0" && scaleV=="0")))
+						{
+							//trace("tileSpecularBmpData:",tw,th,w,h,bd.width,bd.height);
+							
+							var sx:Number = w/tw;
+							var sy:Number = h/th;
+							
+							var dx:int = bd.width*sx;
+							var dy:int = bd.height*sy;
+							
+							bd = BMP.tileBmpData(bd,dx,dy);
+						}
+						
+						bd = BMP.scaleBmpData(bd);
+						
+						if(bd.width>2048 || bd.height>2048)
+						{
+							bd = BMP.scaleBmpData(bd,2048,2048);
+						}
+						
+						var tex:BitmapTexture = new BitmapTexture(bd);
+						//var tex:BitmapTexture = new BitmapTexture(bmp.bitmapData);
 						mat.specularMap = tex;
 					});
 				}
 				
-				if (normalMapUrl != '') {
-					RenderUtils.loadTexture(baseUrl + normalMapUrl,function(tex:BitmapTexture):void {
+				if (normalMapUrl != '' && useNormal) {
+					RenderUtils.loadTexture(baseUrl + normalMapUrl,function(bmp:Bitmap):void {
+						//trace(name2,"tw,th,grid3:",tw,th,grid);
+						if(grid.length==4 && w>255 && h>255)
+						{
+							var bd:BitmapData = BMP.grid9Scale(bmp.bitmapData,grid[0],grid[1],grid[2],grid[3],w,h);
+							//trace("1:",bd.width,bd.height);
+							bd = BMP.scaleBmpData(bd);
+							//trace("2:",bd.width,bd.height);
+						}
+						else if(grid.length==4)
+						{
+							bd = BMP.getNormalBitmap(32,32);//.tileBmpData(bmp.bitmapData,32,32);
+						}
+						else
+						{
+							bd = bmp.bitmapData;
+							if(tw!=0 && th!=0 && scaleU=="0" && scaleV=="0")
+							{
+								var sx:Number = w/tw;
+								var sy:Number = h/th;
+								
+								var dx:int = bd.width*sx;
+								var dy:int = bd.height*sy;
+								
+								bd = BMP.tileBmpData(bd,dx,dy);
+							}
+						}
+						
+						bd = BMP.scaleBmpData(bd);
+						
+						if(bd.width>2048 || bd.height>2048)
+						{
+							bd = BMP.scaleBmpData(bd,2048,2048);
+						}
+						
+						var tex:BitmapTexture = new BitmapTexture(bd);
 						mat.normalMap = tex;
 					});
 				}
+				/*else
+				{
+					mat.normalMap = getDefNormalMap();
+				}*/
 				
-				
+				//mat.shadowMethod = lightManager.getDefaultShadowMethod();
+				//mat.shadowMethod = new SoftShadowMapMethod(lightManager.topLight,5,10);
+				//mat.shadowMethod = new FilteredShadowMapMethod(lightManager.topLight);
 				
 				// 如果有CubMap
 				if (cubeMap != '') {
@@ -296,11 +413,26 @@ package ztc.meshbuilder.room
 				}
 			}
 			
-			return {
+			/*{
 				material:mat,
 				scaleU:Number(scaleU),
-				scaleV:Number(scaleV)
-			};
+				scaleV:Number(scaleV),
+				tileWidth:tw,
+				tileHeight:th,
+				grid9:(grid.length==4)
+			};*/
+			return new MaterialData(mat,Number(scaleU),Number(scaleV),tw,th,(grid.length==4));
+		}
+		
+		private var defNormalMap:BitmapTexture;
+		
+		private function getDefNormalMap():BitmapTexture
+		{
+			if(!defNormalMap)
+			{
+				defNormalMap = new BitmapTexture(BMP.getNormalBitmap(512,512));
+			}
+			return defNormalMap;
 		}
 		
 		public var methods:Object = new Object();

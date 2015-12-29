@@ -3,6 +3,7 @@ package ztc.meshbuilder.room
 	import flash.geom.Vector3D;
 	
 	import away3d.core.base.Geometry;
+	import away3d.core.base.ISubGeometry;
 	import away3d.core.base.SubGeometry;
 	import away3d.core.math.Vector3DUtils;
 	import away3d.entities.Mesh;
@@ -393,9 +394,23 @@ package ztc.meshbuilder.room
 			
 			// UV
 			fillUV(sg);
-			
+		
 			// add subGeometry to geometry
 			geometry.addSubGeometry(sg);
+		}
+		
+		public function updateUV(tileWidth:int,tileHeight:int):void
+		{
+			var sg:SubGeometry = SubGeometry(geometry.subGeometries[0]);
+			fillUV(sg,tileWidth);
+			
+			if(dangshuiMeshs)
+			{
+				for each(var cube:CubeMesh in dangshuiMeshs)
+				{
+					cube.updateUV(tileWidth,tileWidth);
+				}
+			}
 		}
 		
 		/**
@@ -521,11 +536,15 @@ package ztc.meshbuilder.room
 			return (v1.crossProduct(v2).length / 2 / 1000000);
 		}
 		
+		private var dangshuiMeshs:Vector.<CubeMesh>;
+		
 		/**
 		 * 创建挡水
 		 */
 		private function createDangShui():void {
 			if (dang == null || dang.length < 2) return;
+			
+			dangshuiMeshs = new Vector.<CubeMesh>();
 			
 			for (var i:int = 0; i < dang.length - 1; i ++) {
 				var p1:Point = dang[i];
@@ -546,6 +565,7 @@ package ztc.meshbuilder.room
 				
 				this.addChild(cube);
 				this.subMeshes.push(cube.subMeshes[0]);
+				dangshuiMeshs.push(cube);
 			}
 		}
 	}

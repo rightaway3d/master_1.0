@@ -523,7 +523,7 @@ package rightaway3d.house.editor2d
 		{
 			for each(var m:Mesh in toplineMeshs)
 			{
-				RenderUtils.setMaterial(m,matName);
+				RenderUtils.setMaterial(m,matName,true,null,false);
 			}
 		}
 		
@@ -1294,6 +1294,7 @@ package rightaway3d.house.editor2d
 		public function clear():void
 		{
 			removeTableMeshs();
+			this.removeTopLineMeshs();
 			
 			/*flueProduct = getProduct(ProductObjectName.FLUE);
 			if(flueProduct)
@@ -2427,20 +2428,27 @@ package rightaway3d.house.editor2d
 			//po.name_en = enName;
 			po.type = ctype;
 			
-			if(ctype==CabinetType.DOOR_PLANK)
-				po.customMaterialName = yPos>CrossWall.GROUND_OBJECT_HEIGHT?wallCabinetDoorMat:groundCabinetDoorMat;//_cabinetDoorDefaultMaterial;
-			else if(ctype==CabinetType.BODY_PLANK || ctype==CabinetType.CORNER_PLANK)
-				po.customMaterialName = _cabinetBodyDefaultMaterial;
-			else
-				po.customMaterialName = "柜脚挡板";
-			
-			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
-			
 			if(cw)
 			{
 				ProductManager.own.addProductToScene(po);
 			}
 			this.cabinetCtr.setProductPos(po,cw,xPos,yPos,zPos);
+			
+			if(ctype==CabinetType.DOOR_PLANK)
+			{
+				po.customMaterialName = yPos>CrossWall.GROUND_OBJECT_HEIGHT?wallCabinetDoorMat:groundCabinetDoorMat;//_cabinetDoorDefaultMaterial;
+			}
+			else if(ctype==CabinetType.BODY_PLANK || ctype==CabinetType.CORNER_PLANK)
+			{
+				po.customMaterialName = _cabinetBodyDefaultMaterial;
+			}
+			else
+			{
+				po.customMaterialName = "柜脚挡板";
+			}
+			trace("customMaterialName:",po.customMaterialName);
+			
+			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
 			
 			//plateDict[po] = po;
 			
@@ -3111,7 +3119,7 @@ package rightaway3d.house.editor2d
 			for(var i:int=len-1;i>-1;i--)
 			{
 				var wo:WallObject = obs[i];
-				if(this.cabinetCtr.isMiddleCabinet(wo.object))//障碍物属于中高柜或高柜
+				if(wo.object is ProductObject && this.cabinetCtr.isMiddleCabinet(wo.object))//障碍物属于中高柜或高柜
 				{
 					obs.splice(i,1);
 				}

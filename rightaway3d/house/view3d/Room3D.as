@@ -20,9 +20,9 @@ package rightaway3d.house.view3d
 	import rightaway3d.engine.utils.GlobalEvent;
 	import rightaway3d.house.editor2d.CabinetController;
 	import rightaway3d.house.view3d.base.RoomGeometry;
-	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.Room;
 	
+	import ztc.meshbuilder.room.MaterialData;
 	import ztc.meshbuilder.room.RenderUtils;
 
 	public class Room3D extends Mesh
@@ -94,12 +94,32 @@ package rightaway3d.house.view3d
 		
 		private function setGroundMaterial(materialName:String):void
 		{
-			RenderUtils.setMaterial(groundFace,materialName);
+			var md:MaterialData = RenderUtils.setMaterial(groundFace,materialName);
+			if(!md.grid9Scale && md.tileWidth!=0 && md.tileHeight!=0 && md.scaleU!=0 && md.scaleV!=0)
+			{
+				roomGeom.groundTextureWidth = md.tileWidth;
+				roomGeom.groundTextureHeight = md.tileHeight;
+			}
+			else
+			{
+				roomGeom.groundTextureWidth = 0;
+				roomGeom.groundTextureHeight = 0;
+			}
 		}
 		
 		private function setCeilingMaterial(materialName:String):void
 		{
-			RenderUtils.setMaterial(ceilingFace,materialName);
+			var md:MaterialData = RenderUtils.setMaterial(ceilingFace,materialName);
+			if(!md.grid9Scale && md.tileWidth!=0 && md.tileHeight!=0 && md.scaleU!=0 && md.scaleV!=0)
+			{
+				roomGeom.ceilingTextureWidth = md.tileWidth;
+				roomGeom.ceilingTextureHeight = md.tileHeight;
+			}
+			else
+			{
+				roomGeom.ceilingTextureWidth = 0;
+				roomGeom.ceilingTextureHeight = 0;
+			}
 		}
 		
 		override public function dispose():void
@@ -147,6 +167,7 @@ package rightaway3d.house.view3d
 			isMouseMove = true;
 		}
 		
+		private var lastTime:int;
 		private function onMouseUp(e:MouseEvent3D):void
 		{
 			CabinetController.getInstance().scene.stage.removeEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
@@ -184,6 +205,7 @@ package rightaway3d.house.view3d
 		public function updateView():void
 		{
 			roomGeom.updateGeometry();
+			//roomGeom.updateUVs();
 		}
 		
 		private function getSubMesh(geom:CompactSubGeometry):SubMesh
@@ -192,7 +214,7 @@ package rightaway3d.house.view3d
 		}
 		
 		//========================================================================================================
-		private var groundURL:String;
+		/*private var groundURL:String;
 		public function loadGroundTexture2(url:String):void
 		{
 			return;
@@ -218,16 +240,16 @@ package rightaway3d.house.view3d
 
 			var m:TextureMaterial = groundFace.material as TextureMaterial;
 			m.texture = new BitmapTexture(BMP.scaleBmpData(bmp.bitmapData));
+			m.normalMap = new BitmapTexture(BMP.getColorBitmap(0x7f80ff,8,8));
 			
 			loaderInfo.loader.unload();
 			
 			roomGeom.updateGeometry();
-		}
+		}*/
 		
 		
 		//========================================================================================================
-		private var ceilingURL:String;
-		private var lastTime:int;
+		/*private var ceilingURL:String;
 		public function loadCeilingTexture2(url:String):void
 		{
 			trace("loadCeilingTexture:"+url);
@@ -258,7 +280,7 @@ package rightaway3d.house.view3d
 			loaderInfo.loader.unload();
 			
 			roomGeom.updateGeometry();
-		}
+		}*/
 		
 		//========================================================================================================
 	}

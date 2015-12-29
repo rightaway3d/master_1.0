@@ -22,20 +22,20 @@ package rightaway3d.house.view3d.base
 		/**
 		 * 墙体正面贴图材质的宽度，用于计算贴图UV
 		 */
-		public var frontTextureWidth:Number = 1000;
+		public var frontTextureWidth:Number = 0;
 		/**
 		 * 墙体正面贴图材质的高度，用于计算贴图UV
 		 */
-		public var frontTextureHeight:Number = 1000;
+		public var frontTextureHeight:Number = 0;
 		
 		/**
 		 * 墙体背面贴图材质的宽度，用于计算贴图UV
 		 */
-		public var backTextureWidth:Number = 1000;
+		public var backTextureWidth:Number = 0;
 		/**
 		 * 墙体背面贴图材质的高度，用于计算贴图UV
 		 */
-		public var backTextureHeight:Number =  1000;
+		public var backTextureHeight:Number =  0;
 		
 		public function WallGeometry(wall:Wall)
 		{
@@ -209,6 +209,7 @@ package rightaway3d.house.view3d.base
 			data[vertexIndex++] = v;
 			data[vertexIndex++] = u;
 			data[vertexIndex++] = v;
+			//vertexIndex += 4;
 		}
 		
 		private function _addVertex(data:Vector.<Number>,x:Number,y:Number,z:Number,nx:Number,ny:Number,nz:Number,tx:Number,ty:Number,tz:Number):void
@@ -417,9 +418,8 @@ package rightaway3d.house.view3d.base
 			var length:Number = vo.groundFrontEnd.x - x0;
 			var height:Number = vo.floor.ceilingHeight;
 			
-			var su:Number = length/frontTextureWidth;
-			var sv:Number = height/frontTextureHeight;
-			//target.scaleUV(su,sv);
+			var su:Number = frontTextureWidth==0  ? target.scaleU : length/frontTextureWidth;
+			var sv:Number = frontTextureHeight==0 ? target.scaleV : height/frontTextureHeight;
 			
 			var u:Number,v:Number;
 			
@@ -486,8 +486,8 @@ package rightaway3d.house.view3d.base
 			var length:Number = vo.groundBackEnd.x - x0;
 			var height:Number = vo.floor.ceilingHeight;
 			
-			var su:Number = length/backTextureWidth;
-			var sv:Number = height/backTextureHeight;
+			var su:Number = backTextureWidth==0  ? target.scaleU : length/backTextureWidth;
+			var sv:Number = backTextureHeight==0 ? target.scaleV : height/backTextureHeight;
 			
 			var u:Number,v:Number;
 			

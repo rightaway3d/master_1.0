@@ -393,6 +393,10 @@ package rightaway3d.engine.product
 				var name:String = defaultMaterialDict[type];
 				//trace("matName:"+name);
 				po.customMaterialName = name;
+				if(name==CabinetType.BODY_PLANK)
+				{
+					
+				}
 			}
 			else
 			{

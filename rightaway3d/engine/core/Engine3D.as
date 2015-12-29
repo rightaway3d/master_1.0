@@ -115,7 +115,7 @@ package rightaway3d.engine.core
 			
 			camCtrl = new CameraController(container,camera);
 			
-			initLights();
+			//initLights();
 			
 			colorMat = createColorMaterial(0x808080);
 			
@@ -245,7 +245,7 @@ package rightaway3d.engine.core
 			view.visible = true;
 		}
 		
-		public function setLightColor(color:uint):void
+		public function setLightColor2(color:uint):void
 		{
 			sunLight.color = color;
 			/*if(pointLights)

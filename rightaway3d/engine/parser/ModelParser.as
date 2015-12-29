@@ -1,5 +1,6 @@
 package rightaway3d.engine.parser
 {
+	import flash.display3D.textures.TextureBase;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Vector3D;
@@ -10,6 +11,7 @@ package rightaway3d.engine.parser
 	import away3d.materials.TextureMaterial;
 	import away3d.primitives.CubeGeometry;
 	import away3d.primitives.CylinderGeometry;
+	import away3d.textures.Texture2DBase;
 	
 	import rightaway3d.engine.model.ModelInfo;
 	import rightaway3d.engine.model.ModelInfoLoader;
@@ -95,6 +97,8 @@ package rightaway3d.engine.parser
 			}
 		}
 		
+		private var defcfg:DefaultConfig;
+		
 		private function parse(model:ModelInfo):void
 		{
 			//trace("ModelParser parse:"+model.modelFileURL);
@@ -105,7 +109,7 @@ package rightaway3d.engine.parser
 			{
 				if(!sea3d)
 				{
-					sea3d = new SEA3D(new DefaultConfig());
+					sea3d = new SEA3D(defcfg||=new DefaultConfig());
 					sea3d.addEventListener(SEAEvent.COMPLETE,onSeaComplete);
 					sea3d.addEventListener(SEAEvent.PROGRESS,onSeaProgress);
 					sea3d.addEventListener(SEAEvent.ERROR,onSeaError);
@@ -138,7 +142,7 @@ package rightaway3d.engine.parser
 			//dc = currModel.color + dc;
 			
 			//var mesh:Mesh = new Mesh(new CubeGeometry(b.x,b.y,b.z,1,1,1,false));
-			var mesh:Mesh = new CubeMesh(b.x,b.y,b.z);
+			var mesh:Mesh = new CubeMesh(b.x,b.y,b.z,100,100);
 			currModel.meshs = new Vector.<Mesh>(1);
 			currModel.meshs[0] = mesh;
 			
@@ -244,6 +248,7 @@ package rightaway3d.engine.parser
 					//trace("specular2:"+spm.specular);
 					//trace("ambient2:"+spm.ambient);
 					//trace("gloss2:"+spm.gloss);
+					//trace("normalMap:",spm.normalMap);
 				}
 			}
 			

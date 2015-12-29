@@ -15,6 +15,7 @@ package rightaway3d.engine.product
 	import rightaway3d.house.vo.BaseVO;
 	import rightaway3d.house.vo.WallObject;
 	
+	import ztc.meshbuilder.room.MaterialData;
 	import ztc.meshbuilder.room.MaterialLibrary;
 	import ztc.meshbuilder.room.RenderUtils;
 	
@@ -552,23 +553,24 @@ package rightaway3d.engine.product
 		 */
 		public function setCustomMaterial():Boolean
 		{
-			if(_customMaterialName && !_customMaterial)_customMaterial = MaterialLibrary.instance.getMaterialData(_customMaterialName);
+			if(_customMaterialName && !_customMaterial)_customMaterial = MaterialLibrary.instance.getMaterialData(_customMaterialName,512,512);
+			//trace("------setCustomMaterial:"+_customMaterialName,modelObject,modelObject?modelObject.meshs:"");
 			
 			
 			//var i:int = 0;
 			if(_customMaterialName && modelObject && modelObject.meshs)//存在自定义材质时，使用自定义材质
 			{
-				var mat:MaterialBase = MaterialBase(_customMaterial.material);
 				for each(var mesh:Mesh in modelObject.meshs)
 				{
 					//mesh.material = mat;
-					RenderUtils.setMaterial(mesh,_customMaterialName);
+					_customMaterial = RenderUtils.setMaterial(mesh,_customMaterialName);
 //					if( i == 0) {
 //					    trace('uvdata: ' + mesh.geometry.subGeometries[0].UVData);
 //						i++;
 //					}
 				}
 				
+				var mat:MaterialBase = MaterialBase(_customMaterial.material);
 				modelObject.materials = new <MaterialBase>[mat];
 				
 				return true;
@@ -576,16 +578,15 @@ package rightaway3d.engine.product
 			return false;
 		}
 		
-		private var _customMaterial:Object;
+		private var _customMaterial:MaterialData;
 
 		/**
 		 * 自定义材质（当前产品为非组合产品时，所包含模型使用自定义材质）
 		 */
-		public function get customMaterial():Object
+		public function get customMaterial():MaterialData
 		{
 			return _customMaterial;
 		}
-
 		
 		/**
 		 * 此产品所贴靠的墙面

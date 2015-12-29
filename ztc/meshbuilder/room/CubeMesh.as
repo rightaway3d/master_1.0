@@ -49,14 +49,17 @@ package ztc.meshbuilder.room
 		
 		// 场景中的一个单位代表的实际长度,如1000 = 1米
 		// 此值用来设置UV坐标
-		public var _baseLength:Number;
+		//public var tileWidth:int;
+		//public var tileHeight:int;
 		
-		public function CubeMesh(width:Number = 100, height:Number = 100, depth:Number = 100, baseLength = 1000)
+		public function CubeMesh(width:Number = 100, height:Number = 100, depth:Number = 100, tileWidth_ = 0, tileHeight_ = 0)
 		{
+			//trace("---CubeMesh width,height,depth:"+width,height,depth);
 			//this._width = width;
 			//this._height = height;
 			//this._depth = depth;
-			this._baseLength = baseLength;
+			//this.tileWidth = tileWidth_;
+			//this.tileHeight = tileHeight_;
 			
 			cube = new CubeGeometry(width,height,depth,1,1,1,false);
 			
@@ -67,7 +70,8 @@ package ztc.meshbuilder.room
 			geometry = cube;
 			
 			// 更新UV
-			updateUV();
+			//updateUV(tileWidth_, tileHeight_);
+			//trace("subMeshes:",subMeshes.length,subMeshes);
 		}
 		
 		/*override public function clone():Object3D
@@ -105,7 +109,13 @@ package ztc.meshbuilder.room
 		/**
 		 * 根据实际大小更新UV坐标
 		 */
-		public function updateUV():void {
+		public function updateUV(tileWidth = 0, tileHeight = 0):void
+		{
+			//if(tileWidth_ != 0)
+				//tileWidth = tileWidth_;
+			//if(tileHeight_ != 0 )
+				//tileHeight = tileHeight_;
+			
 			var sg:CompactSubGeometry = CompactSubGeometry(geometry.subGeometries[0]);
 			
 			var vs:Vector.<Number> = sg.vertexData;
@@ -144,18 +154,19 @@ package ztc.meshbuilder.room
 						v.z = vs[_tmp + 2];
 						
 						if (n.x != 0) {          // x轴上的面
-							sg.vertexData[_tmp + sg.UVOffset] = (v.z - base.z) / _baseLength;
-							sg.vertexData[_tmp + sg.UVOffset + 1] = (v.y - base.y) / _baseLength;
+							sg.vertexData[_tmp + sg.UVOffset] 		=  tileWidth==0 ? sg.scaleU : (v.z - base.z) / tileWidth;
+							sg.vertexData[_tmp + sg.UVOffset + 1] 	= tileHeight==0 ? sg.scaleV : (v.y - base.y) / tileHeight;
 						} else if (n.y != 0) {   // y轴上的面
-							sg.vertexData[_tmp + sg.UVOffset] = (v.x - base.x) / _baseLength;
-							sg.vertexData[_tmp + sg.UVOffset + 1] = (v.z - base.z) / _baseLength;
+							sg.vertexData[_tmp + sg.UVOffset] 		=  tileWidth==0 ? sg.scaleU : (v.x - base.x) / tileWidth;
+							sg.vertexData[_tmp + sg.UVOffset + 1] 	= tileHeight==0 ? sg.scaleV : (v.z - base.z) / tileHeight;
 						} else if (n.z != 0) {   // z轴上的面
-							sg.vertexData[_tmp + sg.UVOffset] = (v.x - base.x) / _baseLength;
-							sg.vertexData[_tmp + sg.UVOffset + 1] = (v.y - base.y) / _baseLength;
+							sg.vertexData[_tmp + sg.UVOffset] 		=  tileWidth==0 ? sg.scaleU : (v.x - base.x) / tileWidth;
+							sg.vertexData[_tmp + sg.UVOffset + 1] 	= tileHeight==0 ? sg.scaleV : (v.y - base.y) / tileHeight;
 						}
 					}	
 				}
 			}
+			sg.updateData(sg.vertexData);
 		}
 	}
 }

@@ -976,7 +976,7 @@ package rightaway3d.house.editor2d
 		
 		private function initCabinet(cw:CrossWall=null,xPos:int=-1,yPos:int=0,zPos:int=0,setPos:Boolean=true):void
 		{
-			trace("initCabinet:"+zPos);
+			//trace("initCabinet:"+zPos);
 			sceneHeightSize = Scene2D.sceneHeightSize;
 			
 			rooms = scene.currFloor.rooms;
@@ -1012,7 +1012,7 @@ package rightaway3d.house.editor2d
 			}
 			else if(setPos)
 			{
-				trace("initCabinet2:"+zPos);
+				//trace("initCabinet2:"+zPos);
 				setProductPos(gvar.currProduct,cw,xPos,yPos,zPos);
 			}
 			

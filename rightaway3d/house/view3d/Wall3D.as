@@ -25,6 +25,7 @@ package rightaway3d.house.view3d
 	import rightaway3d.house.vo.Wall;
 	import rightaway3d.house.vo.WallUtils;
 	
+	import ztc.meshbuilder.room.MaterialData;
 	import ztc.meshbuilder.room.RenderUtils;
 	
 
@@ -206,8 +207,18 @@ package rightaway3d.house.view3d
 		
 		private function setFrontWallMaterial(materialName:String):void
 		{
-			RenderUtils.setMaterial(frontFace,materialName);//当前是墙体的正面和背面都设置为同一种材质了
+			var md:MaterialData = RenderUtils.setMaterial(frontFace,materialName);//当前是墙体的正面和背面都设置为同一种材质了
 			//TextureMaterial(frontFace.material).shadowMethod = Engine3D.instance.shadowMethod;
+			if(!md.grid9Scale && md.tileWidth!=0 && md.tileHeight!=0 && md.scaleU!=0 && md.scaleV!=0)
+			{
+				wallGeom.frontTextureWidth = md.tileWidth;
+				wallGeom.frontTextureHeight = md.tileHeight;
+			}
+			else
+			{
+				wallGeom.frontTextureWidth = 0;
+				wallGeom.frontTextureHeight = 0;
+			}
 			
 			//RenderUtils.setMaterial(holeFace,materialName);//当前是墙体的正面和背面都设置为同一种材质了
 			TextureMaterial(holeFace.material).alpha = 1;
@@ -319,15 +330,15 @@ package rightaway3d.house.view3d
 		}
 		
 		//========================================================================================================
-		public function loadTexture2(url:String):void
+		/*public function loadTexture2(url:String):void
 		{
 			trace("loadBackground:"+url);
 			var loader:Loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onBGLoaded);
 			loader.load(new URLRequest(url));			
-		}
+		}*/
 		
-		private function onBGLoaded(event:Event):void
+		/*private function onBGLoaded(event:Event):void
 		{
 			var loaderInfo:LoaderInfo = event.currentTarget as LoaderInfo;
 			loaderInfo.removeEventListener(Event.COMPLETE,onBGLoaded);
@@ -362,19 +373,19 @@ package rightaway3d.house.view3d
 			loaderInfo.loader.unload();
 			
 			this.updateView();
-		}
+		}*/
 		
 		
 		//========================================================================================================
-		private function loadNormal2(url:String):void
+		/*private function loadNormal2(url:String):void
 		{
 			trace("loadNormal:"+url);
 			var loader:Loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onNormalLoaded);
 			loader.load(new URLRequest(url));			
-		}
+		}*/
 		
-		private function onNormalLoaded(event:Event):void
+		/*private function onNormalLoaded(event:Event):void
 		{
 			var loaderInfo:LoaderInfo = event.currentTarget as LoaderInfo;
 			loaderInfo.removeEventListener(Event.COMPLETE,onNormalLoaded);
@@ -410,7 +421,7 @@ package rightaway3d.house.view3d
 			loaderInfo.loader.unload();
 			
 			this.updateView();
-		}
+		}*/
 		
 		//========================================================================================================
 	}

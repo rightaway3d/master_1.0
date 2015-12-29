@@ -68,7 +68,7 @@ package rightaway3d.house.view3d
 			engineManager.rootContainer = house3d;
 			
 			engine3d.setBackgroundColor(0x0);
-			engine3d.setLightColor(0xffffff);
+			//engine3d.setLightColor(0xffffff);
 			engine3d.camCtrl.cc.distance = 10000;
 			engine3d.camCtrl.cc.minTiltAngle = -5;
 			//engine3d.camera.lens.near = 1;

@@ -105,7 +105,7 @@ package rightaway3d.engine.commodity
 			engine3d.setBackgroundColor(defData.backgroundColor);
 			
 			//设置3D场景灯光颜色
-			if(defData.lightColor>0)engine3d.setLightColor(defData.lightColor);
+			//if(defData.lightColor>0)engine3d.setLightColor(defData.lightColor);
 			
 			//加载背景图片
 			if(defData.backgroundImage)loadBackground(defData.backgroundImage);

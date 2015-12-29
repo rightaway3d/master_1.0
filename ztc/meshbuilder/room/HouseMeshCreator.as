@@ -42,22 +42,22 @@ package ztc.meshbuilder.room
 			
 			// create Frame material
 			mat = new ColorMaterial(0xDDDDDD);
-			mat.ambient = 3;
+			mat.ambient = 0.8;
 			mat.specular = 0.5;
 			
 			// cresate glass material
 			glassMat = new ColorMaterial(0x001111,0.15);
 			glassMat.specular = 1;
 			
-			
-			doorFrameMat = new ColorMaterial(0xD0BB9F);
+			doorFrameMat = new ColorMaterial(0xD0BB9F);//0xD0BB9F
 			doorFrameMat.specular = 0;
 			//doorFrameMat.gloss = 0;
 			doorFrameMat.ambient = 0.3;
-			doorMat = new ColorMaterial(0xD9C9B3);
+			
+			doorMat = new ColorMaterial(0xD8D9A8);//0xD9C9B3
 			doorMat.specular = 0;
 			//doorMat.gloss = 0;
-			doorMat.ambient = 0.3;
+			doorMat.ambient = 0.5;
 		}
 		
 		/**

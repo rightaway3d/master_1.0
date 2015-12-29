@@ -461,7 +461,7 @@ package rightaway3d.house.vo
 				tmpGroundObjects.splice(tmpGroundObjects.indexOf(wo),1);
 				
 				var a:Array = headCrossWall.tmpGroundObjects;
-				if(a.length>0 && a[a.length-1].object == wo.object)
+				if(a.length>0 && a[a.length-1].object == wo)
 				{
 					a.pop();
 					headCrossWall.dispatchSizeChangeEvent();
@@ -469,7 +469,7 @@ package rightaway3d.house.vo
 				else
 				{
 					a = endCrossWall.tmpGroundObjects;
-					if(a.length>0 && a[0].object == wo.object)
+					if(a.length>0 && a[0].object == wo)
 					{
 						a.shift();
 						endCrossWall.dispatchSizeChangeEvent();
@@ -484,7 +484,7 @@ package rightaway3d.house.vo
 				tmpWallObjects.splice(tmpWallObjects.indexOf(wo),1);
 				
 				a= headCrossWall.tmpWallObjects;
-				if(a.length>0 && a[a.length-1].object == wo.object)
+				if(a.length>0 && a[a.length-1].object == wo)
 				{
 					a.pop();
 					headCrossWall.dispatchSizeChangeEvent();
@@ -492,7 +492,7 @@ package rightaway3d.house.vo
 				else
 				{
 					a = endCrossWall.tmpWallObjects;
-					if(a.length>0 && a[0].object == wo.object)
+					if(a.length>0 && a[0].object == wo)
 					{
 						a.shift();
 						endCrossWall.dispatchSizeChangeEvent();
@@ -502,7 +502,7 @@ package rightaway3d.house.vo
 			
 			//this.initTestObject();
 			this.dispatchSizeChangeEvent();
-			
+			//this.resetGroundObjects(
 			/*if(object.object is ProductObject)
 			{
 				if(headCrossWall)
@@ -623,6 +623,7 @@ package rightaway3d.house.vo
 			
 			two.type = wo.type;
 			//two.object = wo.object;
+			two.object = wo;
 			
 			return two;
 		}

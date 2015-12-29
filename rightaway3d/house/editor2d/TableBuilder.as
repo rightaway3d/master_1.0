@@ -900,13 +900,14 @@ package rightaway3d.house.editor2d
 			}
 			else
 			{
-				var name:String = "装饰板_" + width + "x" + height
+				var name:String = "装饰板_" + width + "x" + height;
+				trace("addGroundCabinetPlate:",name);
 				po = cabinetCreator.createCabinetPlate(cw,width,height-3,16,xPos,yPos,zPos,CabinetType.DOOR_PLANK,name);
 				
 				po.productCode = "00000000F";
 			}
 			po.name_en = CabinetType.CORNER_PLANK;
-			addPlateProduct(po,width,height);
+			addPlateHandle(po,width,height);
 			return po;
 		}
 		
@@ -970,10 +971,11 @@ package rightaway3d.house.editor2d
 			
 			var po:ProductObject = productManager.createRootProductObject(list[0]);
 			cabinetCtrl.setProductPos(po,cw,xPos,CrossWall.WALL_OBJECT_HEIGHT,0);
-			po.customMaterialName = cabinetCreator.cabinetBodyDefaultMaterial;
 			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
 			po.isActive = false;
 			po.name_en = CabinetType.CORNER_PLANK;
+			po.type = CabinetType.BODY;
+			po.customMaterialName = cabinetCreator.cabinetBodyDefaultMaterial;
 			
 			/*var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,18,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"封板B-330");
 			po.name_en = CabinetType.CORNER_PLANK;
@@ -1044,7 +1046,14 @@ package rightaway3d.house.editor2d
 				<active>false</active>
 			</item>;
 		
-		private function addPlateProduct(parent:ProductObject,width:int,height:int=720):void
+		/**
+		 * 大于300宽的封板加拉手
+		 * @param parent
+		 * @param width
+		 * @param height
+		 * 
+		 */		
+		private function addPlateHandle(parent:ProductObject,width:int,height:int=720):void
 		{
 			if(width>=300)//大于300宽的封板加拉手
 			{

@@ -30,20 +30,20 @@ package rightaway3d.house.view3d.base
 		/**
 		 * 墙体正面贴图材质的宽度，用于计算贴图UV
 		 */
-		public var groundTextureWidth:Number = 500;
+		public var groundTextureWidth:Number = 0;
 		/**
 		 * 墙体正面贴图材质的高度，用于计算贴图UV
 		 */
-		public var groundTextureHeight:Number = 500;
+		public var groundTextureHeight:Number = 0;
 		
 		/**
 		 * 墙体背面贴图材质的宽度，用于计算贴图UV
 		 */
-		public var ceilingTextureWidth:Number = 500;
+		public var ceilingTextureWidth:Number = 0;
 		/**
 		 * 墙体背面贴图材质的高度，用于计算贴图UV
 		 */
-		public var ceilingTextureHeight:Number =  500;
+		public var ceilingTextureHeight:Number =  0;
 		
 		public function RoomGeometry(room:Room)
 		{
@@ -114,7 +114,7 @@ package rightaway3d.house.view3d.base
 			target.updateData(data);
 			target.updateIndexData(indices);
 			
-			target.scaleUV(3,3);
+			//target.scaleUV(3,3);
 		}
 		
 		private function countGroundVertices(vs:Vector.<Vertex>,ts:Vector.<Triangle>):void
@@ -172,8 +172,8 @@ package rightaway3d.house.view3d.base
 			var dx:Number = maxX - minX;
 			var dy:Number = maxY - minY;
 			
-			var su:Number = dx/groundTextureWidth;
-			var sv:Number = dy/groundTextureHeight;
+			var su:Number = groundTextureWidth==0  ? target.scaleU : dx/groundTextureWidth;
+			var sv:Number = groundTextureHeight==0 ? target.scaleV : dy/groundTextureHeight;
 			
 			var nx:Number=0,ny:Number=1,nz:Number=0,tx:Number=1,ty:Number=0,tz:Number=0;
 			var yHeight:Number = 0;
@@ -214,8 +214,8 @@ package rightaway3d.house.view3d.base
 			var dx:Number = maxX - minX;
 			var dy:Number = maxY - minY;
 			
-			var su:Number = dx/ceilingTextureWidth;
-			var sv:Number = dy/ceilingTextureHeight;
+			var su:Number = ceilingTextureWidth==0  ? target.scaleU : dx/ceilingTextureWidth;
+			var sv:Number = ceilingTextureHeight==0 ? target.scaleV : dy/ceilingTextureHeight;
 			
 			var nx:Number=0,ny:Number=-1,nz:Number=0,tx:Number=1,ty:Number=0,tz:Number=0;
 			var yHeight:Number = vo.floor.ceilingHeight;
