@@ -182,23 +182,26 @@ package rightaway3d.engine.controller
 		
 		public var autoRotation:Boolean = false;
 		
-		public function update():void
+		public function update(interpolate:Boolean = true):void
 		{
 			if (isMove)
 			{
+				//trace("update1");
 				cc.panAngle = 0.3*(stage2d.stage.mouseX - lastMouseX) + lastPanAngle;
 				cc.tiltAngle = 0.3*(stage2d.stage.mouseY - lastMouseY) + lastTiltAngle;
 				//trace("Camera panAngle:"+cc.panAngle.toFixed(1)+" tiltAngle:"+cc.tiltAngle.toFixed(1)+" distance:"+cc.distance.toFixed(1)+" center:"+cc.lookAtPosition);
 			}
 			else if(autoRotation)
 			{
+				//trace("update2");
 				cc.panAngle += autoRotationStep;
 			}
+			//trace("update3:",cc.panAngle,cc.tiltAngle);
 			
 			//cc.panAngle += panIncrement;
 			//cc.tiltAngle += tiltIncrement;
 			//cc.distance += distanceIncrement;
-			cc.update();
+			cc.update(interpolate);
 		}
 		
 		private var callbackByMoveTo:Function;

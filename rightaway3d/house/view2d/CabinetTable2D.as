@@ -72,16 +72,12 @@ package rightaway3d.house.view2d
 			
 			var depthss:Array = cc.tableDepthss;
 			
-			var len:int = tabless.length;
-			if(index<len)
-			{
-				drawBG();
-				updateView(tabless[index],depthss[index++]);
-				return true;
-			}
+			if(index>=tabless.length)return false;
 			
-			index = 0;
-			return false;
+			drawBG();
+			updateView(tabless[index],depthss[index++]);
+			
+			return true;
 		}
 		
 		private var pillars:Array;//房间里所有的立柱或烟道

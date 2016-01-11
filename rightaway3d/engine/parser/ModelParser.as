@@ -142,7 +142,7 @@ package rightaway3d.engine.parser
 			//dc = currModel.color + dc;
 			
 			//var mesh:Mesh = new Mesh(new CubeGeometry(b.x,b.y,b.z,1,1,1,false));
-			var mesh:Mesh = new CubeMesh(b.x,b.y,b.z,100,100);
+			var mesh:Mesh = new CubeMesh(b.x,b.y,b.z);
 			currModel.meshs = new Vector.<Mesh>(1);
 			currModel.meshs[0] = mesh;
 			

@@ -213,12 +213,15 @@ package rightaway3d.engine.core
 			this.scene.addChild(skyBox);
 		}
 		
+		public var isRendered:Boolean = false;
 		public function startRender():void
 		{
 			if(!container.stage)return;
 			
 			container.stage.addEventListener(Event.ENTER_FRAME,onStageEnterFrame);
 			container.addEventListener(Event.REMOVED_FROM_STAGE,stopRender);
+			
+			isRendered = true;
 		}
 		
 		public function stopRender(e:Event=null):void
@@ -593,9 +596,9 @@ package rightaway3d.engine.core
 			render();
 		}
 		
-		public function render():void
+		public function render(interpolateCamera:Boolean = true):void
 		{
-			camCtrl.update();
+			camCtrl.update(interpolateCamera);
 			
 			//light.position = camera.position;
 //			light.lookAt(new Vector3D());

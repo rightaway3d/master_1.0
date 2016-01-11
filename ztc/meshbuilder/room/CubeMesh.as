@@ -52,7 +52,7 @@ package ztc.meshbuilder.room
 		//public var tileWidth:int;
 		//public var tileHeight:int;
 		
-		public function CubeMesh(width:Number = 100, height:Number = 100, depth:Number = 100, tileWidth_ = 0, tileHeight_ = 0)
+		public function CubeMesh(width:Number = 100, height:Number = 100, depth:Number = 100)
 		{
 			//trace("---CubeMesh width,height,depth:"+width,height,depth);
 			//this._width = width;

@@ -82,6 +82,12 @@ package rightaway3d.house.editor2d
 			productManager.setProductMaterial(CabinetType.BODY_PLANK,value);
 		}
 		
+		public function setLvboDefaultMaterial(value:String):void
+		{
+			ProductInfo.defaultMaterialDict[CabinetType.LVBO_PLANK] = value;
+			productManager.setProductMaterial(CabinetType.LVBO_PLANK,value);
+		}
+		
 		
 		/*private var _cabinetDoorDefaultMaterial:String;
 		
@@ -2422,6 +2428,8 @@ package rightaway3d.house.editor2d
 			var mtype:String = ModelType.BOX_C;
 			var enName:String = CabinetType.BAFFLE;
 			var po:ProductObject = ProductManager.own.createCustomizeProduct(mtype,name,enName,width,height,depth,0xffffff,false);
+			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
+			
 			//po.productInfo.name = enName;
 			//po.productInfo.type = ctype;
 			//po.type = enName;
@@ -2432,6 +2440,7 @@ package rightaway3d.house.editor2d
 			{
 				ProductManager.own.addProductToScene(po);
 			}
+			
 			this.cabinetCtr.setProductPos(po,cw,xPos,yPos,zPos);
 			
 			if(ctype==CabinetType.DOOR_PLANK)
@@ -2447,8 +2456,6 @@ package rightaway3d.house.editor2d
 				po.customMaterialName = "柜脚挡板";
 			}
 			trace("customMaterialName:",po.customMaterialName);
-			
-			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
 			
 			//plateDict[po] = po;
 			
@@ -3414,7 +3421,7 @@ package rightaway3d.house.editor2d
 			cw.getWallObjectOfPos(x0,x1,objects);//查找区间内已经存在的物体，并作为障碍物来区隔当前墙面区域
 			var alen:int = objects.length;
 			
-			//trace(alen,"objects:"+objects);
+			trace(x0,x1,alen,"objects:"+objects);
 			
 			var hasHole:Boolean = false;//标志当前分隔区域的障碍物里，是否有门洞或烟机，或者障碍物的进深超过吊柜的进深
 			
@@ -3568,22 +3575,19 @@ package rightaway3d.house.editor2d
 		
 		private function getWallObjectType(wo:WallObject):String
 		{
+			trace("getWallObjectType:",wo.object);
 			var type:String;
 			if(wo.object is WallHole)//窗口
 			{
 				type = ObstacleType.HOLE;
 			}
+			else if(wo.object is ProductObject && wo.object.view2d==hoodProduct)//烟机
+			{
+				type = ObstacleType.HOOD;
+			}
 			else
 			{
-				var po:ProductObject = wo.object;
-				if(po && po.view2d == hoodProduct)//烟机
-				{
-					type = ObstacleType.HOOD;
-				}
-				else
-				{
-					type = ObstacleType.OBJECT;
-				}
+				type = ObstacleType.OBJECT;
 			}
 			return type;
 		}

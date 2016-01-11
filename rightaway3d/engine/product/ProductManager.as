@@ -711,6 +711,7 @@ package rightaway3d.engine.product
 			setProductObject(pObj);
 			
 			updateProductModel(pObj);
+			trace("addProductToScene:",pObj,pObj.productInfo);
 			
 			flash.utils.setTimeout(cloneObject,100,pObj);
 		}
@@ -1233,7 +1234,7 @@ package rightaway3d.engine.product
 		{
 			if(objectDict[pObj.objectID]==pObj)
 			{
-				trace("removeProductObject:",pObj.objectID);
+				//trace("removeProductObject:",pObj.objectID);
 				delete objectDict[pObj.objectID];
 				//trace(pObj);
 				//throw new Error();

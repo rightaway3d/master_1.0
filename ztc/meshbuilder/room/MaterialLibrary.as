@@ -216,7 +216,7 @@ package ztc.meshbuilder.room
 			if(!scaleU)scaleU = "1";
 			if(!scaleV)scaleV = "1";
 			
-			trace('1u: ' + scaleU + ' 1v: ' + scaleV);
+			//trace('1u: ' + scaleU + ' 1v: ' + scaleV);
 			
 			var name2:String = name;
 			if((tw!=0 && th!=0) && (grid.length==4 || (scaleU=="0" && scaleV=="0")))//(grid.length==4)// && w>255 && h>255)

@@ -3,14 +3,10 @@ package ztc.meshbuilder.room
 	import flash.geom.Vector3D;
 	
 	import away3d.containers.View3D;
-	import away3d.entities.Mesh;
-	import away3d.lights.DirectionalLight;
 	import away3d.lights.PointLight;
 	import away3d.lights.ThreePointLight;
-	import away3d.materials.ColorMaterial;
 	import away3d.materials.lightpickers.StaticLightPicker;
 	import away3d.materials.methods.SoftShadowMapMethod;
-	import away3d.primitives.SphereGeometry;
 
 	public class LightManager
 	{
@@ -176,7 +172,7 @@ package ztc.meshbuilder.room
 			floorLight.position = ceilingLightPos;
 			//floorLight.fallOff = maxLen;// * 2//1.1;
 			
-			trace("--light position:",pointLights.length,ceilingLight.position,floorLight.position);
+			//trace("--light position:",pointLights.length,ceilingLight.position,floorLight.position);
 			//return;
 			if(pointLights.length==4)
 			{

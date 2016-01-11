@@ -62,7 +62,7 @@ package rightaway3d.house.view2d
 			var s:String;
 			if(matObject[mat]==undefined)
 			{
-				trace("getMatFlag:",mat,matIndex);
+				//trace("getMatFlag:",mat,matIndex);
 				
 				matObject[mat] = matIndex++;
 			}

@@ -61,6 +61,8 @@ package rightaway3d.house.editor2d
 			{
 				var depthss:Array = [];
 				var tabless:Array = resetGroundArea(groundArea,groundCabinetDict,depthss);
+			//return null;
+			
 				cabinetCreator.createCabinetTable(tabless,depthss);//[[600,600,600],[600,600,600],[600,600,600]]);
 				
 				var house:House = House.getInstance();
@@ -137,6 +139,8 @@ package rightaway3d.house.editor2d
 			
 			var tabless:Array = setGroundArea(groundArea,wallDict);
 			setGroundLeg(tabless);
+			//return null;
+			
 			setGroundArea2(tabless);
 			
 			var areaLen:int = tabless.length;
@@ -862,8 +866,8 @@ package rightaway3d.house.editor2d
 			if(list.length()==0)return null;
 			
 			var po:ProductObject = productManager.createRootProductObject(list[0]);
-			po.isActive = false;
 			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
+			po.isActive = false;
 			cabinetCtrl.setProductPos(po,cw,xpos,ypos,zpos);
 			
 			return po;
@@ -970,12 +974,13 @@ package rightaway3d.house.editor2d
 			if(list.length()==0)return;
 			
 			var po:ProductObject = productManager.createRootProductObject(list[0]);
-			cabinetCtrl.setProductPos(po,cw,xPos,CrossWall.WALL_OBJECT_HEIGHT,0);
 			po.objectInfo.isIgnoreObject = true;//所有挡板不会标注尺寸
+			
 			po.isActive = false;
 			po.name_en = CabinetType.CORNER_PLANK;
 			po.type = CabinetType.BODY;
 			po.customMaterialName = cabinetCreator.cabinetBodyDefaultMaterial;
+			cabinetCtrl.setProductPos(po,cw,xPos,CrossWall.WALL_OBJECT_HEIGHT,0);
 			
 			/*var po:ProductObject = cabinetCreator.createCabinetPlate(cw,width,18,330,xPos,CrossWall.WALL_OBJECT_HEIGHT,0,CabinetType.CORNER_PLANK,"封板B-330");
 			po.name_en = CabinetType.CORNER_PLANK;

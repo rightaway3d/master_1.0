@@ -10,11 +10,15 @@ package rightaway3d.house.view3d
 	import rightaway3d.engine.model.ModelLoader;
 	import rightaway3d.engine.parser.ModelParser;
 	import rightaway3d.engine.product.ProductManager;
+	import rightaway3d.engine.product.ProductObject;
 	import rightaway3d.engine.skybox.SkyBoxLoader;
 	import rightaway3d.house.editor2d.CabinetController;
 	import rightaway3d.house.editor2d.CabinetCreator;
 	import rightaway3d.house.utils.GlobalConfig;
+	import rightaway3d.house.vo.CrossWall;
 	import rightaway3d.house.vo.House;
+	import rightaway3d.house.vo.Wall;
+	import rightaway3d.house.vo.WallObject;
 
 	public class Scene3D extends Sprite
 	{
@@ -116,7 +120,7 @@ package rightaway3d.house.view3d
 		public function updateHouse(house:House):void
 		{
 			house3d.update(house);
-			trace("house3d:"+house.width,house.height,house.depth);
+			//trace("house3d:"+house.width,house.height,house.depth);
 			
 			// ztc 更新灯光位置
 			var max:Vector3D = house.max.clone();
@@ -133,18 +137,72 @@ package rightaway3d.house.view3d
 			d *= 0.5;
 			
 			this.engine3d.camCtrl.maxWhellDistance = d;
-			this.engine3d.camCtrl.cc.distance = d*0.5;
+			this.engine3d.camCtrl.cc.distance = d;
 			this.engine3d.camCtrl.cc.panAngle = house.currPanAngle;
-			this.engine3d.camCtrl.cc.tiltAngle = 10;//85;//25;
-			this.engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,house.currFloor.ceilingHeight/2,0);
-
+			this.engine3d.camCtrl.cc.tiltAngle = 0;//85;//25;
+			this.engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);//house.currFloor.ceilingHeight/2
+			//this.engine3d.camCtrl.cc.
+			//engine3d.render(false);
+			
 			/*var ssmm:SoftShadowMapMethod = new SoftShadowMapMethod(engine3d.sunLight, 30);
 			ssmm.range = 3;	// the sample radius defines the softness of the shadows
 			ssmm.epsilon = .1;*/
 			//ColorMaterial(ground.material).shadowMethod = new FilteredShadowMapMethod(engine3d.sunLight);
-			setTimeout(function():void {
-				engine3d.updateCubeReflection();
-			},1000);
+		}
+		
+		public function update():Boolean
+		{
+			//trace("update:",index,walls.length);
+			if(index>=walls.length)return false;
+			
+			var wall:Wall = walls[index++];
+			
+			var a:Number = (540-wall.angles)%360;
+			engine3d.camCtrl.cc.panAngle = a;
+			engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);
+			engine3d.render(false);
+			
+			return true;
+		}
+		
+		private var index:int;
+		private var walls:Array;
+		
+		public function reset(house:House):void
+		{
+			walls = [];
+			var cws:Vector.<CrossWall> = house.currFloor.rooms[0].walls;
+			for each(var cw:CrossWall in cws)
+			{
+				if(hasCabinet(cw))
+				{
+					walls.push(cw.wall);
+				}
+			}
+			
+			index = 0;
+		}
+		
+		private function hasCabinet(cw:CrossWall):Boolean
+		{
+			if(_hasCabinet(cw.groundObjects))return true;
+			if(_hasCabinet(cw.wallObjects))return true;
+			return false;
+		}
+		
+		private function _hasCabinet(wos:Array):Boolean
+		{
+			for each(var wo:WallObject in wos)
+			{
+				if(wo.object is ProductObject)
+				{
+					if(ProductObject(wo.object).view2d)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		
 		public function updateView(w:int,h:int):void

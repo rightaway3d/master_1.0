@@ -376,6 +376,10 @@ package rightaway3d.house.vo
 				{
 					headCrossWall.resetGroundObjects(wo01);
 				}
+				/*else if(wo.x-wo.width-this.localHead.x<1)
+				{
+					headCrossWall.addWallObject(this.getEmptyWallObject(headCrossWall.localEnd.x,80,350,720));
+				}*/
 				
 				if(endCrossWall)var wo11:WallObject = this.getMaxDepthObject(this.endCrossWall._groundObjects);
 				if(wo11)
@@ -438,6 +442,18 @@ package rightaway3d.house.vo
 			}*/
 		}
 		
+		private function getEmptyWallObject(x:Number,y:Number,depth:int,height:int):WallObject
+		{
+			var wo:WallObject = new WallObject();
+			wo.x = x;
+			wo.y = y;
+			wo.z = 0;
+			wo.width = 0;
+			wo.depth = depth;
+			wo.height = height;
+			return wo;
+		}
+		
 		/**
 		 * 移除关联到此墙面的物体
 		 * @param object
@@ -460,13 +476,13 @@ package rightaway3d.house.vo
 				
 				tmpGroundObjects.splice(tmpGroundObjects.indexOf(wo),1);
 				
-				var a:Array = headCrossWall.tmpGroundObjects;
-				if(a.length>0 && a[a.length-1].object == wo)
+				if(headCrossWall)var a:Array = headCrossWall.tmpGroundObjects;
+				if(a && a.length>0 && a[a.length-1].object == wo)
 				{
 					a.pop();
 					headCrossWall.dispatchSizeChangeEvent();
 				}
-				else
+				else if(endCrossWall)
 				{
 					a = endCrossWall.tmpGroundObjects;
 					if(a.length>0 && a[0].object == wo)
@@ -483,18 +499,18 @@ package rightaway3d.house.vo
 				
 				tmpWallObjects.splice(tmpWallObjects.indexOf(wo),1);
 				
-				a= headCrossWall.tmpWallObjects;
-				if(a.length>0 && a[a.length-1].object == wo)
+				if(headCrossWall)var b:Array = headCrossWall.tmpWallObjects;
+				if(b && b.length>0 && b[b.length-1].object == wo)
 				{
-					a.pop();
+					b.pop();
 					headCrossWall.dispatchSizeChangeEvent();
 				}
-				else
+				else if(endCrossWall)
 				{
-					a = endCrossWall.tmpWallObjects;
-					if(a.length>0 && a[0].object == wo)
+					b = endCrossWall.tmpWallObjects;
+					if(b.length>0 && b[0].object == wo)
 					{
-						a.shift();
+						b.shift();
 						endCrossWall.dispatchSizeChangeEvent();
 					}
 				}

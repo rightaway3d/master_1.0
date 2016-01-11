@@ -23,6 +23,10 @@ package rightaway3d.house.cabinet
 		 */
 		static public const BODY_PLANK:String = "cabinet_body_plank";
 		/**
+		 * 铝箔板
+		 */
+		static public const LVBO_PLANK:String = "cabinet_lvbo_plank";
+		/**
 		 * 拐角柜封板
 		 */
 		static public const CORNER_PLANK:String = "corner_cabinet_plank";
