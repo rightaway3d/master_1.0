@@ -71,6 +71,10 @@ package rightaway3d.house.cabinet
 		 */
 		static public const TABLE:String = "cabinet_table";
 		/**
+		 * 顶线
+		 */
+		static public const TOP_LINE:String = "top_line";
+		/**
 		 * 五金配件
 		 */
 		static public const METAL_FITTINGS:String = "metal_fittings";

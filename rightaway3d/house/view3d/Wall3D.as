@@ -34,9 +34,9 @@ package rightaway3d.house.view3d
 		public var wallGeom:WallGeometry;
 		
 		public var frontFace:SubMesh;
-		public var backFace:SubMesh;
+		//public var backFace:SubMesh;//屏蔽墙体背面
 		
-		private var holeFace:SubMesh;
+		private var fourSideFace:SubMesh;
 		
 		//public var lightPicker:LightPickerBase;
 		
@@ -50,20 +50,32 @@ package rightaway3d.house.view3d
 			var cm:TextureMaterial = new TextureMaterial();
 			//var cm:ColorMaterial = new ColorMaterial(0x808080);
 			//cm.color = 0x808080;
-			cm.color = 0xeeeeee;
+			cm.color = 0xeeeeee;//0xff0000;//
 			cm.specular = 0.5;
 			cm.ambient = 0.9;
 			//cm.gloss = 100;
 			cm.gloss = 50;
 			//cm.normalMap = Common.getInstance().getNormalTexture();
-			cm.alpha = 1;
+			//cm.alpha = 0.5;
 			
 			//super(wallGeom);
+			
 			super(wallGeom,cm);
 			
 			frontFace = getSubMesh(wallGeom.frontGeom);
-			backFace = getSubMesh(wallGeom.backGeom);
-			holeFace = getSubMesh(wallGeom.subGeometries[0]);
+			//屏蔽墙体背面backFace = getSubMesh(wallGeom.backGeom);
+			fourSideFace = getSubMesh(wallGeom.fourSideGeom);
+			
+			var m:TextureMaterial = new TextureMaterial();
+			m.alpha = 0;//0.5;
+			m.color = 0;//0xff0000;//0xeeeeee;//
+			m.specular = 0.9;
+			
+			//屏蔽墙体背面backFace.material = m;
+			fourSideFace.material = m;
+			
+			
+			//TextureMaterial(holeFace.material).alpha = 0;
 			
 			//loadTexture("12003.png");
 			//loadTexture2("assets/map/1528.png");//1528
@@ -221,7 +233,7 @@ package rightaway3d.house.view3d
 			}
 			
 			//RenderUtils.setMaterial(holeFace,materialName);//当前是墙体的正面和背面都设置为同一种材质了
-			TextureMaterial(holeFace.material).alpha = 1;
+			//TextureMaterial(holeFace.material).alpha = 1;
 			//TextureMaterial(backFace.material).alpha = 0.01;
 		}
 		
@@ -247,7 +259,7 @@ package rightaway3d.house.view3d
 			}
 			wallGeom = null;
 			frontFace = null;
-			backFace = null;
+			//屏蔽墙体背面backFace = null;
 			
 			super.dispose();
 		}
@@ -264,7 +276,7 @@ package rightaway3d.house.view3d
 			CabinetController.getInstance().scene.stage.addEventListener(MouseEvent.MOUSE_MOVE,onMouseMove);
 			
 			var sm:SubMesh = subMeshes[e.subGeometryIndex];
-			if(sm==frontFace || sm==backFace)
+			if(sm==frontFace)//屏蔽墙体背面 || sm==backFace)
 			{
 				var cw:CrossWall = sm==frontFace?_wall.frontCrossWall:_wall.backCrossWall;
 				GlobalEvent.event.dispatchCrossWallMouseDownEvent(cw);
@@ -305,7 +317,7 @@ package rightaway3d.house.view3d
 		public function dispatchMouseUpEvent(subGeometryIndex:uint):void
 		{
 			var sm:SubMesh = subMeshes[subGeometryIndex];
-			if(sm==frontFace || sm==backFace)
+			if(sm==frontFace)//屏蔽墙体背面 || sm==backFace)
 			{
 				var cw:CrossWall = sm==frontFace?_wall.frontCrossWall:_wall.backCrossWall;
 				GlobalEvent.event.dispatchCrossWallMouseUpEvent(cw);

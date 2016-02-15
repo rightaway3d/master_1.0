@@ -283,9 +283,9 @@ package rightaway3d.house.editor2d
 			var len:int = products.length;
 			for(var i:int=0;i<len;i++)
 			{
-				trace("");
+				//trace("");
 				var p:Object = products[i];
-				trace("objectID1:",p.objectID);
+				//trace("objectID1:",p.objectID);
 				parseProduct(p);
 			}
 			

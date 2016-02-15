@@ -15,6 +15,7 @@ package rightaway3d.engine.product
 	import rightaway3d.engine.model.ModelObject;
 	import rightaway3d.engine.model.ModelType;
 	import rightaway3d.engine.parser.ModelParser;
+	import rightaway3d.engine.utils.GlobalEvent;
 	import rightaway3d.house.cabinet.CustomizeProduct2D;
 	import rightaway3d.house.editor2d.CabinetController;
 	import rightaway3d.house.lib.CabinetLib;
@@ -145,7 +146,7 @@ package rightaway3d.engine.product
 			wo.height = height;
 			wo.object = newProduct;
 			newProduct.objectInfo = wo;
-			trace("wo1:",wo);
+			//trace("wo1:",wo);
 			
 			if(!info.isReady)
 			{
@@ -182,13 +183,21 @@ package rightaway3d.engine.product
 			}
 			
 			newProduct.rotation.y = newProduct.container3d.rotationY = a;
+			newProduct.rotation.z = newProduct.container3d.rotationZ = targetObject.rotation.z;
 			
 			if(newProduct.view2d)
 			{
 				newProduct.view2d.rotation = a;
 			}
 			
+			if(!targetObject.parentProductObject)
+			{
+				GlobalEvent.event.dispatchProductCreatedEvent(newProduct);
+			}
+			
 			trace("dimensions:",info.dimensions);
+			trace("targetObject.rotation:",targetObject.rotation);
+			trace("newProduct.rotation:",newProduct.rotation);
 			trace("wo3:",wo);
 			return newProduct;
 		}
@@ -198,15 +207,18 @@ package rightaway3d.engine.product
 		 */
 		public function replaceProductObject(targetObject:ProductObject,srcInfoID:int,fileURL:String,name:String,width:int,depth:int,height:int,dataFormat:String="text"):ProductObject
 		{
-			//trace("replaceProductObject:"+targetObject.position.y);
+			trace("replaceProductObject:"+targetObject.name);
 			if(!targetObject.parentProductObject && targetObject.productInfo.infoID!=srcInfoID)//此产品非子产品，且目标与源不是同一个产品
 			{
 				var newProduct:ProductObject = this._createProductObject(targetObject,srcInfoID,fileURL,name,width,depth,height);
 				newProduct.isLock = targetObject.isLock;
 				newProduct.isOrder = targetObject.isOrder;
+				newProduct.name = targetObject.name;
+				newProduct.name_en = targetObject.name_en;
 				
 				targetObject.dispose();
 				
+				trace("replaceProductObject2:"+newProduct.name);
 				return newProduct;
 			}
 			
@@ -237,7 +249,7 @@ package rightaway3d.engine.product
 			w1 = src1.width;
 			d1 = src1.depth;
 			h1 = src1.height;
-			trace("w1,d1,h1:",w1,d1,h1);
+			//trace("w1,d1,h1:",w1,d1,h1);
 			var newProduct1:ProductObject = this._createProductObject(target,id1,file1,"",w1,d1,h1);
 			newProduct1.isLock = target.isLock;
 			newProduct1.isOrder = target.isOrder;
@@ -248,7 +260,7 @@ package rightaway3d.engine.product
 			w2 = src2.width;
 			d2 = src2.depth;
 			h2 = src2.height;
-			trace("w2,d2,h2:",w2,d2,h2);
+			//trace("w2,d2,h2:",w2,d2,h2);
 			
 			var newProduct2:ProductObject = this._createProductObject(target,id2,file2,"",w2,d2,h2);
 			newProduct2.isLock = target.isLock;
@@ -328,9 +340,10 @@ package rightaway3d.engine.product
 			{
 				var ppo:ProductObject = po.parentProductObject;
 				var info:ProductInfo = this.createProductInfo(srcID,file,dataFormat);
+				trace("replaceSubProductObject po.position,po.rotation:"+po.position,po.rotation);
 				
 				var objID:int = po.id;
-				var newProduct:ProductObject = this.createProductObject(info,objID,name,"",po.isActive,po.position);
+				var newProduct:ProductObject = this.createProductObject(info,objID,name,"",po.isActive,po.position,po.rotation);
 				newProduct.isLock = po.isLock;
 				newProduct.isOrder = po.isOrder;
 				newProduct.objectID = po.objectID;
@@ -711,7 +724,7 @@ package rightaway3d.engine.product
 			setProductObject(pObj);
 			
 			updateProductModel(pObj);
-			trace("addProductToScene:",pObj,pObj.productInfo);
+			//trace("addProductToScene:",pObj,pObj.productInfo);
 			
 			flash.utils.setTimeout(cloneObject,100,pObj);
 		}
@@ -802,7 +815,7 @@ package rightaway3d.engine.product
 			return pObj;
 		}
 		
-		public function createProductObject(info:ProductInfo,objID:int,name:String,name_en:String="",isActive:Boolean=true,position:Vector3D=null):ProductObject
+		public function createProductObject(info:ProductInfo,objID:int,name:String,name_en:String="",isActive:Boolean=true,position:Vector3D=null,rotation:Vector3D=null):ProductObject
 		{
 			var o:ProductObject = new ProductObject();
 			o.id = objID;
@@ -811,7 +824,7 @@ package rightaway3d.engine.product
 			o.isActive = isActive;
 			
 			o.position = position ? position.clone() : new Vector3D();
-			o.rotation = new Vector3D();
+			o.rotation = rotation ? rotation.clone() : new Vector3D();
 			o.scale = new Vector3D(1,1,1);
 			
 			o.objectInfo = new WallObject();
@@ -832,7 +845,7 @@ package rightaway3d.engine.product
 		public function parseProductObject(data:Object,parent:ProductObject=null):ProductObject
 		{
 			var type:String = data.objectInfo?data.objectInfo.type:"";
-			trace("parseProductObject name:"+data.name+" file:"+data.file);
+			//trace("parseProductObject name:"+data.name+" file:"+data.file);
 			
 			if(type==ModelType.BOX_C || type==ModelType.CYLINDER_C)//用户动态创建的物体
 			{
@@ -1113,7 +1126,7 @@ package rightaway3d.engine.product
 			}
 			
 			obj.objectID = objectID;
-			//trace("objectID3:"+obj.objectID);
+			trace("objectID3:"+obj.objectID);
 			
 			if(objectDict[obj.objectID])
 			{
@@ -1234,7 +1247,7 @@ package rightaway3d.engine.product
 		{
 			if(objectDict[pObj.objectID]==pObj)
 			{
-				//trace("removeProductObject:",pObj.objectID);
+				trace("removeProductObject:",pObj.objectID);
 				delete objectDict[pObj.objectID];
 				//trace(pObj);
 				//throw new Error();

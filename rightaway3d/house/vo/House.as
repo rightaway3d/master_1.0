@@ -22,7 +22,7 @@ package rightaway3d.house.vo
 		public var height:int = 0;//dy
 		public var depth:int = 0;//dz
 		
-		public var currPanAngle:Number = 180;
+		//public var currPanAngle:Number = 180;
 		
 		public function updateBounds():void
 		{

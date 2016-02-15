@@ -14,10 +14,10 @@ package rightaway3d.house.view3d.base
 	{
 		public var vo:Wall;
 		
-		public var frontGeom:CompactSubGeometry;
-		public var backGeom:CompactSubGeometry;
-		//public var frontGeom:SubGeometry;
-		//public var backGeom:SubGeometry;
+		public var fourSideGeom:CompactSubGeometry;//墙体上下左右四个面
+		public var frontGeom:CompactSubGeometry;//墙体正面
+		//屏蔽墙体背面//public var backGeom:CompactSubGeometry;//墙体背面
+		public var wallHoleGeom:CompactSubGeometry;//墙洞的侧面
 		
 		/**
 		 * 墙体正面贴图材质的宽度，用于计算贴图UV
@@ -47,7 +47,14 @@ package rightaway3d.house.view3d.base
 		private function init():void
 		{
 			frontGeom = getSubGeom();
-			backGeom = getSubGeom();
+			//backGeom = getSubGeom();//屏蔽墙体背面
+			
+			if(vo.holes.length>0)
+			{
+				wallHoleGeom = getSubGeom();
+			}
+			
+			fourSideGeom = this.subGeometries[0] as CompactSubGeometry;
 		}
 		
 		private function getSubGeom():CompactSubGeometry
@@ -74,8 +81,25 @@ package rightaway3d.house.view3d.base
 		private var numVertices:int;
 		private var numIndices:int;
 		
-		//计算创建墙体除正面与背面区域后，所需要的顶点数量，及三角形顶点索引数（包括墙洞上下左右4个侧面）
-		private function countNumVertices():void
+		//计算创建墙体除正面与背面区域及墙洞上下左右4个侧面后，所需要的顶点数量，及三角形顶点索引数
+		private function countNumVertices0():void
+		{
+			numVertices = 12;//墙体的底面和顶面各有6个顶点
+			numIndices = 24;//墙体的底面和顶面各有4个三角面，每个三角面3个顶点索引，计24个
+			
+			if(vo.groundHeadPoint.crossWalls.length==1)
+			{
+				numVertices += 4;//墙体头端没有相交墙体时，取头端上下前后4个角顶点绘制闭合面
+				numIndices += 6;//墙头2个三角面，计6个顶点索引
+			}
+			
+			if(vo.groundEndPoint.crossWalls.length==1)
+			{
+				numVertices += 4;//墙体尾端没有相交墙体时，取尾端上下前后4个角顶点绘制闭合面
+				numIndices += 6;//墙尾2个三角面，计6个顶点索引
+			}
+		}
+		/*private function countNumVertices():void
 		{
 			numVertices = 12;//墙体的底面和顶面各有6个顶点
 			numIndices = 24;//墙体的底面和顶面各有4个三角面，每个三角面3个顶点索引，计24个
@@ -98,54 +122,24 @@ package rightaway3d.house.view3d.base
 				numVertices += 16;//洞口上下左右4个面各4个点，计16个点
 				numIndices += 24;//洞口内侧的4个矩形区域，每个矩形区域有2个三角面，每个三角面3个顶点索引,计24个索引
 			}
-			
-			/*surfaceRects.length = 0;
-			
-			numVertices += 8;//墙体的正面及背面的4个角，各4个顶点
-			numIndices += 12;//没有墙洞时，墙体的正面及背面各2个三角面，计12个顶点索引
+		}*/
+		
+		//计算创建墙体时墙洞上下左右4个侧面所需要的顶点数量，及三角形顶点索引数
+		private function countNumVertices1():void
+		{
+			numVertices = 0;//墙体的底面和顶面各有6个顶点
+			numIndices = 0;//墙体的底面和顶面各有4个三角面，每个三角面3个顶点索引，计24个
 			
 			var len:int = vo.holes.length;
-			//trace("holes:"+len);
-			if(len==0)
+			for(var i:int=0;i<len;i++)
 			{
-				surfaceRects.push(new Rectangle(0,0,vo.length,vo.floor.ceilingHeight));//没有洞口时，整面墙体作为一个区域
+				numVertices += 16;//洞口上下左右4个面各4个点，计16个点
+				numIndices += 24;//洞口内侧的4个矩形区域，每个矩形区域有2个三角面，每个三角面3个顶点索引,计24个索引
 			}
-			else
-			{
-				sortHoles(vo.holes);
-				
-				var h0:WallHole = vo.holes[0];
-				addSurfaceArea(h0,0);
-				
-				for(var i:int=1;i<len;i++)
-				{
-					var h:WallHole = vo.holes[i-1];
-					h0 = vo.holes[i];
-					addSurfaceArea(h0,h.x+h.width);
-				}
-				
-				var rect:Rectangle = new Rectangle(h0.x+h0.width,0,vo.length-(h0.x+h0.width),vo.floor.ceilingHeight);//最右侧洞口的右侧区域
-				surfaceRects.push(rect);
-			}*/
 		}
 		
 		private function countNumVertices2():void
 		{
-			/*numVertices = 12;//墙体的底面和顶面各有6个顶点
-			numIndices = 24;//墙体的底面和顶面各有4个三角面，每个三角面3个顶点索引，计24个
-			
-			if(vo.groundHeadPoint.crossWalls.length==1)
-			{
-				numVertices += 4;//墙体头端没有相交墙体时，取头端上下前后4个角顶点绘制闭合面
-				numIndices += 6;//墙头2个三角面，计6个顶点索引
-			}
-			
-			if(vo.groundEndPoint.crossWalls.length==1)
-			{
-				numVertices += 4;//墙体尾端没有相交墙体时，取尾端上下前后4个角顶点绘制闭合面
-				numIndices += 6;//墙尾2个三角面，计6个顶点索引
-			}*/
-			
 			surfaceRects.length = 0;
 			
 			numVertices = 4;//墙体的单面4个角，计4个顶点
@@ -159,8 +153,6 @@ package rightaway3d.house.view3d.base
 			}
 			else
 			{
-				//sortHoles(vo.holes);
-				
 				var h0:WallHole = vo.holes[0];
 				addSurfaceArea(h0,0);
 				
@@ -242,8 +234,8 @@ package rightaway3d.house.view3d.base
 			indices[numIndices++] = n4;
 		}
 		
-		//创建墙体的底面和顶面
-		private function createFace1(data:Vector.<Number>,indices:Vector.<uint>):void
+		//创建墙体的底面
+		private function createBottomFace(data:Vector.<Number>,indices:Vector.<uint>):void
 		{
 			var p1:Point3D = vo.groundHead;
 			var p2:Point3D = vo.groundFrontHead;
@@ -266,11 +258,22 @@ package rightaway3d.house.view3d.base
 			
 			addQuadrilateralIndex(indices,n,n+1,n+2,n+3);
 			addQuadrilateralIndex(indices,n,n+3,n+4,n+5);
+		}
+		
+		//创建墙体的顶面
+		private function createTopFace(data:Vector.<Number>,indices:Vector.<uint>):void
+		{
+			var p1:Point3D = vo.groundHead;
+			var p2:Point3D = vo.groundFrontHead;
+			var p3:Point3D = vo.groundFrontEnd;
+			var p4:Point3D = vo.groundEnd;
+			var p5:Point3D = vo.groundBackEnd;
+			var p6:Point3D = vo.groundBackHead;
 			
 			//顶面
-			n = getCurrVertexIndex();
-			ny = 1;
-			y = vo.floor.ceilingHeight;
+			var n:int = getCurrVertexIndex();
+			var nx:Number=0,ny:Number=1,nz:Number=0,tx:Number=1,ty:Number=0,tz:Number=0;
+			var y:Number = vo.floor.ceilingHeight;
 			
 			addVertex(data,p1.x,y,p1.z,nx,ny,nz,tx,ty,tz);
 			addVertex(data,p2.x,y,p2.z,nx,ny,nz,tx,ty,tz);
@@ -284,7 +287,7 @@ package rightaway3d.house.view3d.base
 		}
 		
 		//创建墙体的左右侧面
-		private function createFace2(data:Vector.<Number>,indices:Vector.<uint>):void
+		private function createHeadAndEndFace(data:Vector.<Number>,indices:Vector.<uint>):void
 		{
 			if(vo.groundHeadPoint.crossWalls.length==1 || vo.groundEndPoint.crossWalls.length==1)
 			{
@@ -330,7 +333,7 @@ package rightaway3d.house.view3d.base
 		}
 		
 		//创建洞口内侧面
-		private function createHoleFace(data:Vector.<Number>,indices:Vector.<uint>):void
+		private function createHoleFace(data:Vector.<Number>,indices:Vector.<uint>,target:CompactSubGeometry):void
 		{
 			var len:int = vo.holes.length;
 			if(len>0)
@@ -545,9 +548,10 @@ package rightaway3d.house.view3d.base
 		
 		private function createFace(data:Vector.<Number>,indices:Vector.<uint>,target:CompactSubGeometry):void
 		{
-			createFace1(data,indices);
-			createFace2(data,indices);
-			createHoleFace(data,indices);
+			createTopFace(data,indices);
+			createBottomFace(data,indices);
+			createHeadAndEndFace(data,indices);
+			//createHoleFace(data,indices);
 		}
 		
 		/**
@@ -555,9 +559,25 @@ package rightaway3d.house.view3d.base
 		 */
 		protected override function buildGeometry(target:CompactSubGeometry):void
 		{
-			_buildGeom(target,countNumVertices,createFace);
+			//trace("");
+			//trace("buildGeometry");
+			
+			_buildGeom(target,countNumVertices0,createFace);
+			
+			if(vo.holes.length>0)
+			{
+				wallHoleGeom ||= getSubGeom();
+				_buildGeom(wallHoleGeom,countNumVertices1,createHoleFace);
+			}
+			else if(wallHoleGeom)
+			{
+				this.removeSubGeometry(wallHoleGeom);
+				wallHoleGeom.dispose();
+				wallHoleGeom = null;
+			}
+			
 			_buildGeom(frontGeom,countNumVertices2,createFrontFace);
-			_buildGeom(backGeom,countNumVertices2,createBackFace);
+			//_buildGeom(backGeom,countNumVertices2,createBackFace);//屏蔽墙体背面
 		}
 		
 		private function _buildGeom(target:CompactSubGeometry,countVerticesFun:Function,createFaceFun:Function):void
@@ -573,10 +593,14 @@ package rightaway3d.house.view3d.base
 			countVerticesFun();
 			//trace("numVertices:"+numVertices);
 			
-			if (numVertices == target.numVertices) {
+			//if(numVertices==0)return;
+			
+			if (numVertices>0 && numVertices == target.numVertices) {
 				data = target.vertexData;
 				indices = target.indexData || new Vector.<uint>(numIndices, true);
-			} else {
+			}
+			else
+			{
 				data = new Vector.<Number>(numVertices*stride, true);
 				indices = new Vector.<uint>(numIndices, true);
 				invalidateUVs();
@@ -586,11 +610,6 @@ package rightaway3d.house.view3d.base
 			
 			numIndices = 0;
 			
-			/*createFace1(data,indices);
-			createFace2(data,indices);
-			createFrontFace(data,indices);
-			createBackFace(data,indices);
-			createHoleFace(data,indices);*/
 			createFaceFun(data,indices,target);
 			
 			target.updateData(data);

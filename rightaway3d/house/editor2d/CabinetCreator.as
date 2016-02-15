@@ -25,6 +25,7 @@ package rightaway3d.house.editor2d
 	import rightaway3d.house.cabinet.ListType;
 	import rightaway3d.house.lib.CabinetLib;
 	import rightaway3d.house.lib.CabinetTool;
+	import rightaway3d.house.utils.CabinetTableUtils;
 	import rightaway3d.house.utils.Geom;
 	import rightaway3d.house.utils.Point3D;
 	import rightaway3d.house.utils.SectionTLS01;
@@ -111,6 +112,8 @@ package rightaway3d.house.editor2d
 		//设置所有地柜门及封板材质
 		public function set groundCabinetDoorMaterial(matName:String):void
 		{
+			trace("setGroundCabinetDoorMaterial:"+matName);
+			
 			groundCabinetDoorMat = matName;
 			ProductInfo.defaultMaterialDict[CabinetType.GROUND_DOOR_PLANK] = matName;
 			//setCabinetsDoorMaterial(sceneGroundCabinets,matName);
@@ -139,6 +142,8 @@ package rightaway3d.house.editor2d
 		//设置所有吊柜门及封板材质
 		public function set wallCabinetDoorMaterial(matName:String):void
 		{
+			trace("setWallCabinetDoorMaterial:"+matName);
+			
 			wallCabinetDoorMat = matName;
 			ProductInfo.defaultMaterialDict[CabinetType.WALL_DOOR_PLANK] = matName;
 			//setCabinetsDoorMaterial(sceneWallCabinets,matName);
@@ -377,7 +382,7 @@ package rightaway3d.house.editor2d
 				if(flueCrossWall == drainerCrossWall)//水盆和灶台放置于同一面墙体
 				{
 					trace("水盆和灶台放置于同一面墙体");
-					setCameraPanAngle(flueCrossWall.wall);
+					//setCameraPanAngle(flueCrossWall.wall);
 					_autoCreateCabinet([[drainerCrossWall]]);
 				}
 				else//水盆和灶台放置于不同墙体
@@ -385,19 +390,19 @@ package rightaway3d.house.editor2d
 					if(drainerCrossWall.endCrossWall==flueCrossWall && flueCrossWall.headCrossWall==drainerCrossWall)
 					{
 						trace("水盆-->灶台");
-						setCameraPanAngle(drainerCrossWall.wall,flueCrossWall.wall);
+						//setCameraPanAngle(drainerCrossWall.wall,flueCrossWall.wall);
 						_autoCreateCabinet([[drainerCrossWall,flueCrossWall]]);
 					}
 					else if(flueCrossWall.endCrossWall==drainerCrossWall && drainerCrossWall.headCrossWall==flueCrossWall)
 					{
 						trace("灶台-->水盆");
-						setCameraPanAngle(drainerCrossWall.wall,flueCrossWall.wall);
+						//setCameraPanAngle(drainerCrossWall.wall,flueCrossWall.wall);
 						_autoCreateCabinet([[flueCrossWall,drainerCrossWall]]);
 					}
 					else//两个墙面不相交
 					{
 						trace("两个墙面不相交:灶台-水盆");
-						setCameraPanAngle(flueCrossWall.wall);
+						//setCameraPanAngle(flueCrossWall.wall);
 						_autoCreateCabinet([[flueCrossWall],[drainerCrossWall]]);
 					}
 				}
@@ -411,19 +416,19 @@ package rightaway3d.house.editor2d
 					if(generalCrossWall.headCrossWall==drainerCrossWall && drainerCrossWall.endCrossWall==generalCrossWall)
 					{
 						trace("水盆,灶台-->一般墙体");
-						setCameraPanAngle(generalCrossWall.wall,flueCrossWall.wall);
+						//setCameraPanAngle(generalCrossWall.wall,flueCrossWall.wall);
 						_autoCreateCabinet([[drainerCrossWall,generalCrossWall]]);
 					}
 					else if(generalCrossWall.endCrossWall==drainerCrossWall && drainerCrossWall.headCrossWall==generalCrossWall)
 					{
 						trace("一般墙体-->水盆,灶台");
-						setCameraPanAngle(generalCrossWall.wall,flueCrossWall.wall);
+						//setCameraPanAngle(generalCrossWall.wall,flueCrossWall.wall);
 						_autoCreateCabinet([[generalCrossWall,drainerCrossWall]]);
 					}
 					else//两个墙面不相交
 					{
 						trace("两个墙面不相交:水盆,灶台-一般墙体");
-						setCameraPanAngle(flueCrossWall.wall);
+						//setCameraPanAngle(flueCrossWall.wall);
 						_autoCreateCabinet([[drainerCrossWall],[generalCrossWall]]);
 					}
 				}
@@ -432,37 +437,37 @@ package rightaway3d.house.editor2d
 					if(drainerCrossWall.endCrossWall==flueCrossWall && flueCrossWall.endCrossWall==generalCrossWall)
 					{
 						trace("水盆-->灶台-->一般墙体");
-						setCameraPanAngle(flueCrossWall.wall);
+						//setCameraPanAngle(flueCrossWall.wall);
 						_autoCreateCabinet([[drainerCrossWall,flueCrossWall,generalCrossWall]]);
 					}
 					else if(flueCrossWall.endCrossWall==drainerCrossWall && drainerCrossWall.endCrossWall==generalCrossWall)
 					{
 						trace("灶台-->水盆-->一般墙体");
-						setCameraPanAngle(drainerCrossWall.wall);
+						//setCameraPanAngle(drainerCrossWall.wall);
 						_autoCreateCabinet([[flueCrossWall,drainerCrossWall,generalCrossWall]]);
 					}
 					else if(drainerCrossWall.endCrossWall==generalCrossWall && generalCrossWall.endCrossWall==flueCrossWall)
 					{
 						trace("水盆-->一般墙体-->灶台");
-						setCameraPanAngle(generalCrossWall.wall);
+						//setCameraPanAngle(generalCrossWall.wall);
 						_autoCreateCabinet([[drainerCrossWall,generalCrossWall,flueCrossWall]]);
 					}
 					else if(flueCrossWall.endCrossWall==generalCrossWall && generalCrossWall.endCrossWall==drainerCrossWall)
 					{
 						trace("灶台-->一般墙体-->水盆");
-						setCameraPanAngle(generalCrossWall.wall);
+						//setCameraPanAngle(generalCrossWall.wall);
 						_autoCreateCabinet([[flueCrossWall,generalCrossWall,drainerCrossWall]]);
 					}
 					else if(generalCrossWall.endCrossWall==drainerCrossWall && drainerCrossWall.endCrossWall==flueCrossWall)
 					{
 						trace("一般墙体-->水盆-->灶台");
-						setCameraPanAngle(drainerCrossWall.wall);
+						//setCameraPanAngle(drainerCrossWall.wall);
 						_autoCreateCabinet([[generalCrossWall,drainerCrossWall,flueCrossWall]]);
 					}
 					else if(generalCrossWall.endCrossWall==flueCrossWall && flueCrossWall.endCrossWall==drainerCrossWall)
 					{
 						trace("一般墙体-->灶台-->水盆");
-						setCameraPanAngle(flueCrossWall.wall);
+						//setCameraPanAngle(flueCrossWall.wall);
 						_autoCreateCabinet([[generalCrossWall,flueCrossWall,drainerCrossWall]]);
 					}
 					else
@@ -483,25 +488,36 @@ package rightaway3d.house.editor2d
 		private var toplineMeshs:Array = [];
 		private var topLinesData:Array;
 		
+		private var _hasTopLine:Boolean = false;
+		
 		public function createTopLine(lines:Array):void
 		{
+			trace("createTopLine:"+lines);
+			var hasTopLine:Boolean = true;
+			
 			removeTopLineMeshs();
 			
-			if(!lines)return;
-			topLinesData = lines;
-			
 			//如果地柜与吊柜的材质不一致，不能加顶线
-			if(wallCabinetDoorMat!=groundCabinetDoorMat)return;
+			if(wallCabinetDoorMat!=groundCabinetDoorMat)
+				hasTopLine = false;
 			
 			//只有指定的两种材质需要加顶线
-			if(wallCabinetDoorMat!="MCMS002"/*米黄珍珠-古典*/ && wallCabinetDoorMat!="MCMS006"/*牛津樱桃木-古典*/)return;
+			if(wallCabinetDoorMat!="MCMS002"/*米黄珍珠-古典*/ && wallCabinetDoorMat!="MCMS006"/*牛津樱桃木-古典*/)
+				hasTopLine = false;
+			
+			if(lines==topLinesData && _hasTopLine==hasTopLine)return;
+			
+			topLinesData = lines;
+			_hasTopLine = hasTopLine;
+			
+			if(!lines || !_hasTopLine)return;
 			
 			if(!lofting)lofting = new Lofting3D();
 			if(!section)section = new SectionTLS01();
 			
 			for each(var points:Vector.<Point> in lines)
 			{
-				trace("----createTopLine:",points);
+				//trace("----createTopLine:",points);
 				var mesh:Mesh = lofting.createLofting3D(section.points,points);
 				
 				mesh.y = CrossWall.WALL_OBJECT_HEIGHT + 720;
@@ -661,6 +677,7 @@ package rightaway3d.house.editor2d
 			ts += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal);
 			ts += getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal);
 			ts += getTableData(subtotal);
+			ts += getTopLineProductData(subtotal);
 			return ts;
 		}
 		
@@ -725,6 +742,8 @@ package rightaway3d.house.editor2d
 					s += getCabinetDoorData(CabinetType.DOOR_PLANK,subtotal) + ",";
 					s += getCabinetDoorData(CabinetType.CORNER_PLANK,subtotal) + ",";
 					s += getTableData(subtotal);
+					s += getTopLineProductData(subtotal);
+					
 					var ts:String = getDeviceData(subtotal);
 					if(ts)
 					{
@@ -1228,6 +1247,58 @@ package rightaway3d.house.editor2d
 			return toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,name,image) + ",";
 		}
 		
+		private function getTopLineProductData(subtotal:Object):String
+		{
+			var s:String = "";
+			if(!_hasTopLine || !topLinesData)return s;
+			
+			var lib:MaterialLibrary = MaterialLibrary.instance;
+			var name:String = this.wallCabinetDoorMaterial;
+			var price:Number = 380;
+			var id:int = 0;
+			var productName:String = "吸塑顶线";
+			var productModel:String = lib.getMaterialAttribute(name,"productModel");
+			var specifications:String = lib.getMaterialAttribute(name,"specifications");
+			var productCode:String = "00000000D";
+			var materialName:String = lib.getMaterialAttribute(name,"materialName");
+			var materialDscp:String = lib.getMaterialAttribute(name,"materialDscp");
+			var unit:String = "延米";
+			var other:String = lib.getMaterialAttribute(name,"other");
+			var image:String = lib.baseUrl + lib.getMaterialAttribute(name,"diffuseMap");
+			var productType:String = CabinetType.TOP_LINE;
+			subtotal[productType] = 0;
+			
+			var len:int = topLinesData.length;
+			for(var i:int=0;i<len;i++)
+			{
+				var points:Vector.<Point> = topLinesData[i];
+				var len2:int = points.length;
+				var p0:Point = points[0];
+				
+				for(var j:int=1;j<len2;j++)
+				{
+					var p1:Point = points[j];
+					var dist:int = Point.distance(p0,p1);
+					
+					if(j>1)dist += 100;//顶线头部的拼接冗余量
+					if(j<len2-1)dist += 100;//顶线尾部的拼接冗余量
+					
+					var n:Number = dist * 0.001;//长度转换为延米
+					
+					var total:Number = price*n;
+					var c:int = Math.ceil(total*100);
+					total = c/100;//保留两位小数
+					subtotal[productType] += total;
+					
+					s += toOrderJson3(id,productName,productType,productModel,specifications,productCode,materialName,materialDscp,unit,price,n,total,name,image) + ",";
+					
+					p0 = p1;
+				}
+			}
+			
+			return s;
+		}
+		
 		//[name:部件名称，guige:规格，price:单价，num：数量，subtotal：金额，other；备注]
 		/*private function toOrderJson(name:String,guige:String,price:Number,num:Number,subtotal:Number,other:String):String
 		{
@@ -1498,14 +1569,14 @@ package rightaway3d.house.editor2d
 		
 		private function getTopLineData():String
 		{
-			if(!topLinesData)return "";
+			if(!_hasTopLine || !topLinesData)return "";
 			
 			var s:String = ",\"topLine\":[";
 			
 			var len:int = topLinesData.length;
 			for(var i:int=0;i<len;i++)
 			{
-				s += i==0?"[":",[";
+				s += i==0 ? "[" : ",[";
 				var points:Vector.<Point> = topLinesData[i];
 				var len2:int = points.length;
 				for(var j:int=0;j<len2;j++)
@@ -3598,6 +3669,9 @@ package rightaway3d.house.editor2d
 			_cabinetTabless = tabless;
 			_tableDepthss = depthss;
 			
+			var ct:CabinetTableUtils = CabinetTableUtils.instance;
+			ct.updateRoomPillars();
+			
 			var resetFirstPoint:Boolean = false;//是否需要重新设置第一点
 			
 			//var depth:int=600;
@@ -3608,10 +3682,12 @@ package rightaway3d.house.editor2d
 				var depths:Array = depthss[i];
 				//trace("depths:",depths);
 				
-				var points:Array = [];
+				var tableData:WallSubArea = tables[0];
+				var depth:int=depths[0];
+				
+				/*var points:Array = [];
 				var dangshui:Array = [];
 				
-				var tableData:WallSubArea = tables[0];
 				var cw:CrossWall = tableData.cw;
 					
 				var x0:Number = tableData.x0;
@@ -3630,7 +3706,6 @@ package rightaway3d.house.editor2d
 				var head:Point = new Point();
 				var end:Point = new Point();
 				
-				var depth:int=depths[0];
 				offsetCrossWall(cw,depth,head,end,h,e);
 				
 				var p:Point = cw.isHead?head:end;
@@ -3735,7 +3810,13 @@ package rightaway3d.house.editor2d
 				{
 					dangshui.push(dangshui.shift());//将一开始取到点放到最后的位置，形成一个沿墙的逆时针挡水起止点
 				}
-				//trace("points:"+points);
+				*/
+				
+				var points:Array = ct.getTableBorder(tables,depths,false);
+				trace("points:"+points);
+				
+				var dss:Array = ct.getWaterHoldingBorder(tables,depths,false);
+				var dangshui:Array = dss[0];
 				//trace("dangshui:"+dangshui);
 				
 				//trace(points);
@@ -4176,7 +4257,7 @@ package rightaway3d.house.editor2d
 		/**
 		 * 设置相机默认角度
 		 */
-		private function setCameraPanAngle(w1:Wall,w2:Wall=null):void
+		/*private function setCameraPanAngle(w1:Wall,w2:Wall=null):void
 		{
 			var house:House = House.getInstance();
 			var a1:Number = (540-w1.angles)%360;
@@ -4189,7 +4270,7 @@ package rightaway3d.house.editor2d
 			{
 				house.currPanAngle = a1;
 			}
-		}
+		}*/
 		
 		private var bigCabinets:Array = [800,900];
 		private var smallCabinets:Array = [300,400,450];//,500

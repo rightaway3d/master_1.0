@@ -1,5 +1,6 @@
 package rightaway3d.house.view3d
 {
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Vector3D;
@@ -77,51 +78,19 @@ package rightaway3d.house.view3d
 			engine3d.camCtrl.cc.minTiltAngle = -5;
 			//engine3d.camera.lens.near = 1;
 			//engine3d.camera.lens.far = 20000;
-			engine3d.camCtrl.addEventListener("distanceChange",onDistanceChanged);
-			
-			/*var cm:ColorMaterial = new ColorMaterial(0x555555);
-			//cm.shadowMethod = new FilteredShadowMapMethod(engine3d.sunLight);
-			//cm.shadowMethod.epsilon = 0.01;
-			cm.lightPicker = engine3d.lightPicker;
-			cm.specular = 0;
-			cm.ambient = 1;*/
-			//cm.gloss
-			
-			/*groundGeom = new PlaneGeometry(20000,20000);
-			ground = new Mesh(groundGeom,cm);
-			engine3d.addRootChild(ground);
-			ground.y = -28;*/
-			
-			//engine3d.addRootChild(new Trident());
-			
-			/*var box:Mesh = new Mesh(new CubeGeometry(),cm);
-			engine3d.addRootChild(box);*/
-			//解析产品数据，加载产品模型
-			
-			/*var plist:XMLList = this.getProductXML().product;
-			var len:int = plist.length();
-			for(var i:int=0;i<len;i++)
-			{
-				var p:XML = plist[i];
-				productManager.parseProductObject(p);				
-			}
-			productManager.loadProduct();*/
+			//engine3d.camCtrl.addEventListener("distanceChange",onDistanceChanged);
 		}
 		
-		protected function onDistanceChanged(event:Event):void
+		/*protected function onDistanceChanged(event:Event):void
 		{
 			//var n:int = engine3d.camCtrl.cc.distance/400;
 			//if(n<5)n=5;
 			//ground.y = -n;
 			//trace("distance:"+n);
-		}
+		}*/
 		
-		private var i:int = 1;
-		public function updateHouse(house:House):void
+		private function updateLight(house:House):void
 		{
-			house3d.update(house);
-			//trace("house3d:"+house.width,house.height,house.depth);
-			
 			// ztc 更新灯光位置
 			var max:Vector3D = house.max.clone();
 			max.x = max.x - house.x;
@@ -129,18 +98,34 @@ package rightaway3d.house.view3d
 			var min:Vector3D = house.min.clone();
 			min.x = min.x - house.x;
 			min.z = min.z - house.z;
+			
 			engine3d.updateLights(max,min);
-			
-			productManager.updateProductPosition(-house.x,-house.z);
-			
+		}
+		
+		private function getCameraDistance(house:House):Number
+		{
 			var d:int = house.width<house.depth?house.width:house.depth;
 			d *= 0.5;
+			return d;
+		}
+		
+		private function _updateHouse(house:House):void
+		{
+			house3d.update(house);
+			//trace("house3d:"+house.width,house.height,house.depth);
+			updateLight(house);
 			
-			this.engine3d.camCtrl.maxWhellDistance = d;
-			this.engine3d.camCtrl.cc.distance = d;
-			this.engine3d.camCtrl.cc.panAngle = house.currPanAngle;
-			this.engine3d.camCtrl.cc.tiltAngle = 0;//85;//25;
-			this.engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);//house.currFloor.ceilingHeight/2
+			productManager.updateProductPosition(-house.x,-house.z);
+		}
+		
+		public function updateHouse(house:House):void
+		{
+			_updateHouse(house);
+			reset(house);
+			setCameraOfWalls();
+			/*var d:Number = getCameraDistance(house);
+			setCamera(d,house.currPanAngle);*/
+			
 			//this.engine3d.camCtrl.cc.
 			//engine3d.render(false);
 			
@@ -150,16 +135,31 @@ package rightaway3d.house.view3d
 			//ColorMaterial(ground.material).shadowMethod = new FilteredShadowMapMethod(engine3d.sunLight);
 		}
 		
+		private function setCamera(dist:Number,panAngle:Number):void
+		{
+			trace("setCamera:",dist,panAngle);
+			this.engine3d.camCtrl.maxWhellDistance = dist;
+			this.engine3d.camCtrl.cc.distance = dist;
+			this.engine3d.camCtrl.cc.panAngle = panAngle;
+			this.engine3d.camCtrl.cc.tiltAngle = 0;//85;//25;
+			this.engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);//house.currFloor.ceilingHeight/2
+		}
+		
 		public function update():Boolean
 		{
-			//trace("update:",index,walls.length);
+			trace("update:",index,walls.length);
+			
 			if(index>=walls.length)return false;
 			
 			var wall:Wall = walls[index++];
+			var d:Number = wall.length;
+			var a0:Number = (540-wall.angles)%360;
 			
-			var a:Number = (540-wall.angles)%360;
+			setCamera(d,a0);
+			
+			/*var a:Number = (540-wall.angles)%360;
 			engine3d.camCtrl.cc.panAngle = a;
-			engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);
+			engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);*/
 			engine3d.render(false);
 			
 			return true;
@@ -180,7 +180,127 @@ package rightaway3d.house.view3d
 				}
 			}
 			
+			if(walls.length==0)//如果当前场景还没有放置厨柜，则任取一墙作为默认角度
+			{
+				walls.push(cws[0].wall);
+			}
+			
 			index = 0;
+		}
+		
+		private function setCameraOfWalls(hideWalls:Array=null):void
+		{
+			if(walls.length==1)
+			{
+				var w0:Wall = walls[0];
+				if(hideWalls)hideWalls.push(w0.frontCrossWall.headCrossWall.headCrossWall.wall);
+				
+				var d:Number = w0.length;
+				var a0:Number = (540-w0.angles)%360;
+				
+				setCamera(d,a0);
+			}
+			else if(walls.length==2)
+			{
+				var w1:Wall = walls[0];
+				var w2:Wall = walls[1];
+				
+				if(w1.frontCrossWall.headCrossWall == w2.frontCrossWall
+					|| w1.frontCrossWall.endCrossWall == w2.frontCrossWall)
+				{
+					var a1:Number = (540-w1.angles)%360;
+					var a2:Number = (540-w2.angles)%360;
+					a0 = (a1+a2)*0.5;
+					d = (w1.length + w2.length)*0.5;
+					setCamera(d,a0);
+					
+					if(hideWalls)
+					{
+						if(w1.frontCrossWall.headCrossWall == w2.frontCrossWall)
+						{
+							hideWalls.push(w2.frontCrossWall.headCrossWall.wall);
+							hideWalls.push(w2.frontCrossWall.headCrossWall.headCrossWall.wall);
+						}
+						else
+						{
+							hideWalls.push(w1.frontCrossWall.headCrossWall.wall);
+							hideWalls.push(w1.frontCrossWall.headCrossWall.headCrossWall.wall);
+						}
+					}
+				}
+				else
+				{
+					w0 = w1.frontCrossWall.endCrossWall.wall;
+					
+					if(hideWalls)hideWalls.push(w0.frontCrossWall.headCrossWall.headCrossWall.wall);
+					
+					d = w0.length>w1.length ? w0.length : w1.length;
+					
+					a0 = (540-w0.angles)%360;
+					
+					setCamera(d,a0);
+				}
+			}
+			else if(walls.length==3)
+			{
+				w0 = getMiddleWall(walls);
+				
+				if(hideWalls)hideWalls.push(w0.frontCrossWall.headCrossWall.headCrossWall.wall);
+				
+				w1 = w0.frontCrossWall.headCrossWall.wall;
+				
+				d = w0.length>w1.length ? w0.length : w1.length;
+				a0 = (540-w0.angles)%360;
+				
+				setCamera(d,a0);
+			}
+		}
+		
+		public function getSnapshot(house:House,isReset:Boolean=true,forceRender:Boolean=true,w:int=1200,h:int=900):BitmapData
+		{
+			house.updateBounds();
+			_updateHouse(house);
+			
+			if(isReset)reset(house);
+			//var d:Number = getCameraDistance(house) * 2;
+			
+			var hideWalls:Array = [];
+			
+			if(forceRender)
+			{
+				setCameraOfWalls(hideWalls);
+				
+				house3d.setWallsVisible(hideWalls,false);
+				
+				engine3d.render(false);
+			}
+			
+			var bd:BitmapData = engine3d.getSnapshot(w,h);
+			
+			house3d.setWallsVisible(hideWalls,true);
+			
+			return bd;
+		}
+		
+		private function getMiddleWall(walls:Array):Wall
+		{
+			var w0:Wall = walls[0];
+			var w1:Wall = walls[1];
+			var w2:Wall = walls[2];
+			
+			if((w1.frontCrossWall.endCrossWall.wall==w0 && w2.frontCrossWall.headCrossWall.wall==w0)
+			|| (w1.frontCrossWall.headCrossWall.wall==w0 && w2.frontCrossWall.endCrossWall.wall==w0))
+				return w0;
+			
+			if((w0.frontCrossWall.endCrossWall.wall==w1 && w2.frontCrossWall.headCrossWall.wall==w1)
+			|| (w0.frontCrossWall.headCrossWall.wall==w1 && w2.frontCrossWall.endCrossWall.wall==w1))
+				return w1;
+			
+			if((w0.frontCrossWall.endCrossWall.wall==w2 && w1.frontCrossWall.headCrossWall.wall==w2)
+			|| (w0.frontCrossWall.headCrossWall.wall==w2 && w1.frontCrossWall.endCrossWall.wall==w2))
+				return w2;
+			
+			return null;
 		}
 		
 		private function hasCabinet(cw:CrossWall):Boolean

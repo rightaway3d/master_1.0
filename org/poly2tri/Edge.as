@@ -14,7 +14,7 @@ package org.poly2tri {
 			if (p1.y > p2.y) {
 				swap = true;
 			} else if (p1.y == p2.y) {
-				if (p1.x == p2.x) throw(new Error("Repeat points"));
+				if (p1.x == p2.x) throw(new Error("Repeat points:"+p1));
 
 				swap = (p1.x > p2.x);
 			} else {

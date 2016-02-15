@@ -117,6 +117,28 @@ package rightaway3d.house.view3d
 			wall3d.disposeWithAnimatorAndChildren();
 		}
 		
+		public function setWallsVisible(walls:Array,visible:Boolean):void
+		{
+			for each(var wall:Wall in walls)
+			{
+				if(wallDict[wall])
+				{
+					var wall3d:Wall3D = wallDict[wall];
+					wall3d.visible = visible;
+				}
+				
+				var holes:Vector.<WallHole> = wall.holes;
+				for each(var hole:WallHole in holes)
+				{
+					if(holesDict[hole])
+					{
+						var mo:MeshObject = holesDict[hole];
+						mo.mesh.visible = visible;
+					}
+				}				
+			}
+		}
+		
 		private function onRoomDispose(e:Event):void
 		{
 			var room:Room = e.currentTarget as Room;
@@ -235,6 +257,8 @@ package rightaway3d.house.view3d
 				mo.mesh.z = p.z-house.z;*/
 			}
 		}
+		
+		
 		
 		private function createWindoor(hole:WallHole):MeshObject
 		{

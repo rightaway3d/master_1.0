@@ -11,6 +11,7 @@ package rightaway3d.house.view2d
 	import rightaway3d.engine.product.ProductObjectName;
 	import rightaway3d.house.editor2d.CabinetCreator;
 	import rightaway3d.house.editor2d.Scene2D;
+	import rightaway3d.house.utils.CabinetTableUtils;
 	import rightaway3d.house.utils.Geom;
 	import rightaway3d.house.utils.GlobalConfig;
 	import rightaway3d.house.utils.Point3D;
@@ -24,7 +25,7 @@ package rightaway3d.house.view2d
 
 	public class CabinetTable2D extends Base2D
 	{
-		static private const POS_LEFT:String = "left";
+		/*static private const POS_LEFT:String = "left";
 		static private const POS_RIGHT:String = "right";
 		static private const POS_TOP:String = "top";
 		static private const POS_BOTTOM:String = "bottom";
@@ -32,9 +33,10 @@ package rightaway3d.house.view2d
 		static private const POS_MIDDLE:String = "middle";
 		static private const POS_END:String = "end";
 		static private const POS_OUT:String = "out";
-		static private const POS_IN:String = "in";
+		static private const POS_IN:String = "in";*/
 		
 		private var cc:CabinetCreator = CabinetCreator.getInstance();
+		private var ct:CabinetTableUtils = CabinetTableUtils.instance;
 		
 		private var view:Sprite;
 		
@@ -44,6 +46,8 @@ package rightaway3d.house.view2d
 			
 			view = new Sprite();
 			this.addChild(view);
+			
+			ct.view2d = view;
 		}
 		
 		private function resetPoints(points:Array,base:int):void
@@ -68,7 +72,7 @@ package rightaway3d.house.view2d
 			var tabless:Array = cc.cabinetTabless;
 			if(!tabless)return false;
 			
-			getRoomPillars();
+			ct.updateRoomPillars();
 			
 			var depthss:Array = cc.tableDepthss;
 			
@@ -80,18 +84,18 @@ package rightaway3d.house.view2d
 			return true;
 		}
 		
-		private var pillars:Array;//房间里所有的立柱或烟道
-		private var columns:Array;//房间里所有的立管
+		//private var pillars:Array;//房间里所有的立柱或烟道
+		//private var columns:Array;//房间里所有的立管
 		
 		//获取到房间里的所有立柱立管
-		private function getRoomPillars():void
+		/*private function updateRoomPillars():void
 		{
-			//trace("getRoomPillars");
+			//trace("updateRoomPillars");
 			pillars = ProductManager.own.getRootProductsByName(ProductObjectName.ROOM_SQUARE_PILLAR);
 			columns = ProductManager.own.getRootProductsByName(ProductObjectName.ROOM_CIRCULAR_COLUMN);
 			//trace("pillars:"+pillars);
 			//trace("columns:"+columns);
-		}
+		}*/
 		
 		private function drawBG():void
 		{
@@ -108,7 +112,7 @@ package rightaway3d.house.view2d
 		{
 			var max:Point = new Point();
 			var min:Point = new Point();
-			countBound(tables,depths,max,min);
+			ct.countBound(tables,depths,max,min);
 			var tw:int = max.x - min.x;
 			var th:int = max.y - min.y;
 			var dx:int = -min.x;
@@ -122,9 +126,9 @@ package rightaway3d.house.view2d
 			g.clear();
 			g.lineStyle(0,0);
 			
-			drawTable2D(tables,depths,g,dx,dy,min,max);
-			drawWaterHoldingBorder(tables,depths,g,dx,dy);
-			drawCabinetBorder(tables,depths,g,dx,dy);
+			ct.drawTable2D(tables,depths,g,dx,dy,min,max);
+			ct.drawWaterHoldingBorder(tables,depths,g,dx,dy);
+			ct.drawCabinetBorder(tables,depths,g,dx,dy);
 			
 			var w:Number = Base2D.sizeToScreen(tw);
 			var h:Number = Base2D.sizeToScreen(th);
@@ -144,13 +148,13 @@ package rightaway3d.house.view2d
 //			view.y = (sh - view.height) * 0.5 + dy;
 		}
 		
-		private function addMarkPoint(wall:Wall,ps:Array,p:Point):void
+		/*private function addMarkPoint(wall:Wall,ps:Array,p:Point):void
 		{
 			p = wall.globalToLocal2(p);
 			ps.push(p.x);
-		}
+		}*/
 		
-		private function unPoints(ps:Array,s:String):Point
+		/*private function unPoints(ps:Array,s:String):Point
 		{
 			var max:Point = new Point();
 			var len:int = ps.length;
@@ -165,9 +169,9 @@ package rightaway3d.house.view2d
 			}
 			//trace("upPoints:"+ps);
 			return max;
-		}
+		}*/
 		
-		private function drawMarking(cw:CrossWall,pos:String,min:Point,max:Point,base:Point,points:Array,drawSecondLayer:Boolean=true):void
+		/*private function drawMarking(cw:CrossWall,pos:String,min:Point,max:Point,base:Point,points:Array,drawSecondLayer:Boolean=true):void
 		{
 			var len:int = points.length;
 			
@@ -177,9 +181,9 @@ package rightaway3d.house.view2d
 			}
 			
 			drawMarking2(cw,pos,min,max,base,points);
-		}
+		}*/
 		
-		private function drawMarking2(cw:CrossWall,pos:String,min:Point,max:Point,base:Point,points:Array,layerIndex:int=0):void
+		/*private function drawMarking2(cw:CrossWall,pos:String,min:Point,max:Point,base:Point,points:Array,layerIndex:int=0):void
 		{
 			var markHeight:int = 180;
 			var dx:Number=0,dy:Number=0;
@@ -293,10 +297,10 @@ package rightaway3d.house.view2d
 			
 			setSizeMark(pos,min,max.y,points,dx,dy);
 
-		}
+		}*/
 		
 		//pos:left,right,top,bottom
-		private function setSizeMark(pos:String,min:Point,maxY:int,points:Array,dx:int,dy:int):BaseMarking
+		/*private function setSizeMark(pos:String,min:Point,maxY:int,points:Array,dx:int,dy:int):BaseMarking
 		{
 			//trace("setSizeMark:",pos,min,maxY,points,dx,dy);
 			if(pos=="A")pos=POS_TOP;
@@ -342,10 +346,10 @@ package rightaway3d.house.view2d
 			}
 			//trace("mark:",mark.x,mark.y);
 			return mark;
-		}
+		}*/
 		
 		//绘制整体台面及标识水盆灶台位置
-		private function drawTable2D(tables:Array,depths:Array,g:Graphics,dx:int,dy:int,min:Point,max:Point):void
+		/*private function drawTable2D(tables:Array,depths:Array,g:Graphics,dx:int,dy:int,min:Point,max:Point):void
 		{
 			var drainer:ProductObject = cc.drainerProduct;
 			var drainerInfo:WallObject = drainer.objectInfo;
@@ -634,14 +638,14 @@ package rightaway3d.house.view2d
 			
 			points.push(hp);
 			drawPoints(g,points,dx,dy);
-		}
+		}*/
 		
 		//绘制柜体外沿
-		private function drawCabinetBorder(tables:Array,depths:Array,g:Graphics,dx:int,dy:int):void
+		/*private function drawCabinetBorder(tables:Array,depths:Array,g:Graphics,dx:int,dy:int):void
 		{
 			var waiyan:Array = [];//厨柜外沿路径点序列（比台面外沿要缩进30mm）
 			
-			var dsWidth:int = 20;//挡水的宽度
+			//var dsWidth:int = 20;//挡水的宽度
 			var cyWidth:int = 30;//台面出沿的宽度
 			
 			var depth:int=depths[0]-cyWidth;
@@ -758,19 +762,19 @@ package rightaway3d.house.view2d
 			
 			g.lineStyle(0,0x555555);
 			drawPoints(g,waiyan,dx,dy,true);
-		}
+		}*/
 		
-		private function addPoint(points:Array,wall:Wall,base:Point,offsetY:Number,offsetX:Number=0):Point
+		/*private function addPoint(points:Array,wall:Wall,base:Point,offsetY:Number,offsetX:Number=0):Point
 		{
 			var p:Point = base.clone();
 			offsetPoint(p,offsetY,offsetX);
 			wall.localToGlobal2(p,p);
 			points.push(p);
 			return p;
-		}
+		}*/
 		
 		//绘制挡水
-		private function drawWaterHoldingBorder(tables:Array,depths:Array,g:Graphics,dx:int,dy:int):void
+		/*private function drawWaterHoldingBorder(tables:Array,depths:Array,g:Graphics,dx:int,dy:int):void
 		{
 			var dsWidth:int = 20;//挡水的宽度
 			var dsWidth2:int = 40;//挡水的宽度
@@ -818,13 +822,13 @@ package rightaway3d.house.view2d
 				var ro:RoomObject = this.getRoomObject(cw,x0,x1,RoomObject.END);
 				if(ro)
 				{
-					if(ro.name == ProductObjectName.ROOM_SQUARE_PILLAR)
+					if(ro.name == ProductObjectName.ROOM_SQUARE_PILLAR)//立柱
 					{
 						addPoint(points,cw.wall,p,ro.holeDepth+dsWidth,-dsWidth);
 						addPoint(points,cw.wall,p,ro.holeDepth+dsWidth,-ro.holeWidth-dsWidth);
 						addPoint(points,cw.wall,p,dsWidth,-ro.holeWidth-dsWidth);
 					}
-					else
+					else//立管
 					{
 						addPoint(points,cw.wall,p,ro.holeDepth+dsWidth2,-dsWidth);
 						addPoint(points,cw.wall,p,ro.holeDepth+dsWidth2,-ro.holeWidth-dsWidth2);
@@ -1029,17 +1033,16 @@ package rightaway3d.house.view2d
 				}
 			}
 			
-			//drawPoints(g,points,dx,dy);
 			drawPointsArray(g,pss,dx,dy);
-		}
+		}*/
 		
-		private function offsetPoint(p:Point,offsetY:Number,offsetX:Number=0):void
+		/*private function offsetPoint(p:Point,offsetY:Number,offsetX:Number=0):void
 		{
 			p.x += offsetX;
 			p.y = p.y>0 ? p.y+offsetY : p.y-offsetY;
-		}
+		}*/
 		
-		private function drawPointsArray(g:Graphics,pointsArray:Array,dx:int,dy:int,isBrokenLine:Boolean=false):void
+		/*private function drawPointsArray(g:Graphics,pointsArray:Array,dx:int,dy:int,isBrokenLine:Boolean=false):void
 		{
 			var len:int = pointsArray.length;
 			for(var i:int=0;i<len;i++)
@@ -1047,9 +1050,9 @@ package rightaway3d.house.view2d
 				var points:Array = pointsArray[i];
 				drawPoints(g,points,dx,dy,isBrokenLine);
 			}
-		}
+		}*/
 		
-		private function drawPoints(g:Graphics,points:Array,dx:int,dy:int,isBrokenLine:Boolean=false):void
+		/*private function drawPoints(g:Graphics,points:Array,dx:int,dy:int,isBrokenLine:Boolean=false):void
 		{
 			//trace("drawPoints:"+points);
 			var len:int = points.length;
@@ -1078,9 +1081,9 @@ package rightaway3d.house.view2d
 					p0 = p1;
 				}
 			}
-		}
+		}*/
 		
-		private function drawDeviceCenter(name:String,device:ProductObject,g:Graphics,dx:int,dy:int,holeSize:String):Point
+		/*private function drawDeviceCenter(name:String,device:ProductObject,g:Graphics,dx:int,dy:int,holeSize:String):Point
 		{
 			var wo:WallObject = device.objectInfo;
 			
@@ -1119,10 +1122,10 @@ package rightaway3d.house.view2d
 			}
 			
 			return tp;
-		}
+		}*/
 		
 		//计算台面二维坐标值范围
-		private function countBound(tables:Array,depths:Array,max:Point,min:Point):void
+		/*private function countBound(tables:Array,depths:Array,max:Point,min:Point):void
 		{
 			max.x = 0;
 			max.y = 0;
@@ -1216,41 +1219,41 @@ package rightaway3d.house.view2d
 			
 			p = cc.turnPoint3d(cw.isHead?cw.wall.localToGlobal(h):cw.wall.localToGlobal(e));//台面内沿逆时针方向最后一点
 			resetBound(p,max,min);
-		}
+		}*/
 		
-		private function resetBound(p:Point,max:Point,min:Point):void
+		/*private function resetBound(p:Point,max:Point,min:Point):void
 		{
 			if(p.x>max.x)max.x = p.x;
 			if(p.y>max.y)max.y = p.y;
 			if(p.x<min.x)min.x = p.x;
 			if(p.y<min.y)min.y = p.y;
-		}
+		}*/
 		
-		private function drawLine(g:Graphics,p:Point,dx:int,dy:int):void
+		/*private function drawLine(g:Graphics,p:Point,dx:int,dy:int):void
 		{
 			turnPoint(p,dx,dy);
 			g.lineTo(p.x,p.y);
-		}
+		}*/
 		
-		/**
+		/*
 		 * 将场景右手系坐标，转换为屏幕坐标
 		 * @param p
 		 * @param dx
 		 * @param dy
 		 * 
 		 */
-		private function turnPoint(p:Point,dx:int,dy:int):void
+		/*private function turnPoint(p:Point,dx:int,dy:int):void
 		{
 			//trace("point1:"+p);
 			p.x = Base2D.sizeToScreen(p.x + dx);
 			p.y = Base2D.sizeToScreen(dy - p.y);
 			//trace("point2:"+p);
-		}
+		}*/
 		
-		private var pillarDistTable:int = 20;//立管与包管之间的净空
-		private var pillarDistWall:int = 300;//立管与某一墙面之间净空大于此值时，要使用U型包管，否则使用L型包管
+		//private var pillarDistTable:int = 20;//立管与包管之间的净空
+		//private var pillarDistWall:int = 300;//立管与某一墙面之间净空大于此值时，要使用U型包管，否则使用L型包管
 		
-		private function getRoomObject(cw:CrossWall,x0:Number,x1:Number,position:String):RoomObject
+		/*private function getRoomObject(cw:CrossWall,x0:Number,x1:Number,position:String):RoomObject
 		{
 			//trace("getRoomObject position:"+position);
 			var ro:RoomObject;
@@ -1365,18 +1368,18 @@ package rightaway3d.house.view2d
 			}
 			
 			return null;
-		}
+		}*/
 		
-		private function isOverArea(x00:Number,x01:Number,x10:Number,x11:Number):Boolean
+		/*private function isOverArea(x00:Number,x01:Number,x10:Number,x11:Number):Boolean
 		{
 			if(MyMath.isGreaterEqual(x10,x01))return false;
 			if(MyMath.isLessEqual(x11,x00))return false;
 			return true;
-		}
+		}*/
 	}
 }
 
-import rightaway3d.engine.product.ProductObject;
+/*import rightaway3d.engine.product.ProductObject;
 
 class RoomObject
 {
@@ -1401,4 +1404,4 @@ class RoomObject
 	{
 		object = obj;
 	}
-}
+}*/

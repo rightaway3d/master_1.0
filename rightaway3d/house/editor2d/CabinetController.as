@@ -506,6 +506,7 @@ package rightaway3d.house.editor2d
 			deleteProductByName(ProductObjectName.HOOD);
 			
 			this.clearLocationFlag();
+			//this.lockLocationFlag(false);
 			
 			//gvar.currProduct2 = null;
 			currCrossWall = null;
@@ -514,7 +515,7 @@ package rightaway3d.house.editor2d
 			//_flueFlag = null;
 			
 			//actionHistory.clear();
-			ProductObject.resetIndex();
+			//ProductObject.resetIndex();
 			
 			//scene.house.currFloor.updateWallMark();
 		}
