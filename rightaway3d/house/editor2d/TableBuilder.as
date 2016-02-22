@@ -905,11 +905,12 @@ package rightaway3d.house.editor2d
 			else
 			{
 				var name:String = "装饰板_" + width + "x" + height;
-				trace("addGroundCabinetPlate:",name);
+				trace("创建非标装饰板:",name);
 				po = cabinetCreator.createCabinetPlate(cw,width,height-3,16,xPos,yPos,zPos,CabinetType.DOOR_PLANK,name);
 				
 				po.productCode = "00000000F";
 			}
+			
 			po.name_en = CabinetType.CORNER_PLANK;
 			addPlateHandle(po,width,height);
 			return po;

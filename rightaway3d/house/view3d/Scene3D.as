@@ -145,6 +145,8 @@ package rightaway3d.house.view3d
 			this.engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);//house.currFloor.ceilingHeight/2
 		}
 		
+		private var hideWall:Wall;
+		
 		public function update():Boolean
 		{
 			trace("update:",index,walls.length);
@@ -157,10 +159,11 @@ package rightaway3d.house.view3d
 			
 			setCamera(d,a0);
 			
+			hideWall = wall.frontCrossWall.headCrossWall.headCrossWall.wall;
 			/*var a:Number = (540-wall.angles)%360;
 			engine3d.camCtrl.cc.panAngle = a;
 			engine3d.camCtrl.cc.lookAtPosition = new Vector3D(0,1200,0);*/
-			engine3d.render(false);
+			//engine3d.render(false);
 			
 			return true;
 		}
@@ -170,7 +173,9 @@ package rightaway3d.house.view3d
 		
 		public function reset(house:House):void
 		{
+			hideWall = null;
 			walls = [];
+			
 			var cws:Vector.<CrossWall> = house.currFloor.rooms[0].walls;
 			for each(var cw:CrossWall in cws)
 			{
@@ -269,11 +274,15 @@ package rightaway3d.house.view3d
 			if(forceRender)
 			{
 				setCameraOfWalls(hideWalls);
-				
-				house3d.setWallsVisible(hideWalls,false);
-				
-				engine3d.render(false);
 			}
+			else if(hideWall)
+			{
+				hideWalls.push(hideWall);
+			}
+			
+			house3d.setWallsVisible(hideWalls,false);
+			
+			engine3d.render(false);
 			
 			var bd:BitmapData = engine3d.getSnapshot(w,h);
 			

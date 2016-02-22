@@ -1126,7 +1126,7 @@ package rightaway3d.engine.product
 			}
 			
 			obj.objectID = objectID;
-			trace("objectID3:"+obj.objectID);
+			//trace("objectID3:"+obj.objectID);
 			
 			if(objectDict[obj.objectID])
 			{
